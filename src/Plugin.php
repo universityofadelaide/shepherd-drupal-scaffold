@@ -8,9 +8,10 @@ namespace UniversityOfAdelaide\ShepherdDrupalScaffold;
 
 use Composer\Composer;
 use Composer\EventDispatcher\EventSubscriberInterface;
+use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
+use Composer\Script\ScriptEvents;
 use Composer\Util\RemoteFilesystem;
-use DrupalComposer\DrupalScaffold\FileFetcher;
 
 /**
  * Composer plugin for handling Shepherd Drupal scaffold.

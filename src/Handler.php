@@ -6,6 +6,7 @@ use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\Util\Filesystem;
 use Composer\Util\RemoteFilesystem;
+use DrupalComposer\DrupalScaffold\FileFetcher;
 use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
 
 class Handler

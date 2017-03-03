@@ -19,6 +19,40 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 {
 
     /**
+     * @var \UniversityOfAdelaide\ShepherdDrupalScaffold\Handler
+     */
+    protected $handler;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function activate(Composer $composer, IOInterface $io)
+    {
+        $this->handler = new Handler($composer, $io);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return array(
+            ScriptEvents::POST_UPDATE_CMD => 'postCmd',
+        );
+    }
+
+    /**
+    * Post command event callback.
+    *
+    * @param \Composer\Script\Event $event
+    */
+    public function postCmd(\Composer\Script\Event $event)
+    {
+        $this->handler->onPostCmdEvent($event);
+    }
+
+
+    /**
      * Script callback for putting in composer scripts to download the
      * scaffold files.
      *
@@ -26,19 +60,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
      */
     public static function scaffold(\Composer\Script\Event $event)
     {
-        $source = 'https://raw.githubusercontent.com/universityofadelaide/shepherd-drupal-scaffold/{version}/{path}';
-        $filenames = [
-            'RoboFileBase.php'
-        ];
-        $version = 'master';
-        $destination = dirname($event->getComposer()->getConfig()
-            ->get('vendor-dir'));
-
-        $fetcher = new FileFetcher(
-            new RemoteFilesystem($event->getIO()),
-            $source,
-            $filenames
-        );
-        $fetcher->fetch($version, $destination);
+        $handler = new Handler($event->getComposer(), $event->getIO());
+        $handler->downloadScaffold();
     }
 }

@@ -1,0 +1,19 @@
+{
+    "name": "universityofadelaide/shepherd-drupal-scaffold",
+    "description": "Composer Plugin for updating the Shepherd Drupal tools.",
+    "type": "composer-plugin",
+    "license": "GPL-2.0+",
+    "require": {
+        "php": ">=5.4.5",
+        "composer-plugin-api": "^1.0.0",
+        "drupal-composer/drupal-scaffold": "^2.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "UniversityOfAdelaide\\ShepherdDrupalScaffold\\": "src/"
+        }
+    },
+    "extra": {
+        "class": "UniversityOfAdelaide\\ShepherdDrupalScaffold\\Plugin"
+    }
+}

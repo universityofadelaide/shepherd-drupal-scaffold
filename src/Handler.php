@@ -51,7 +51,8 @@ class Handler
     {
         $source = 'https://raw.githubusercontent.com/universityofadelaide/shepherd-drupal-scaffold/{version}/{path}';
         $filenames = [
-            'RoboFileBase.php'
+            'dsh',
+            'RoboFileBase.php',
         ];
         $version = 'master';
         $destination = dirname($this->composer->getConfig()

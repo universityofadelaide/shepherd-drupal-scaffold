@@ -36,9 +36,12 @@ setup_ssh_agent_proxy() {
     error "whilp/ssh-agent could not be started."
   fi
 
-  notice "Connecting ssh-agent to the network."
   set +e
-  docker network connect ${PROJECT}_default ssh-agent
+  # Test to make sure its not already on the network
+  if ! docker network inspect ${PROJECT}_default | grep "ssh-agent" > /dev/null; then
+    notice "Connecting ssh-agent to the network."
+    docker network connect ${PROJECT}_default ssh-agent
+  fi
   set -e
 }
 

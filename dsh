@@ -85,7 +85,7 @@ dsh_shell() {
       -e UID=${UID} \
       -v ${DIR}:/code \
       -v ${SOCK}:${CONTAINER_SOCK} -e SSH_AUTH_SOCK=${SSH_AUTH_SOCK} \
-      --network shepherd_default \
+      --network ${PROJECT}_default \
       uofa/utility-php7 /entry.sh
   set -e
 }

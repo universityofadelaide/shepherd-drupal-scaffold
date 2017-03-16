@@ -34,6 +34,14 @@ dsh_shell() {
   set -e
 }
 
+dsh_pull() {
+  docker pull helder/mailcatcher
+  docker pull jwilder/nginx-proxy
+  docker pull mariadb
+  docker pull uofa/utility-php7
+  docker pull uofa/apache2-php7-dev
+}
+
 dsh_help() {
   printf "\nUsage: dsh COMMAND\n\n"
   printf "Commands:\n"
@@ -49,6 +57,9 @@ COMMAND=${1:-default}
 case ${COMMAND} in
   h*|-h|--help)
     dsh_help
+    ;;
+  p*)
+    dsh_pull
     ;;
   sh*|ss*)
     dsh_shell

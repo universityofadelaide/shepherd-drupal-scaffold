@@ -43,6 +43,7 @@ setup_dnsmasq() {
    echo "address=/${DOMAIN}/127.0.0.1" > /usr/local/etc/dnsmasq.conf
    # Write resolver if none exists.
     if [ ! -f /etc/resolver/${DOMAIN} ]; then
+      mkdir -p /etc/resolver
       notice "Resolver does not exist for ${DOMAIN}, creating one..."
       sudo bash -c 'echo "nameserver 127.0.0.1" > /etc/resolver/'${DOMAIN}''
     fi

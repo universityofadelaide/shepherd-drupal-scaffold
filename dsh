@@ -52,7 +52,7 @@ dsh_start() {
   setup
   notice "Starting project containers."
   docker-compose up -d
-  # setup_xdebug
+  setup_xdebug
   notice "Please wait about 10 seconds for the database to settle.
 You can now access the site from http://${PROJECT}.${DOMAIN}.
 Project files are available in /code, You may need to build and install your

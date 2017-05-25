@@ -185,7 +185,9 @@ abstract class RoboFileBase extends \Robo\Tasks {
     // @TODO: When is this really used? Automated builds - can be random values.
     $successful = $this->_exec("$this->drush_cmd site-install " .
       $this->getDrupalProfile() .
-      " install_configure_form.update_status_module='array(FALSE,FALSE)' -y" .
+      " install_configure_form.enable_update_status_module=NULL" .
+      " install_configure_form.enable_update_status_emails=NULL" .
+      " -y" .
       " --account-mail=\"" . $this->config['site']['admin_email'] . "\"" .
       " --account-name=\"" . $this->config['site']['admin_user'] . "\"" .
       " --account-pass=\"" . $this->config['site']['admin_password'] . "\"" .

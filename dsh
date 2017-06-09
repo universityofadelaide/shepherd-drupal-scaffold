@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [ -f dsh.local ]; then
-  source dsh.local
+if [ -f dsh.project ]; then
+  source dsh.project
 fi
 
 # `set +e` is used to continue on errors throughout this script.
@@ -88,7 +88,7 @@ dsh_shell() {
   notice "Starting shell."
   docker exec --interactive --tty --user ${USER} \
     --env SSH_AUTH_SOCK=${CONTAINER_SSH_AUTH_SOCK} \
-    ${DSH_LOCAL[@]} \
+    ${DSH_PROJECT[@]} \
     ${PROJECT}_web_1 /bin/bash
 }
 

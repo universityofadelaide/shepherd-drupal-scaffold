@@ -1,9 +1,5 @@
 #!/bin/bash
 
-if [ -f dsh.project ]; then
-  source dsh.project
-fi
-
 # `set +e` is used to continue on errors throughout this script.
 set -euo pipefail
 IFS=$'\n\t'
@@ -143,6 +139,11 @@ setup() {
   fi
   setup_docker_network
   setup_nginx_proxy
+  set +e
+  if [ -f dsh.project ]; then
+    source dsh.project
+  fi
+  set -e
 }
 
 setup_docker_machine() {

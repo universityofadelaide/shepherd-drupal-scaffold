@@ -68,6 +68,9 @@ dsh_shell() {
     dsh_start
   fi
 
+  # Execute project specific setup
+  dsh_project
+
   # @note This logic could be moved to a script that's added to the dev image.
   # Add host machine user to web container if it doesn't already exist.
   if ! docker exec ${PROJECT}_web_1 id -u ${USER} > /dev/null 2>&1; then
@@ -129,6 +132,14 @@ dsh_logs() {
   fi
 }
 
+dsh_project() {
+  set +e
+  if [ -f dsh.project ]; then
+    source dsh.project
+  fi
+  set -e
+}
+
 setup() {
   if [ ${HOST_TYPE} == 'mac' ]; then
     # If Docker for Mac isn't running, assume Docker Machine.
@@ -139,11 +150,6 @@ setup() {
   fi
   setup_docker_network
   setup_nginx_proxy
-  set +e
-  if [ -f dsh.project ]; then
-    source dsh.project
-  fi
-  set -e
 }
 
 setup_docker_machine() {

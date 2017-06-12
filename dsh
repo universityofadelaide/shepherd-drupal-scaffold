@@ -395,8 +395,8 @@ dsh_install_tools() {
 # Fetches all images used by the project.
 dsh_pull() {
   docker-compose pull
-  docker pull helder/mailcatcher
   docker pull jwilder/nginx-proxy
+  docker pull uofa/utility-php7:shepherd
 }
 
 dsh_help() {

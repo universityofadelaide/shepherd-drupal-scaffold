@@ -63,7 +63,7 @@ Connecting via ./dsh shell and running robo build is a common next step."
 # Command: ./dsh shell
 # Connects a shell to the web image as the current user.
 dsh_shell() {
-  if ! docker ps | grep ${PROJECT} > /dev/null; then
+  if ! docker ps | grep ${PROJECT}_web_1 > /dev/null; then
     notice "Project not running, starting."
     dsh_start
   fi
@@ -116,7 +116,7 @@ dsh_purge() {
 # Command: ./dsh status
 # Shows status information about project containers.
 dsh_status() {
-  if ! docker ps | grep ${PROJECT}; then
+  if ! docker ps | grep "\s${PROJECT}_"; then
     notice "${PROJECT} not running."
   fi
 }

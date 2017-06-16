@@ -89,7 +89,7 @@ dsh_shell() {
     --env SSH_AUTH_SOCK=${CONTAINER_SSH_AUTH_SOCK} \
     ${DSH_PROJECT[@]} \
     --env TERM=xterm-256color \
-    ${PROJECT}_web_1 /bin/bash
+    ${PROJECT}_web_1 ${@:-/bin/bash}
 }
 
 # Command: ./dsh stop
@@ -312,59 +312,6 @@ create_machine() {
   dsh_setup_dnsmasq
 }
 
-# @todo Currently unsupported - hasn't been upgraded, may not work.
-dsh_run() {
-  dsh_start
-  SHELL_USER=${USER}
-  SHELL_PID=$$
-  DSH_IMAGE=${1}
-  DSH_COMMAND=${*:2}
-
-  notice "Executing command."
-
-  mkdir -p ${HOME}/.dsh/${PROJECT}/code
-
-  if [ ! -z "${SSH_AUTH_SOCK}" ]; then
-    SOCK=$(dirname ${SSH_AUTH_SOCK})
-    CONTAINER_SOCK=${SOCK}
-    if [ ${OSTYPE} != 'linux-gnu' ]; then
-      # Run the agent proxy first.
-      setup_ssh_agent_proxy
-      # Change vars to mount the /ssh volume create by the ssh_agent_proxy.
-      SOCK="ssh"
-      CONTAINER_SOCK="/ssh"
-      SSH_AUTH_SOCK="/ssh/auth/sock"
-    fi
-    set +e
-    docker run -t --rm \
-      -e USER=${SHELL_USER} \
-      -e UID=${UID} \
-      -v ${SOCK}:${CONTAINER_SOCK} -e SSH_AUTH_SOCK=${SSH_AUTH_SOCK} \
-      -v ${PWD}:/web \
-      -v ${HOME}/.dsh/${PROJECT}/code:/code \
-      -v ${HOME}/.composer:/code/.composer \
-      --net=${PROJECT}_default \
-      ${DSH_IMAGE} /entry.sh ${DSH_COMMAND}
-    set -e
-  fi
-}
-
-# @todo Currently unsupported - hasn't been upgraded, may not work.
-dsh_exec() {
-  dsh_start
-  DSH_IMAGE=${1}
-  DSH_USER=${2}
-  DSH_COMMAND=${*:3}
-
-  notice "Executing command."
-
-  set +e
-  docker exec -t \
-    -u ${DSH_USER} \
-    ${DSH_IMAGE} sh -c "${DSH_COMMAND}"
-  set -e
-}
-
 # Command: ./dsh install
 # Installs project dependencies for Mac.
 dsh_install_tools() {
@@ -431,7 +378,7 @@ COMMAND=${1:-default}
 
 case ${COMMAND} in
   e*)
-    dsh_exec ${@:2}
+    dsh_shell ${@:2}
     ;;
   h*|-h|--help)
     dsh_help
@@ -449,13 +396,13 @@ case ${COMMAND} in
     dsh_purge
     ;;
   r*)
-    dsh_run ${@:2}
+    dsh_shell ${@:2}
     ;;
   se*)
     dsh_setup_dnsmasq
     ;;
   sh*|ss*)
-    dsh_shell
+    dsh_shell ${@:2}
     ;;
   star*)
     dsh_start

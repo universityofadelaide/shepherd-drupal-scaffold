@@ -355,7 +355,7 @@ dsh_install_tools() {
 dsh_pull() {
   docker-compose pull
   docker pull jwilder/nginx-proxy
-  docker pull uofa/utility-php7:shepherd
+  docker pull uofa/utility-php7
 }
 
 dsh_help() {

@@ -86,6 +86,7 @@ dsh_shell() {
 
   docker exec --interactive --tty --user ${USER} \
     --env SSH_AUTH_SOCK=${CONTAINER_SSH_AUTH_SOCK} \
+    --env LINES=$(tput lines) --env COLUMNS=$(tput cols) \
     ${DSH_PROJECT[@]:-} \
     --env TERM=xterm-256color \
     ${PROJECT}_web_1 ${@:-/bin/bash}

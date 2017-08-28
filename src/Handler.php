@@ -4,7 +4,8 @@ namespace UniversityOfAdelaide\ShepherdDrupalScaffold;
 
 use Composer\Composer;
 use Composer\IO\IOInterface;
-use Composer\Util\Filesystem;
+use Composer\Util\Filesystem as ComposerFilesystem;
+use Symfony\Component\Filesystem\Filesystem;
 
 class Handler
 {
@@ -20,7 +21,7 @@ class Handler
     protected $io;
 
     /**
-     * @var \Composer\Util\Filesystem
+     * @var \Symfony\Component\Filesystem\Filesystem
      */
     protected $filesystem;
 
@@ -179,12 +180,13 @@ class Handler
     {
         foreach ($filenames as $filename) {
             // Skip copying files that already exist at the destination.
-            if (! $overwriteExisting && file_exists($destination . '/' . $filename)) {
+            if (! $overwriteExisting && $this->filesystem->exists($destination . '/' . $filename)) {
                 continue;
             }
-            copy(
+            $this->filesystem->copy(
                 $origin . '/' . $filename,
-                $destination . '/' . $filename
+                $destination . '/' . $filename,
+                true
             );
         }
     }
@@ -198,9 +200,12 @@ class Handler
      */
     public function getVendorPath()
     {
+        // Load ComposerFilesystem to get access to path normalisation.
+        $composerFilesystem = new ComposerFilesystem();
+
         $config = $this->composer->getConfig();
-        $this->filesystem->ensureDirectoryExists($config->get('vendor-dir'));
-        $vendorPath = $this->filesystem->normalizePath(realpath($config->get('vendor-dir')));
+        $composerFilesystem->ensureDirectoryExists($config->get('vendor-dir'));
+        $vendorPath = $composerFilesystem->normalizePath(realpath($config->get('vendor-dir')));
 
         return $vendorPath;
     }

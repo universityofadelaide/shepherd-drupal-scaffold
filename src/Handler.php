@@ -178,8 +178,8 @@ class Handler
     public function copyFiles($origin, $destination, $filenames, $overwriteExisting = false)
     {
         foreach ($filenames as $filename) {
-            // Skip copying existant files.
-            if (! $overwriteExisting && file_exists()) {
+            // Skip copying files that already exist at the destination.
+            if (! $overwriteExisting && file_exists($destination . '/' . $filename)) {
                 continue;
             }
             copy(

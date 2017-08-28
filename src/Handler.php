@@ -59,7 +59,7 @@ class Handler
      */
     public function updateShepherdScaffoldFiles()
     {
-        $packagePath = $this->getPackagePath()
+        $packagePath = $this->getPackagePath();
         $projectPath = $this->getProjectPath();
 
         // Always copy and replace these files.
@@ -80,7 +80,7 @@ class Handler
             $projectPath,
             [
                 'RoboFile.php',
-            ],
+            ]
         );
     }
 

@@ -68,7 +68,6 @@ class Handler
             $packagePath,
             $projectPath,
             [
-                'docker-compose.yml',
                 'dsh',
                 'RoboFileBase.php',
             ],
@@ -80,6 +79,7 @@ class Handler
             $packagePath,
             $projectPath,
             [
+                'docker-compose.yml',
                 'RoboFile.php',
             ]
         );

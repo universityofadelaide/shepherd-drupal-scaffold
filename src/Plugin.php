@@ -52,4 +52,17 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     {
         $this->handler->onPostCmdEvent($event);
     }
+
+
+    /**
+     * Script callback for putting in composer scripts to download the
+     * scaffold files.
+     *
+     * @param \Composer\Script\Event $event
+    */
+    public static function scaffold(\Composer\Script\Event $event)
+    {
+        $handler = new Handler($event->getComposer(), $event->getIO());
+        $handler->onPostCmdEvent($event);
+    }
 }

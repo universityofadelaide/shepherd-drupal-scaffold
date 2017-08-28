@@ -145,7 +145,7 @@ class Handler
                 "if (file_exists(__DIR__ . '/settings.local.php')) {\n" .
                 "  include __DIR__ . '/settings.local.php';\n" .
                 "}\n" .
-                "/**\n * END LOCAL CONFIG\n */\n\n"
+                "/**\n * END LOCAL CONFIG\n */\n"
             ;
 
             // Append Shepherd-specific environment variable settings to settings.php.

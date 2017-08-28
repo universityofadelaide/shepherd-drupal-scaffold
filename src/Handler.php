@@ -89,7 +89,7 @@ class Handler
      */
     public function createDirectories()
     {
-        $root = $this->getDrupalRoot();
+        $root = $this->getDrupalRootPath();
         $dirs = [
             'modules',
             'profiles',
@@ -112,7 +112,7 @@ class Handler
      */
     public function createSettingsFile()
     {
-        $root = $this->getDrupalRoot();
+        $root = $this->getDrupalRootPath();
 
         // If the settings.php is not present, and the default version is...
         if (!$this->filesystem->exists($root . '/sites/default/settings.php') && $this->filesystem->exists($root . '/sites/default/default.settings.php')) {
@@ -161,7 +161,7 @@ class Handler
      */
     public function createServicesFile()
     {
-        $root = $this->getDrupalRoot();
+        $root = $this->getDrupalRootPath();
 
         if (!$this->filesystem->exists($root . '/sites/default/services.yml') && $this->filesystem->exists($root . '/sites/default/default.services.yml')) {
             $this->filesystem->copy($root . '/sites/default/default.services.yml', $root . '/sites/default/services.yml');

@@ -9,6 +9,9 @@
         "drupal-composer/drupal-scaffold": "^2.2",
         "symfony/filesystem": "~2.8|~3.0"
     },
+    "config": {
+        "bin-dir": "bin/"
+    },
     "autoload": {
         "psr-4": {
             "UniversityOfAdelaide\\ShepherdDrupalScaffold\\": "src/"

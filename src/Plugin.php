@@ -38,6 +38,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
+            ScriptEvents::POST_INSTALL_CMD => 'postCmd',
             ScriptEvents::POST_UPDATE_CMD => 'postCmd',
         );
     }
@@ -58,10 +59,10 @@ class Plugin implements PluginInterface, EventSubscriberInterface
      * scaffold files.
      *
      * @param \Composer\Script\Event $event
-     */
+    */
     public static function scaffold(\Composer\Script\Event $event)
     {
         $handler = new Handler($event->getComposer(), $event->getIO());
-        $handler->downloadScaffold();
+        $handler->onPostCmdEvent($event);
     }
 }

@@ -139,6 +139,20 @@ class Handler
                 "\$settings['shepherd_site_id'] = getenv('SHEPHERD_SITE_ID');\n" .
                 "\$settings['shepherd_url'] = getenv('SHEPHERD_URL');\n" .
                 "\$settings['shepherd_token'] = getenv('SHEPHERD_TOKEN_FILE') ? file_get_contents(getenv('SHEPHERD_TOKEN_FILE')) : getenv('SHEPHERD_TOKEN');\n" .
+                "if (getenv('REDIS_ENABLED')) {\n" .
+                "  \$settings['redis.connection']['interface'] = 'PhpRedis';\n" .
+                "  \$settings['redis.connection']['host']      = 'redis';\n" .
+                "  \$settings['cache']['default']              = 'cache.backend.redis';\n\n" .
+                "  // Always set the fast backend for bootstrap, discover and config, otherwise\n" .
+                "  // this gets lost when redis is enabled.\n" .
+                "  \$settings['cache']['bins']['bootstrap'] = 'cache.backend.chainedfast';\n" .
+                "  \$settings['cache']['bins']['discovery'] = 'cache.backend.chainedfast';\n" .
+                "  \$settings['cache']['bins']['config']    = 'cache.backend.chainedfast';\n\n" .
+                "  // If we're not installing, include the redis services." .
+                "  if (!isset($GLOBALS['install_state'])) {\n" .
+                "    \$settings['container_yamls'][] = 'modules/contrib/redis/example.services.yml';\n" .
+                "  }\n" .
+                "}\n" .
                 "/**\n * END SHEPHERD CONFIG\n */\n" .
                 "\n" .
                 "/**\n * START LOCAL CONFIG\n */\n" .

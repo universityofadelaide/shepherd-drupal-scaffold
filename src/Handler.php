@@ -141,7 +141,7 @@ class Handler
                 "\$settings['shepherd_token'] = getenv('SHEPHERD_TOKEN_FILE') ? file_get_contents(getenv('SHEPHERD_TOKEN_FILE')) : getenv('SHEPHERD_TOKEN');\n\n" .
                 "if (getenv('REDIS_ENABLED')) {\n" .
                 "  \$settings['redis.connection']['interface'] = 'PhpRedis';\n" .
-                "  \$settings['redis.connection']['host']      = 'redis';\n" .
+                "  \$settings['redis.connection']['host']      = getenv('REDIS_HOST') ?: 'redis';\n" .
                 "  \$settings['cache']['default']              = 'cache.backend.redis';\n\n" .
                 "  // Always set the fast backend for bootstrap, discover and config, otherwise\n" .
                 "  // this gets lost when redis is enabled.\n" .
@@ -152,7 +152,7 @@ class Handler
                 "  if (!isset(\$GLOBALS['install_state'])) {\n" .
                 "    \$settings['container_yamls'][] = 'modules/contrib/redis/example.services.yml';\n" .
                 "  }\n" .
-                "}\n\n" .
+                "}\n" .
                 "/**\n * END SHEPHERD CONFIG\n */\n" .
                 "\n" .
                 "/**\n * START LOCAL CONFIG\n */\n" .

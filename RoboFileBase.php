@@ -134,7 +134,6 @@ abstract class RoboFileBase extends \Robo\Tasks {
    */
   public function devComposerValidate() {
     $this->taskComposerValidate()
-      ->withDependencies()
       ->noCheckPublish()
       ->run()
       ->stopOnFail(TRUE);

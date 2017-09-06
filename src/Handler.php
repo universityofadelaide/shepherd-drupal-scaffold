@@ -64,7 +64,6 @@ class Handler
     public function executeDrupalScaffold($event)
     {
         $root = $this->getDrupalRootPath();
-        $this->filesystem->chmod($root . '/sites/default', 0775);
         $drupalScaffoldHandler = new DrupalScaffoldHandler($event->getComposer(), $event->getIO());
         $drupalScaffoldHandler->downloadScaffold();
         $drupalScaffoldHandler->generateAutoload();

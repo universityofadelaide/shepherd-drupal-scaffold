@@ -5,6 +5,7 @@ namespace UniversityOfAdelaide\ShepherdDrupalScaffold;
 use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\Util\Filesystem as ComposerFilesystem;
+use DrupalComposer\DrupalScaffold\Handler as DrupalScaffoldHandler;
 use Symfony\Component\Filesystem\Filesystem;
 
 class Handler
@@ -45,6 +46,8 @@ class Handler
     */
     public function onPostCmdEvent(\Composer\Script\Event $event)
     {
+        $event->getIO()->write("Execute Drupal scaffold.");
+        $this->executeDrupalScaffold($event);
         $event->getIO()->write("Updating Shepherd scaffold files.");
         $this->updateShepherdScaffoldFiles();
         $event->getIO()->write("Creating necessary directories.");
@@ -53,6 +56,18 @@ class Handler
         $this->modifySettingsFile();
         $event->getIO()->write("Removing write permissions on settings files.");
         $this->removeWritePermissions();
+    }
+
+    /**
+     * Run Drupal scaffold handler.
+     */
+    public function executeDrupalScaffold($event)
+    {
+        $root = $this->getDrupalRootPath();
+        $this->filesystem->chmod($root . '/sites/default', 0775);
+        $drupalScaffoldHandler = new DrupalScaffoldHandler($event->getComposer(), $event->getIO());
+        $drupalScaffoldHandler->downloadScaffold();
+        $drupalScaffoldHandler->generateAutoload();
     }
 
     /**

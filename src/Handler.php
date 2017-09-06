@@ -53,6 +53,8 @@ class Handler
         $this->createSettingsFile();
         $event->getIO()->write("Creating services.yml file if not present.");
         $this->createServicesFile();
+        $event->getIO()->write("Removing write permissions on settings files.");
+        $this->removeWritePermissions();
     }
 
     /**
@@ -169,7 +171,6 @@ class Handler
                 $shepherdSettings,
                 FILE_APPEND
             );
-            $this->filesystem->chmod($root . '/sites/default/settings.php', 0444);
         }
     }
 
@@ -182,8 +183,18 @@ class Handler
 
         if (!$this->filesystem->exists($root . '/sites/default/services.yml') && $this->filesystem->exists($root . '/sites/default/default.services.yml')) {
             $this->filesystem->copy($root . '/sites/default/default.services.yml', $root . '/sites/default/services.yml');
-            $this->filesystem->chmod($root . '/sites/default/services.yml', 0444);
         }
+    }
+
+    /**
+     * Remove all write permissions on Drupal configuration files and folder.
+     */
+    public function removeWritePermissions()
+    {
+        $root = $this->getDrupalRootPath();
+        $this->filesystem->chmod($root . '/sites/default/services.yml', 0444);
+        $this->filesystem->chmod($root . '/sites/default/settings.php', 0444);
+        $this->filesystem->chmod($root . '/sites/default', 0555);
     }
 
     /**

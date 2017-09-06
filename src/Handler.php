@@ -46,8 +46,6 @@ class Handler
     */
     public function onPostCmdEvent(\Composer\Script\Event $event)
     {
-        $event->getIO()->write("Execute Drupal scaffold.");
-        $this->executeDrupalScaffold($event);
         $event->getIO()->write("Updating Shepherd scaffold files.");
         $this->updateShepherdScaffoldFiles();
         $event->getIO()->write("Creating necessary directories.");
@@ -56,17 +54,6 @@ class Handler
         $this->modifySettingsFile();
         $event->getIO()->write("Removing write permissions on settings files.");
         $this->removeWritePermissions();
-    }
-
-    /**
-     * Run Drupal scaffold handler.
-     */
-    public function executeDrupalScaffold($event)
-    {
-        $root = $this->getDrupalRootPath();
-        $drupalScaffoldHandler = new DrupalScaffoldHandler($event->getComposer(), $event->getIO());
-        $drupalScaffoldHandler->downloadScaffold();
-        $drupalScaffoldHandler->generateAutoload();
     }
 
     /**

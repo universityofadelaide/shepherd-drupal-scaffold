@@ -330,6 +330,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
     if ($destination) {
       $this->_exec("$this->drush_cmd -y cex --destination=" . $destination);
       $this->_exec("sed -i '/^uuid: .*$/d' $this->application_root/$destination/*.yml");
+      $this->_exec("sed -i '/core:/, /default_config_hash:*/d' app/config_new/*.yml $this->application_root/$destination/*.yml");
     }
   }
 

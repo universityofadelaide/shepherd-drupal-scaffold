@@ -329,7 +329,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
   protected function configExport($destination = NULL) {
     if ($destination) {
       $this->_exec("$this->drush_cmd -y cex --destination=" . $destination);
-      $this->_exec("sed -i '/^uuid: .*$/d' $this->application_root/$destination/*.yml");
+      $this->_exec("sed -i '/^uuid:.*$/d; /^_core:$/, /^.*default_config_hash:.*$/d' $this->application_root/$destination/*.yml");
     }
   }
 

@@ -63,7 +63,7 @@ Connecting via ./dsh shell and running robo build is a common next step."
 # Command: ./dsh shell
 # Connects a shell to the web image as the current user.
 dsh_shell() {
-  if ! docker ps | grep ${PROJECT}_web_1 > /dev/null; then
+  if ! docker ps | grep "\s${PROJECT}_web_1" > /dev/null; then
     notice "Project not running, starting."
     dsh_start
   fi
@@ -97,7 +97,7 @@ dsh_shell() {
 dsh_stop() {
   notice "Stopping containers."
   docker-compose stop
-  if docker network ls | grep ${PROJECT}_default > /dev/null; then
+  if docker network ls | grep "\s${PROJECT}_default" > /dev/null; then
     notice "Disconnecting nginx proxy from network."
     set +e
     docker network disconnect ${PROJECT}_default nginx-proxy
@@ -128,7 +128,7 @@ dsh_status() {
 # Command: ./dsh logs
 # Tails logs from web container.
 dsh_logs() {
-  if docker ps | grep ${PROJECT}_web_1 > /dev/null; then
+  if docker ps | grep "\s${PROJECT}_web_1" > /dev/null; then
     docker logs --follow --tail 1 ${PROJECT}_web_1
   fi
 }
@@ -204,7 +204,7 @@ setup_ssh_agent_proxy() {
 }
 
 setup_docker_network() {
-  if ! docker network ls | grep ${PROJECT}_default > /dev/null; then
+  if ! docker network ls | grep "\s${PROJECT}_default" > /dev/null; then
     notice "Creating docker network for project."
     docker network create ${PROJECT}_default
   fi

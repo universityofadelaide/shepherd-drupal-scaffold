@@ -46,8 +46,6 @@ class Handler
     */
     public function onPostCmdEvent(\Composer\Script\Event $event)
     {
-        $event->getIO()->write("Execute Drupal scaffold.");
-        $this->executeDrupalScaffold($event);
         $event->getIO()->write("Updating Shepherd scaffold files.");
         $this->updateShepherdScaffoldFiles();
         $event->getIO()->write("Creating necessary directories.");
@@ -56,18 +54,6 @@ class Handler
         $this->modifySettingsFile();
         $event->getIO()->write("Removing write permissions on settings files.");
         $this->removeWritePermissions();
-    }
-
-    /**
-     * Run Drupal scaffold handler.
-     */
-    public function executeDrupalScaffold($event)
-    {
-        $root = $this->getDrupalRootPath();
-        $this->filesystem->chmod($root . '/sites/default', 0775);
-        $drupalScaffoldHandler = new DrupalScaffoldHandler($event->getComposer(), $event->getIO());
-        $drupalScaffoldHandler->downloadScaffold();
-        $drupalScaffoldHandler->generateAutoload();
     }
 
     /**
@@ -133,55 +119,57 @@ class Handler
         // Assume Drupal scaffold created the settings.php
         $this->filesystem->chmod($root . '/sites/default/settings.php', 0664);
 
-        $shepherdSettings = "\n/**\n * START SHEPHERD CONFIG\n */\n" .
-            "\$databases['default']['default'] = array (\n" .
-            "  'database' => getenv('DATABASE_NAME'),\n" .
-            "  'username' => getenv('DATABASE_USER'),\n" .
-            "  'password' => getenv('DATABASE_PASSWORD_FILE') ? file_get_contents(getenv('DATABASE_PASSWORD_FILE')) : getenv('DATABASE_PASSWORD'),\n" .
-            "  'host' => getenv('DATABASE_HOST'),\n" .
-            "  'port' => getenv('DATABASE_PORT') ?: '3306',\n" .
-            "  'driver' => getenv('DATABASE_DRIVER') ?: 'mysql',\n" .
-            "  'prefix' => getenv('DATABASE_PREFIX') ?: '',\n" .
-            "  'collation' => getenv('DATABASE_COLLATION') ?: 'utf8mb4_general_ci',\n" .
-            "  'namespace' => getenv('DATABASE_NAMESPACE') ?: 'Drupal\\\\Core\\\\Database\\\\Driver\\\\mysql',\n" .
-            ");\n" .
-            "\$settings['file_private_path'] = getenv('PRIVATE_DIR');\n" .
-            "\$settings['hash_salt'] = getenv('HASH_SALT') ?: '" . str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(random_bytes(55))) . "';\n" .
-            "\$config_directories['sync'] = getenv('CONFIG_SYNC_DIRECTORY') ?: 'sites/default/files/config_" . str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(random_bytes(55))) . "/sync';\n" .
-            "if (! is_dir(\$app_root . '/' . \$config_directories['sync'])) mkdir(\$app_root . '/' . \$config_directories['sync'], 0777, true);\n" .
-            "\$settings['shepherd_site_id'] = getenv('SHEPHERD_SITE_ID');\n" .
-            "\$settings['shepherd_url'] = getenv('SHEPHERD_URL');\n" .
-            "\$settings['shepherd_token'] = getenv('SHEPHERD_TOKEN_FILE') ? file_get_contents(getenv('SHEPHERD_TOKEN_FILE')) : getenv('SHEPHERD_TOKEN');\n\n" .
-            "\$settings['install_profile'] = getenv('SHEPHERD_INSTALL_PROFILE') ?: 'standard';\n" .
-            "if (getenv('REDIS_ENABLED')) {\n" .
-            "  \$settings['redis.connection']['interface'] = 'PhpRedis';\n" .
-            "  \$settings['redis.connection']['host']      = getenv('REDIS_HOST') ?: 'redis';\n" .
-            "  // Always set the fast backend for bootstrap, discover and config, otherwise\n" .
-            "  // this gets lost when redis is enabled.\n" .
-            "  \$settings['cache']['bins']['bootstrap'] = 'cache.backend.chainedfast';\n" .
-            "  \$settings['cache']['bins']['discovery'] = 'cache.backend.chainedfast';\n" .
-            "  \$settings['cache']['bins']['config']    = 'cache.backend.chainedfast';\n\n" .
-            "  // If we're not installing, include the redis services.\n" .
-            "  if (!isset(\$GLOBALS['install_state'])) {\n" .
-            "    \$settings['cache']['default']  = 'cache.backend.redis';\n\n" .
-            "    \$settings['container_yamls'][] = 'modules/contrib/redis/example.services.yml';\n" .
-            "  }\n" .
-            "}\n" .
-            "/**\n * END SHEPHERD CONFIG\n */\n" .
-            "\n" .
-            "/**\n * START LOCAL CONFIG\n */\n" .
-            "if (file_exists(__DIR__ . '/settings.local.php')) {\n" .
-            "  include __DIR__ . '/settings.local.php';\n" .
-            "}\n" .
-            "/**\n * END LOCAL CONFIG\n */\n"
-        ;
+        // If we haven't already written to settings.php.
+        if (!(strpos(file_get_contents($root . '/sites/default/settings.php'), 'START SHEPHERD CONFIG') !== false)) {
+            $shepherdSettings = "\n/**\n * START SHEPHERD CONFIG\n */\n" .
+                "\$databases['default']['default'] = array (\n" .
+                "  'database' => getenv('DATABASE_NAME'),\n" .
+                "  'username' => getenv('DATABASE_USER'),\n" .
+                "  'password' => getenv('DATABASE_PASSWORD_FILE') ? file_get_contents(getenv('DATABASE_PASSWORD_FILE')) : getenv('DATABASE_PASSWORD'),\n" .
+                "  'host' => getenv('DATABASE_HOST'),\n" .
+                "  'port' => getenv('DATABASE_PORT') ?: '3306',\n" .
+                "  'driver' => getenv('DATABASE_DRIVER') ?: 'mysql',\n" .
+                "  'prefix' => getenv('DATABASE_PREFIX') ?: '',\n" .
+                "  'collation' => getenv('DATABASE_COLLATION') ?: 'utf8mb4_general_ci',\n" .
+                "  'namespace' => getenv('DATABASE_NAMESPACE') ?: 'Drupal\\\\Core\\\\Database\\\\Driver\\\\mysql',\n" .
+                ");\n" .
+                "\$settings['file_private_path'] = getenv('PRIVATE_DIR');\n" .
+                "\$settings['hash_salt'] = getenv('HASH_SALT') ?: '" . str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(random_bytes(55))) . "';\n" .
+                "\$config_directories['sync'] = getenv('CONFIG_SYNC_DIRECTORY') ?: 'sites/default/files/config_".str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(random_bytes(55))) . "/sync';\n" .
+                "if (! is_dir(\$app_root . '/' . \$config_directories['sync'])) mkdir(\$app_root . '/' . \$config_directories['sync'], 0777, true);\n" .
+                "\$settings['shepherd_site_id'] = getenv('SHEPHERD_SITE_ID');\n" .
+                "\$settings['shepherd_url'] = getenv('SHEPHERD_URL');\n" .
+                "\$settings['shepherd_token'] = getenv('SHEPHERD_TOKEN_FILE') ? file_get_contents(getenv('SHEPHERD_TOKEN_FILE')) : getenv('SHEPHERD_TOKEN');\n\n" .
+                "\$settings['install_profile'] = getenv('SHEPHERD_INSTALL_PROFILE') ?: 'standard';\n" .
+                "if (getenv('REDIS_ENABLED')) {\n" .
+                "  \$settings['redis.connection']['interface'] = 'PhpRedis';\n" .
+                "  \$settings['redis.connection']['host'] = getenv('REDIS_HOST') ?: 'redis';\n" .
+                "  // Always set the fast backend for bootstrap, discover and config, otherwise\n" .
+                "  // this gets lost when redis is enabled.\n" .
+                "  \$settings['cache']['bins']['bootstrap'] = 'cache.backend.chainedfast';\n" .
+                "  \$settings['cache']['bins']['discovery'] = 'cache.backend.chainedfast';\n" .
+                "  \$settings['cache']['bins']['config'] = 'cache.backend.chainedfast';\n\n" .
+                "  // If we're not installing, include the redis services.\n" .
+                "  if (!isset(\$GLOBALS['install_state'])) {\n" .
+                "    \$settings['cache']['default'] = 'cache.backend.redis';\n\n" .
+                "    \$settings['container_yamls'][] = 'modules/contrib/redis/example.services.yml';\n" .
+                "  }\n" .
+                "}\n" .
+                "/**\n * END SHEPHERD CONFIG\n */\n" .
+                "\n" .
+                "/**\n * START LOCAL CONFIG\n */\n" .
+                "if (file_exists(__DIR__ . '/settings.local.php')) {\n" .
+                "  include __DIR__ . '/settings.local.php';\n" .
+                "}\n" .
+                "/**\n * END LOCAL CONFIG\n */\n";
 
-        // Append Shepherd-specific environment variable settings to settings.php.
-        file_put_contents(
-            $root . '/sites/default/settings.php',
-            $shepherdSettings,
-            FILE_APPEND
-        );
+            // Append Shepherd-specific environment variable settings to settings.php.
+            file_put_contents(
+                $root.'/sites/default/settings.php',
+                $shepherdSettings,
+                FILE_APPEND
+            );
+        }
     }
 
     /**

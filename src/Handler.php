@@ -144,7 +144,6 @@ class Handler
                 "if (getenv('REDIS_ENABLED')) {\n" .
                 "  \$settings['redis.connection']['interface'] = 'PhpRedis';\n" .
                 "  \$settings['redis.connection']['host'] = getenv('REDIS_HOST') ?: 'redis';\n" .
-                "  \$settings['cache']['default'] = 'cache.backend.redis';\n\n" .
                 "  // Always set the fast backend for bootstrap, discover and config, otherwise\n" .
                 "  // this gets lost when redis is enabled.\n" .
                 "  \$settings['cache']['bins']['bootstrap'] = 'cache.backend.chainedfast';\n" .
@@ -152,6 +151,7 @@ class Handler
                 "  \$settings['cache']['bins']['config'] = 'cache.backend.chainedfast';\n\n" .
                 "  // If we're not installing, include the redis services.\n" .
                 "  if (!isset(\$GLOBALS['install_state'])) {\n" .
+                "    \$settings['cache']['default'] = 'cache.backend.redis';\n\n" .
                 "    \$settings['container_yamls'][] = 'modules/contrib/redis/example.services.yml';\n" .
                 "  }\n" .
                 "}\n" .

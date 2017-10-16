@@ -26,12 +26,4 @@ class RoboFile extends RoboFileBase
         // Put project specific overrides here, below the parent constructor.
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getDrupalProfile()
-    {
-        // Replace this with the profile of your choice.
-        return "standard";
-    }
 }

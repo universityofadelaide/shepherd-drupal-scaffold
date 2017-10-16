@@ -56,7 +56,12 @@ abstract class RoboFileBase extends \Robo\Tasks {
    *
    * I.e. return 'some_profile'.
    */
-  protected abstract function getDrupalProfile();
+  function getDrupalProfile() {
+    $profile = getenv('SHEPHERD_INSTALL_PROFILE');
+    if (empty($profile)) {
+      echo "Install profile environment variable is not set.\n";
+    }
+  }
 
   /**
    * Returns known configuration from environment variables.

@@ -17,6 +17,7 @@ services:
       DATABASE_USER: user
       DATABASE_PASSWORD: password
       PRIVATE_DIR: /shared/private
+      TMP_DIR: /shared/tmp
       PUBLIC_DIR: web/sites/default/files
       HASH_SALT: random-hash
       CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync

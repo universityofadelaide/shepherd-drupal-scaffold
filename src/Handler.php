@@ -133,8 +133,9 @@ class Handler
                 "  'collation' => getenv('DATABASE_COLLATION') ?: 'utf8mb4_general_ci',\n" .
                 "  'namespace' => getenv('DATABASE_NAMESPACE') ?: 'Drupal\\\\Core\\\\Database\\\\Driver\\\\mysql',\n" .
                 ");\n" .
-                "\$settings['file_private_path'] = getenv('PRIVATE_DIR');\n" .
-                "\$settings['file_temporary_path'] = getenv('TMP_DIR');\n" .
+                "\$settings['file_private_path'] = getenv('PRIVATE_DIR') ?: '/shared/private';\n" .
+                "\$settings['file_temporary_path'] = getenv('TMP_DIR') ?: '/shared/tmp';\n" .
+                "\$settings['file_public_path'] = getenv('PUBLIC_DIR') ?: 'web/sites/default/files';\n" .
                 "\$settings['hash_salt'] = getenv('HASH_SALT') ?: '" . str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(random_bytes(55))) . "';\n" .
                 "\$config_directories['sync'] = getenv('CONFIG_SYNC_DIRECTORY') ?: 'sites/default/files/config_".str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(random_bytes(55))) . "/sync';\n" .
                 "if (! is_dir(\$app_root . '/' . \$config_directories['sync'])) mkdir(\$app_root . '/' . \$config_directories['sync'], 0777, true);\n" .

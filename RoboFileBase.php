@@ -27,6 +27,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
   protected $application_root = "web";
   protected $file_public_path = '/shared/public';
   protected $file_private_path = '/shared/private';
+  protected $file_temporary_path = '/shared/tmp';
   protected $services_yml = "web/sites/default/services.yml";
   protected $settings_php = "web/sites/default/settings.php";
 
@@ -178,8 +179,10 @@ abstract class RoboFileBase extends \Robo\Tasks {
     $this->say("Setting files directory owner.");
     $this->_exec("$this->sudo_cmd chown $this->web_server_user:$this->local_user -R $this->file_public_path");
     $this->_exec("$this->sudo_cmd chown $this->web_server_user:$this->local_user -R $this->file_private_path");
+    $this->_exec("$this->sudo_cmd chown $this->web_server_user:$this->local_user -R $this->file_temporary_path");
     $this->setPermissions($this->file_public_path, '0775');
     $this->setPermissions($this->file_private_path, '0775');
+    $this->setPermissions($this->file_temporary_path, '0775');
   }
 
   /**

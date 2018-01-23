@@ -532,7 +532,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
   public function devImportDb($sql_file) {
     $start = new DateTime();
     $this->_exec("$this->drush_cmd -y sql-drop");
-    $this->_exec("zcat $sql_file | $this->drush_cmd sqlc");
+    $this->_exec("$this->drush_cmd --file=$sql_file");
     $this->_exec("$this->drush_cmd cr");
     $this->_exec("$this->drush_cmd upwd admin --password=password");
     $this->_exec("$this->drush_cmd updb -y");
@@ -548,7 +548,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
    */
   public function devExportDb($name = 'dump') {
     $start = new DateTime();
-    $this->_exec("$this->drush_cmd sql-dump | gzip -9 > $name.sql.gz");
+    $this->_exec("$this->drush_cmd sql-dump --gzip --result-file=$name.sql");
     $this->say("Duration: " . date_diff(new DateTime(), $start)->format('%im %Ss'));
     $this->say("Database $name.sql.gz exported");
   }

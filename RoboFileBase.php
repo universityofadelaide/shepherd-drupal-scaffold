@@ -524,6 +524,36 @@ abstract class RoboFileBase extends \Robo\Tasks {
   }
 
   /**
+   * Imports a database, updates the admin user password and applies updates.
+   *
+   * @param string $sql_file
+   *   Path to sql file to import.
+   */
+  public function devImportDb($sql_file) {
+    $start = new DateTime();
+    $this->_exec("$this->drush_cmd -y sql-drop");
+    $this->_exec("$this->drush_cmd --file=$sql_file");
+    $this->_exec("$this->drush_cmd cr");
+    $this->_exec("$this->drush_cmd upwd admin --password=password");
+    $this->_exec("$this->drush_cmd updb -y");
+    $this->say('Duration: ' . date_diff(new DateTime(), $start)->format('%im %Ss'));
+    $this->say('Database imported, admin user password is : password');
+  }
+
+  /**
+   * Exports a database and gzips the sql file.
+   *
+   * @param string $name
+   *   Name of sql file to be exported.
+   */
+  public function devExportDb($name = 'dump') {
+    $start = new DateTime();
+    $this->_exec("$this->drush_cmd sql-dump --gzip --result-file=$name.sql");
+    $this->say("Duration: " . date_diff(new DateTime(), $start)->format('%im %Ss'));
+    $this->say("Database $name.sql.gz exported");
+  }
+
+  /**
    * Check if file exists and set permissions.
    *
    * @param string $file

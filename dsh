@@ -95,6 +95,12 @@ dsh_shell() {
 # Command: ./dsh stop
 # Stops project and brings down network after disconnecting nginx proxy.
 dsh_stop() {
+  # If mac, ensure that docker-machine vars are available
+  # Need this check if working with multiple terminal sessions.
+  if [ ${HOST_TYPE} == 'mac' ]; then
+    setup_docker_machine
+  fi
+
   notice "Stopping containers."
   docker-compose stop
   if docker network ls | grep "\s${PROJECT}_default" > /dev/null; then
@@ -128,6 +134,12 @@ dsh_status() {
 # Command: ./dsh logs
 # Tails logs from web container.
 dsh_logs() {
+  # If mac, ensure that docker-machine vars are available
+  # Need this check if working with multiple terminal sessions.
+  if [ ${HOST_TYPE} == 'mac' ]; then
+    setup_docker_machine
+  fi
+
   if docker ps | grep "\s${PROJECT}_web_1" > /dev/null; then
     docker logs --follow --tail 1 ${PROJECT}_web_1
   fi
@@ -365,6 +377,7 @@ Commands:\n
 \thelp\tShow this help.\n
 \tinstall\tInstall dependencies and tools for development.\n
 \tpurge\tPurge the docker containers, network and proxy and remove all data.\n
+\tsetup_dns\tConfigures dnsmasq.\n
 \tshell\tStart a shell which is connected to the containers and can be used to run commands.\n
 \tstart\tStart the docker containers, network and proxy.\n
 \tstatus\tShow the status of this projects containers.\n

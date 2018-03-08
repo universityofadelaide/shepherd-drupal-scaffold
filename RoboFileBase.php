@@ -450,6 +450,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
       ->from('cache: true')
       ->to('cache: false')
       ->run();
+    $this->devAggregateAssetsDisable();
     $this->devConfigReadOnly();
     $this->say('Clearing Drupal cache...');
     $this->devCacheRebuild();
@@ -484,8 +485,8 @@ abstract class RoboFileBase extends \Robo\Tasks {
    */
   public function devAggregateAssetsDisable() {
     $this->taskExecStack()
-      ->exec($this->drush_cmd . ' cset system.performance js preprocess "false" -y')
-      ->exec($this->drush_cmd . ' cset system.performance css preprocess "false" -y')
+      ->exec($this->drush_cmd . ' cset system.performance js.preprocess "false" -y')
+      ->exec($this->drush_cmd . ' cset system.performance css.preprocess "false" -y')
       ->run();
     $this->devCacheRebuild();
     $this->say('Asset Aggregation is now disabled.');
@@ -496,8 +497,8 @@ abstract class RoboFileBase extends \Robo\Tasks {
    */
   public function devAggregateAssetsEnable() {
     $this->taskExecStack()
-      ->exec($this->drush_cmd . ' cset system.performance js preprocess "true" -y')
-      ->exec($this->drush_cmd . ' cset system.performance css preprocess "true" -y')
+      ->exec($this->drush_cmd . ' cset system.performance js.preprocess "true" -y')
+      ->exec($this->drush_cmd . ' cset system.performance css.preprocess "true" -y')
       ->run();
     $this->devCacheRebuild();
     $this->say('Asset Aggregation is now enabled.');

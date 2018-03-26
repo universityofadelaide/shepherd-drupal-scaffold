@@ -231,9 +231,10 @@ setup_nginx_proxy() {
   if docker ps -a | grep "nginx-proxy" > /dev/null; then
     docker start nginx-proxy > /dev/null
   else
+    # Configuration is only applied when the container is created.
     docker run -d -p 80:80 \
       -v /var/run/docker.sock:/tmp/docker.sock:ro \
-      -v dsh_proxy.conf:/etc/nginx/conf.d/dsh_proxy.conf \
+      -v /etc/nginx/conf.d/dsh_proxy.conf:${pwd}/dsh_proxy.conf \
       --restart always --name nginx-proxy \
       jwilder/nginx-proxy
   fi

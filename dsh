@@ -233,6 +233,7 @@ setup_nginx_proxy() {
   else
     docker run -d -p 80:80 \
       -v /var/run/docker.sock:/tmp/docker.sock:ro \
+      -v dsh_proxy.conf:/etc/nginx/conf.d/dsh_proxy.conf \
       --restart always --name nginx-proxy \
       jwilder/nginx-proxy
   fi

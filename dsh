@@ -300,7 +300,9 @@ dsh_setup_dnsmasq() {
 setup_xdebug() {
   HOST_IP=$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' | head -1)
   notice "Configuring xdebug to connect to host at: ${HOST_IP}."
-  docker exec -t "${PROJECT}_web_1" sed -i "s/^xdebug\.remote_host=.*$/xdebug.remote_host=${HOST_IP}/" /etc/php/7.1/mods-available/xdebug.ini
+  # Get the PHP VERSION, so we edit the correct ini file.
+  PHP_VERSION=$(docker exec -t "${PROJECT}_web_1" php -v | head -n1 | awk '{print $2}' | awk -F '-' '{print $1}' | awk -F '.' '{print $1"."$2}')
+  docker exec -t "${PROJECT}_web_1" sed -i "s/^xdebug\.remote_host=.*$/xdebug.remote_host=${HOST_IP}/" "/etc/php/${PHP_VERSION}/mods-available/xdebug.ini"
   set +e
   docker exec -t -u root "${PROJECT}_web_1" apachectl graceful 2> /dev/null
   set -e

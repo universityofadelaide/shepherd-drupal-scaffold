@@ -161,8 +161,9 @@ setup() {
     fi
     setup_ssh_agent_proxy
   fi
-  setup_docker_network
   setup_nginx_proxy
+  setup_docker_network
+  setup_nginx_connect
 }
 
 setup_docker_machine() {
@@ -231,8 +232,10 @@ setup_nginx_proxy() {
   if docker ps -a | grep "nginx-proxy" > /dev/null; then
     docker start nginx-proxy > /dev/null
   else
+    # Configuration is only applied when the container is created.
     docker run -d -p 80:80 \
       -v /var/run/docker.sock:/tmp/docker.sock:ro \
+      -v /etc/nginx/conf.d/dsh_proxy.conf:$(pwd)/dsh_proxy.conf \
       --restart always --name nginx-proxy \
       jwilder/nginx-proxy
   fi
@@ -240,7 +243,9 @@ setup_nginx_proxy() {
   if ! docker ps | grep "nginx-proxy" > /dev/null; then
     error "jwilder/nginx-proxy could not be started."
   fi
+}
 
+setup_nginx_connect() {
   set +e
   # Test to make sure its not already on the network.
   if ! docker network inspect ${PROJECT}_default | grep "nginx-proxy" > /dev/null; then

@@ -81,6 +81,7 @@ class Handler
             $projectPath,
             [
                 'docker-compose.yml',
+                'dsh_proxy.conf',
                 'RoboFile.php',
             ]
         );

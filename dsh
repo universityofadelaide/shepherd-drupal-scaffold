@@ -103,6 +103,12 @@ dsh_stop() {
 
   notice "Stopping containers."
   docker-compose stop
+}
+
+# Command: ./dsh stop
+# Stops project, then takes down containers and removes volumes if possible.
+dsh_purge() {
+  dsh_stop
   if docker network ls | grep "\s${PROJECT}_default" > /dev/null; then
     notice "Disconnecting nginx proxy from network."
     set +e
@@ -111,12 +117,6 @@ dsh_stop() {
     docker network rm ${PROJECT}_default
     set -e
   fi
-}
-
-# Command: ./dsh stop
-# Stops project, then takes down containers and removes volumes if possible.
-dsh_purge() {
-  dsh_stop
   notice "Taking down containers, removing volumes if possible."
   set +e
   docker-compose down -v

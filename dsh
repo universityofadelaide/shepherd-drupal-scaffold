@@ -12,9 +12,13 @@ MACHINE='default'
 # exists in global DNS, which may cause issues reassigning it with dnsmasq.
 export DOMAIN=${DOMAIN:-'test'}
 
-# Used as the prefix for docker networking, container naming and nginx hostname.
-export PROJECT=$(basename ${PWD} | sed 's/[-_]//g')
+# Nginx proxy exposed port. Useful when using something other than 80.
+export NGINX_PORT=$(docker port nginx-proxy | awk -F ':' '{print $2}')
 
+# Used as the prefix for docker networking, container naming and nginx hostname.
+export PROJECT=$(basename ${PWD})
+
+exit 1
 # Determine the OS type of the host machine.
 if [ "$(uname)" == "Darwin" ]; then
   HOST_TYPE='mac'
@@ -53,8 +57,9 @@ dsh_start() {
   notice "Starting project containers."
   docker-compose up -d
   setup_xdebug
+  export URL="http://${PROJECT}.${DOMAIN}$(if [ ! $NGINX_PORT -eq '80' ]; then echo ":$NGINX_PORT"; fi)"
   notice "Please wait about 10 seconds for the database to settle.
-You can now access the site from http://${PROJECT}.${DOMAIN}.
+You can now access the site from ${URL}.
 Project files are available in /code, You may need to build and install your
   project before it starts working.
 Connecting via ./dsh shell and running robo build is a common next step."
@@ -242,6 +247,9 @@ setup_nginx_proxy() {
 
   if ! docker ps | grep "nginx-proxy" > /dev/null; then
     error "jwilder/nginx-proxy could not be started."
+  else
+    # Update the nginx port as it wasn't running initially.
+    export NGINX_PORT=$(docker port nginx-proxy | awk -F ':' '{print $2}')
   fi
 }
 

@@ -18,7 +18,6 @@ export NGINX_PORT=$(docker port nginx-proxy | awk -F ':' '{print $2}')
 # Used as the prefix for docker networking, container naming and nginx hostname.
 export PROJECT=$(basename ${PWD})
 
-exit 1
 # Determine the OS type of the host machine.
 if [ "$(uname)" == "Darwin" ]; then
   HOST_TYPE='mac'

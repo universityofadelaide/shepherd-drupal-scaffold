@@ -239,7 +239,7 @@ setup_nginx_proxy() {
     # Configuration is only applied when the container is created.
     docker run -d -p 80:80 \
       -v /var/run/docker.sock:/tmp/docker.sock:ro \
-      -v /etc/nginx/conf.d/dsh_proxy.conf:$(pwd)/dsh_proxy.conf \
+      -v $(pwd)/dsh_proxy.conf:/etc/nginx/conf.d/dsh_proxy.conf \
       --restart always --name nginx-proxy \
       jwilder/nginx-proxy
   fi

@@ -158,8 +158,8 @@ class Handler
                 "  }\n" .
                 "}\n" .
                 "\$settings['ua_middleware_service'] = array(\n" .
-                "   'auth' => getenv('UA_MIDDLEWARE_AUTHFILE') ? file_get_contents(getenv('UA_MIDDLEWARE_AUTH_FILE')) : getenv('UA_MIDDLEWARE_AUTH'), \n" .
-                "   'environment' => getenv('UA_MIDDLEWARE_ENV') \n" .
+                "   'auth' => getenv('UA_MIDDLEWARE_AUTH_FILE') ? file_get_contents(getenv('UA_MIDDLEWARE_AUTH_FILE')) : getenv('UA_MIDDLEWARE_AUTH'),\n" .
+                "   'environment' => getenv('UA_MIDDLEWARE_ENV'),\n" .
                 "); \n" .     
                 "/**\n * END SHEPHERD CONFIG\n */\n" .
                 "\n" .

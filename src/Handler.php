@@ -157,6 +157,10 @@ class Handler
                 "    \$settings['container_yamls'][] = 'modules/contrib/redis/example.services.yml';\n" .
                 "  }\n" .
                 "}\n" .
+                "\$settings['ua_middleware_service'] = array(\n" .
+                "   'auth' => getenv('UA_MIDDLEWARE_AUTHFILE') ? file_get_contents(getenv('UA_MIDDLEWARE_AUTH_FILE')) : getenv('UA_MIDDLEWARE_AUTH'), \n" .
+                "   'environment' => getenv('UA_MIDDLEWARE_ENV') \n" .
+                "); \n" .     
                 "/**\n * END SHEPHERD CONFIG\n */\n" .
                 "\n" .
                 "/**\n * START LOCAL CONFIG\n */\n" .

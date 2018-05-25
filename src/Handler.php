@@ -157,8 +157,6 @@ class Handler
                 "    \$settings['container_yamls'][] = 'modules/contrib/redis/example.services.yml';\n" .
                 "  }\n" .
                 "}\n" .
-<<<<<<< Updated upstream
-=======
                 "\$settings['ua_middleware_service'] = array(\n" .
                 "   'environment' => array(\n" .
                 "       'DEV' => array(\n" .
@@ -175,7 +173,6 @@ class Handler
                 "        ),\n" .
                 "   );\n" .
                 ");\n" .     
->>>>>>> Stashed changes
                 "/**\n * END SHEPHERD CONFIG\n */\n" .
                 "\n" .
                 "/**\n * START LOCAL CONFIG\n */\n" .

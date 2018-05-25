@@ -159,7 +159,8 @@ class Handler
                 "}\n" .
                 "if (getenv('UA_MW_SECRET_PATH')) {\n" .
                 "   \$settings['ua_middleware_service'] = []; \n" .
-                "   foreach( glob(getenv('UA_MW_SECRET_PATH') . 'UA_MW_*') as \$secret) {\n" .
+                "   // Glob the secret path for secrets, that match pattern \n" .
+                "   foreach( glob( rtrim(getenv('UA_MW_SECRET_PATH'),DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'UA_MW_*') as \$secret) {\n" .
                 "    \$settings['ua_middleware_service'][pathinfo(\$secret)['filename']] = file_get_contents(\$secret);\n" .
                 "   }\n" .    
                 "}\n" .     

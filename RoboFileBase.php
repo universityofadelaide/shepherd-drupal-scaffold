@@ -168,7 +168,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
     if (isset($this->config['environment']['config_sync_dir'])) {
       // Only do this if we have a config sync dir setting available.
       $this->say("Creating config sync directory.");
-      $this->_exec("mkdir -p " . $this->application_root . "/" . $this->config['environment']['config_sync_dir']);
+      $this->_exec("$this->sudo_cmd mkdir -p " . $this->config['environment']['config_sync_dir']);
     }
   }
 
@@ -176,13 +176,14 @@ abstract class RoboFileBase extends \Robo\Tasks {
    * Set the owner and group of all files in the files dir to the web user.
    */
   public function buildSetFilesOwner() {
-    $this->say("Setting files directory owner.");
-    $this->_exec("$this->sudo_cmd chown $this->web_server_user:$this->local_user -R $this->file_public_path");
-    $this->_exec("$this->sudo_cmd chown $this->web_server_user:$this->local_user -R $this->file_private_path");
-    $this->_exec("$this->sudo_cmd chown $this->web_server_user:$this->local_user -R $this->file_temporary_path");
-    $this->setPermissions($this->file_public_path, '0775');
-    $this->setPermissions($this->file_private_path, '0775');
-    $this->setPermissions($this->file_temporary_path, '0775');
+    foreach ([$this->file_public_path, $this->file_private_path, $this->file_temporary_path] as $path) {
+      $this->say("Ensuring all directories exist.");
+      $this->_exec("$this->sudo_cmd mkdir -p $path");
+      $this->say("Setting files directory owner.");
+      $this->_exec("$this->sudo_cmd chown $this->web_server_user:$this->local_user -R $path");
+      $this->say("Setting directory permissions.");
+      $this->setPermissions($path, '0775');
+    }
   }
 
   /**

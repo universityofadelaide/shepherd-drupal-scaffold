@@ -157,22 +157,12 @@ class Handler
                 "    \$settings['container_yamls'][] = 'modules/contrib/redis/example.services.yml';\n" .
                 "  }\n" .
                 "}\n" .
-                "\$settings['ua_middleware_service'] = array(\n" .
-                "   'environment' => array(\n" .
-                "       'DEV' => array(\n" .
-                "           'password' => getenv('UA_MIDDLEWARE_SERVICE_DEV_PASSWORD') ? file_get_contents(getenv('UA_MIDDLEWARE_SERVICE_DEV_PASSWORD'))\n" .
-                "        ),\n" .
-                "       'SIT' => array(\n" .
-                "           'password' => getenv('UA_MIDDLEWARE_SERVICE_SIT_PASSWORD') ? file_get_contents(getenv('UA_MIDDLEWARE_SERVICE_SIT_PASSWORD'))\n" .
-                "        ),\n" .
-                "       'UAT' => array(\n" .
-                "           'password' => getenv('UA_MIDDLEWARE_SERVICE_UAT_PASSWORD') ? file_get_contents(getenv('UA_MIDDLEWARE_SERVICE_UAT_PASSWORD'))\n" .
-                "        ),\n" .
-                "       'PRD' => array(\n" .
-                "           'password' => getenv('UA_MIDDLEWARE_SERVICE_PRD_PASSWORD') ? file_get_contents(getenv('UA_MIDDLEWARE_SERVICE_PRD_PASSWORD'))\n" .
-                "        ),\n" .
-                "   );\n" .
-                ");\n" .     
+                "if (getenv('UA_MW_SECRET_PATH')) {\n" .
+                "   \$settings['ua_middleware_service'] = []; \n" .
+                "   foreach( glob(getenv('UA_MW_SECRET_PATH') . 'UA_MW_*') as \$secret) {\n" .
+                "    \$settings['ua_middleware_service'][pathinfo(\$secret)['filename']] = file_get_contents(\$secret);\n" .
+                "   }\n" .    
+                "}\n" .     
                 "/**\n * END SHEPHERD CONFIG\n */\n" .
                 "\n" .
                 "/**\n * START LOCAL CONFIG\n */\n" .

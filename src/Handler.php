@@ -162,8 +162,8 @@ class Handler
                 "   // Glob the secret path for secrets, that match pattern \n" .
                 "   foreach( glob( rtrim(getenv('UA_MW_SECRET_PATH'),DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'UA_MW_*') as \$secret) {\n" .
                 "    \$settings['ua_middleware_service'][pathinfo(\$secret)['filename']] = file_get_contents(\$secret);\n" .
-                "   }\n" .    
-                "}\n" .     
+                "   }\n" .
+                "}\n" .
                 "/**\n * END SHEPHERD CONFIG\n */\n" .
                 "\n" .
                 "/**\n * START LOCAL CONFIG\n */\n" .
@@ -187,7 +187,6 @@ class Handler
     public function removeWritePermissions()
     {
         $root = $this->getDrupalRootPath();
-        $this->filesystem->chmod($root . '/sites/default/services.yml', 0444);
         $this->filesystem->chmod($root . '/sites/default/settings.php', 0444);
         $this->filesystem->chmod($root . '/sites/default', 0555);
     }

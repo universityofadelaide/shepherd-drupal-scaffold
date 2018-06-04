@@ -157,11 +157,11 @@ class Handler
                 "    \$settings['container_yamls'][] = 'modules/contrib/redis/example.services.yml';\n" .
                 "  }\n" .
                 "}\n" .
-                "if (getenv('UA_MW_SECRET_PATH')) {\n" .
-                "   \$settings['ua_middleware_service'] = []; \n" .
+                "if (getenv('SHEPHERD_SECRET_PATH')) {\n" .
+                "   \$settings['shepherd_secrets'] = []; \n" .
                 "   // Glob the secret path for secrets, that match pattern \n" .
-                "   foreach( glob( rtrim(getenv('UA_MW_SECRET_PATH'),DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'UA_MW_*') as \$secret) {\n" .
-                "    \$settings['ua_middleware_service'][pathinfo(\$secret)['filename']] = file_get_contents(\$secret);\n" .
+                "   foreach( glob( rtrim(getenv('SHEPHERD_SECRET_PATH'),DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'SHEPHERD_*') as \$secret) {\n" .
+                "    \$settings['shepherd_secrets'][pathinfo(\$secret)['filename']] = file_get_contents(\$secret);\n" .
                 "   }\n" .
                 "}\n" .
                 "/**\n * END SHEPHERD CONFIG\n */\n" .

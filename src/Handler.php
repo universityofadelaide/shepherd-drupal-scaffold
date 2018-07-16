@@ -96,9 +96,9 @@ class Handler
     {
         $root = $this->getDrupalRootPath();
         $dirs = [
-            $root . '/'. 'modules',
-            $root . '/'. 'profiles',
-            $root . '/'. 'themes',
+            $root . '/modules',
+            $root . '/profiles',
+            $root . '/themes',
             'config-install',
             'config-export',
         ];

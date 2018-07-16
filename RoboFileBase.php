@@ -19,6 +19,20 @@ abstract class RoboFileBase extends \Robo\Tasks {
   protected $drush_bin = "bin/drush";
   protected $composer_bin = "composer";
 
+  /**
+   * The path to the phpcs command.
+   *
+   * @var string
+   */
+  protected $phpcsCmd = 'bin/phpcs';
+
+  /**
+   * The path to the phpcbf command.
+   *
+   * @var string
+   */
+  protected $phpcbfCmd = 'bin/phpcbf';
+
   protected $php_enable_module_command = 'phpenmod -v ALL';
   protected $php_disable_module_command = 'phpdismod -v ALL';
 
@@ -35,6 +49,27 @@ abstract class RoboFileBase extends \Robo\Tasks {
 
   protected $config_new_directory = 'config_new';
   protected $config_old_directory = 'config_old';
+
+  /**
+   * The folders to scan for php coding standards violations.
+   *
+   * @var string
+   */
+  protected $phpcsFolders = 'web/modules/custom web/profiles';
+
+  /**
+   * The php extensions to scan for php coding standards violations.
+   *
+   * @var string
+   */
+  protected $phpcsExtensions = 'php,module,inc,install,test,profile,theme';
+
+  /**
+   * The path to the phpcs ruleset to use.
+   *
+   * @var string
+   */
+  protected $phpcsRuleset = 'vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml';
 
   /**
    * Initialize config variables and apply overrides.
@@ -553,6 +588,20 @@ abstract class RoboFileBase extends \Robo\Tasks {
     $this->_exec("$this->drush_cmd sql-dump --gzip --result-file=$name.sql");
     $this->say("Duration: " . date_diff(new DateTime(), $start)->format('%im %Ss'));
     $this->say("Database $name.sql.gz exported");
+  }
+
+  /**
+   * Run coding standards checks for PHP files on the project.
+   */
+  public function lintPhp() {
+    $this->_exec("$this->phpcsCmd --report=full --standard=$this->phpcsRuleset --extensions=$this->phpcsExtensions $this->phpcsFolders");
+  }
+
+  /**
+   * Fix coding standards violations for PHP files on the project.
+   */
+  public function lintFix() {
+    $this->_exec("$this->phpcbfCmd --report=full --standard=$this->phpcsRuleset --extensions=$this->phpcsExtensions $this->phpcsFolders");
   }
 
   /**

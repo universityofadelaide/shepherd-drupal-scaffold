@@ -72,6 +72,34 @@ abstract class RoboFileBase extends \Robo\Tasks {
   protected $phpcsRuleset = 'vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml';
 
   /**
+   * The path to the config dir.
+   *
+   * @var string
+   */
+  protected $configDir = '/code/config-export';
+
+  /**
+   * The path to the config install dir.
+   *
+   * @var string
+   */
+  protected $configInstallDir = '/code/config-install';
+
+  /**
+   * The path to the config delete list.
+   *
+   * @var string
+   */
+  protected $configDeleteList = '/code/drush/config-delete.yml';
+
+  /**
+   * The path to the config delete list.
+   *
+   * @var string
+   */
+  protected $configIgnoreList = '/code/drush/config-ignore.yml';
+
+  /**
    * Initialize config variables and apply overrides.
    */
   public function __construct() {
@@ -373,6 +401,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
    *   The folder within the application root.
    */
   protected function configExport($destination = NULL) {
+    $this->yell('This command is deprecated, you should use config:export-plus instead', 40, 'red');
     if ($destination) {
       $this->_exec("$this->drush_cmd -y cex --destination=" . $destination);
       $this->_exec("sed -i '/^uuid:.*$/d; /^_core:$/, /^.*default_config_hash:.*$/d' $this->application_root/$destination/*.yml");
@@ -389,6 +418,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
    *   Diff output as an array of strings.
    */
   public function configChanges($opts = ['show|s' => FALSE]) {
+    $this->yell('This command is deprecated, you should use config:export-plus and config:import-plus instead', 40, 'red');
     $output_style = '-qbr';
     $config_old_path = $this->application_root . '/' . $this->config_old_directory;
     $config_new_path = $this->application_root . '/' . $this->config_new_directory;
@@ -416,6 +446,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
    *   If the sync is to update an entity instead of a profile, supple a path.
    */
   public function configSync($path = NULL) {
+    $this->yell('This command is deprecated, you should use config:export-plus and config:import-plus instead', 40, 'red');
     $config_sync_already_run = FALSE;
     $output_path = $this->application_root . '/profiles/' . $this->getDrupalProfile() . '/config/install';
     $config_new_path = $this->application_root . '/' . $this->config_new_directory;
@@ -467,6 +498,28 @@ abstract class RoboFileBase extends \Robo\Tasks {
     }
 
     $tasks->run();
+  }
+
+  /**
+   * Imports configuration using advanced drush commands.
+   *
+   * Commands provided by previousnext/drush_cmi_tools.
+   *
+   * @see https://github.com/previousnext/drush_cmi_tools
+   */
+  public function configImportPlus() {
+    $this->_exec("$this->drush_cmd cimy -y --source=$this->configDir --install=$this->configInstallDir --delete-list=$this->configDeleteList");
+  }
+
+  /**
+   * Exports configuration using advanced drush commands.
+   *
+   * Commands provided by previousnext/drush_cmi_tools.
+   *
+   * @see https://github.com/previousnext/drush_cmi_tools
+   */
+  public function configExportPlus() {
+    $this->_exec("$this->drush_cmd cexy -y --destination=$this->configDir --ignore-list=$this->configIgnoreList");
   }
 
   /**

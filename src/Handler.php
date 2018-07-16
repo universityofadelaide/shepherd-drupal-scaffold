@@ -83,6 +83,8 @@ class Handler
                 'docker-compose.yml',
                 'dsh_proxy.conf',
                 'RoboFile.php',
+                'drush/config-ignore.yml',
+                'drush/config-delete.yml',
             ]
         );
     }
@@ -94,16 +96,18 @@ class Handler
     {
         $root = $this->getDrupalRootPath();
         $dirs = [
-            'modules',
-            'profiles',
-            'themes',
+            $root . '/modules',
+            $root . '/profiles',
+            $root . '/themes',
+            'config-install',
+            'config-export',
         ];
 
         // Required for unit testing.
         foreach ($dirs as $dir) {
-            if (!$this->filesystem->exists($root . '/'. $dir)) {
-                $this->filesystem->mkdir($root . '/'. $dir);
-                $this->filesystem->touch($root . '/'. $dir . '/.gitkeep');
+            if (!$this->filesystem->exists($dir)) {
+                $this->filesystem->mkdir($dir);
+                $this->filesystem->touch($dir . '/.gitkeep');
             }
         }
     }

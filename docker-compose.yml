@@ -1,4 +1,4 @@
-version: '2'
+version: '3.2'
 services:
   web:
     image: uofa/apache2-php7-dev:shepherd
@@ -23,9 +23,15 @@ services:
       CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
       SHEPHERD_INSTALL_PROFILE: standard
     volumes:
-      - .:/code
-      - shared:/shared
-      - ${HOST_SSH_AUTH_SOCK_DIR}:/ssh
+      - type: bind
+        source: .
+        target: /code
+      - type: bind
+        source: ./shared
+        target: /shared
+      - type: bind
+        source: ${HOST_SSH_AUTH_SOCK_DIR}
+        target: /ssh
   db:
     image: mariadb
     environment:

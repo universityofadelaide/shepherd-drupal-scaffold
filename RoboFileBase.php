@@ -33,6 +33,9 @@ abstract class RoboFileBase extends \Robo\Tasks {
    */
   protected $phpcbfCmd = 'bin/phpcbf';
 
+  protected $codeceptCmd = 'bin/codecept';
+  protected $phpUnitCmd = 'bin/phpunit';
+
   protected $php_enable_module_command = 'phpenmod -v ALL';
   protected $php_disable_module_command = 'phpdismod -v ALL';
 
@@ -655,6 +658,36 @@ abstract class RoboFileBase extends \Robo\Tasks {
    */
   public function lintFix() {
     $this->_exec("$this->phpcbfCmd --report=full --standard=$this->phpcsRuleset --extensions=$this->phpcsExtensions $this->phpcsFolders");
+  }
+
+  /**
+   * Run a codeception test suite with optional javascript support.
+   *
+   * @param $suite
+   *   What test suite to run.
+   * @param bool $js
+   *   Run tests with javascript support.
+   */
+  public function testCodeception($suite, $js = FALSE) {
+    if ($js) {
+      $this->_exec("nohup /usr/local/bin/chromedriver --url-base=/wd/hub --no-sandbox > /dev/null &");
+    }
+
+    $this->_exec("$this->codeceptCmd run $suite --steps --fail-fast");
+
+    if ($js) {
+      $this->_exec("killall -9 chromedriver");
+    }
+  }
+
+  /**
+   * Run the phpunit test suite.
+   *
+   * @param $group
+   *   What test group to run.
+   */
+  public function testPhpUnit($group) {
+    $this->_exec("sudo -u www-data -E $this->phpUnitCmd --group $group --testdox -c /code/phpunit.xml /code/web/modules/custom");
   }
 
   /**

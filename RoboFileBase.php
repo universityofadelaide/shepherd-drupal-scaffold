@@ -669,6 +669,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
    *   Run tests with javascript support.
    */
   public function testCodeception($suite, $js = FALSE) {
+    $this->checkInstallState();
     if ($js) {
       $this->_exec("nohup /usr/local/bin/chromedriver --url-base=/wd/hub --no-sandbox > /dev/null &");
     }
@@ -687,7 +688,20 @@ abstract class RoboFileBase extends \Robo\Tasks {
    *   What test group to run.
    */
   public function testPhpUnit($group) {
+    $this->checkInstallState();
     $this->_exec("sudo -u www-data -E $this->phpUnitCmd --group $group --testdox -c /code/phpunit.xml /code/web/modules/custom");
+  }
+
+  /**
+   * Check drupal is installer
+   */
+  protected function checkInstallState() {
+    $drupal_db_check = $this->taskExec("$this->drush_cmd sqlq \"show tables like 'node'\"")
+      ->printOutput(FALSE)
+      ->run();
+    if (trim($drupal_db_check->getMessage()) != 'node') {
+      exit("Drupal not installed, execute robo build.\n");
+    }
   }
 
   /**

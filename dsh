@@ -99,6 +99,7 @@ dsh_shell() {
     --env LINES=$(tput lines) --env COLUMNS=$(tput cols) \
     ${DSH_PROJECT[@]:-} \
     --env TERM=xterm-256color \
+    --env PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/code/bin \
     ${PROJECT}_web_1 ${@:-/bin/bash}
 }
 

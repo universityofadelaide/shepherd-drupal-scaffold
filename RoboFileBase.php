@@ -700,7 +700,8 @@ abstract class RoboFileBase extends \Robo\Tasks {
       ->printOutput(FALSE)
       ->run();
     if (trim($drupal_db_check->getMessage()) != 'node') {
-      exit("Drupal not installed, execute robo build.\n");
+      $this->say("Drupal not installed, execute robo build.\n");
+      exit(1);
     }
   }
 

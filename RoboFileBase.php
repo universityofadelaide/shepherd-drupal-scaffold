@@ -665,18 +665,18 @@ abstract class RoboFileBase extends \Robo\Tasks {
    *
    * @param $suite
    *   What test suite to run.
-   * @param bool $js
-   *   Run tests with javascript support.
+   * @param array $opts
+   *   Option to enable javascript.
    */
-  public function testCodeception($suite, $js = FALSE) {
+  public function testCodeception($suite, $opts = ['js' => FALSE]) {
     $this->checkInstallState();
-    if ($js) {
+    if ($opts['js']) {
       $this->_exec("nohup /usr/local/bin/chromedriver --url-base=/wd/hub --no-sandbox > /dev/null &");
     }
 
     $this->_exec("$this->codeceptCmd run $suite --steps --fail-fast");
 
-    if ($js) {
+    if ($opts['js']) {
       $this->_exec("killall -9 chromedriver");
     }
   }

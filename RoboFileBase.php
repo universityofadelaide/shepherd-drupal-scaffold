@@ -693,7 +693,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
   }
 
   /**
-   * Check drupal is installer
+   * Check that Drupal is installed.
    */
   protected function checkInstallState() {
     $drupal_db_check = $this->taskExec("$this->drush_cmd sqlq \"show tables like 'node'\"")

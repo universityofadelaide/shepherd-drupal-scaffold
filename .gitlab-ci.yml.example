@@ -1,0 +1,19 @@
+# Drupal8 Shepherd Gitlab CI script
+project:
+  script:
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.composer/cache
+    - docker run --rm --tty -v ${PWD}:/code bash bash -c 'chown :33 -R /code'
+    - docker run --rm --tty -u $(id -u):$(id -g) -v ${PWD}:/app -v ~/.composer/cache:/tmp/cache composer install --ignore-platform-reqs --no-scripts --no-ansi
+    - ./dsh start
+    - sleep 10
+    - ./dsh run robo build
+    - ./dsh run robo test:codeception acceptance
+    - ./dsh run robo test:codeception acceptance_javascript --js
+    - ./dsh run robo test:php-unit test_group
+  after_script:
+    - docker run --rm --tty -v ${PWD}:/code bash bash -c 'chmod 777 -R /code/web/sites/default'
+    - ./dsh stop
+  tags:
+  except:
+  - tags

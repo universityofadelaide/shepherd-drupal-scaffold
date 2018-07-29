@@ -1,7 +1,7 @@
 version: '3'
 services:
   web:
-    image: uofa/apache2-php7-dev:shepherd
+    image: upfa/apache2-php7-dev:shepherd
     privileged: true
     hostname: ${PROJECT}
     environment:
@@ -10,10 +10,9 @@ services:
       SITE_ADMIN_EMAIL: admin@example.com
       SITE_ADMIN_USERNAME: admin
       SITE_ADMIN_PASSWORD: password
-      VIRTUAL_HOST: ${PROJECT}.${DOMAIN}
+      VIRTUAL_HOST: web
       # Do not define this as '/' or apache2 will give strange behaviour
       # WEB_PATH: /test
-      SSH_AUTH_SOCK: ${CONTAINER_SSH_AUTH_SOCK}
       DATABASE_HOST: db
       DATABASE_PORT: 3306
       DATABASE_NAME: drupal
@@ -27,9 +26,9 @@ services:
       SHEPHERD_INSTALL_PROFILE: standard
     volumes:
       - .:/code
-      - ./shared:/shared
+      - shared:/shared
       - ${HOST_SSH_AUTH_SOCK_DIR}:/ssh
-  db:
+  mysql:
     image: mariadb
     environment:
       MYSQL_DATABASE: drupal

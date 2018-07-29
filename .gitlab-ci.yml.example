@@ -10,7 +10,7 @@ project:
     - ./dsh run robo build
     - ./dsh run robo test:codeception acceptance
     - ./dsh run robo test:codeception acceptance_javascript --js
-    - ./dsh run robo test:php-unit test_group
+    - ./dsh run robo test:php-unit --group=test_group
   after_script:
     - docker run --rm --tty -v ${PWD}:/code bash bash -c 'chmod 777 -R /code/web/sites/default'
     - ./dsh stop

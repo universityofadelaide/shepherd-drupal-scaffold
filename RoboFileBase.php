@@ -684,12 +684,17 @@ abstract class RoboFileBase extends \Robo\Tasks {
   /**
    * Run the phpunit test suite.
    *
-   * @param $group
-   *   What test group to run.
+   * @param array $opts
+   *   Optional group of tests to run.
    */
-  public function testPhpUnit($group) {
+  public function testPhpUnit($opts = ['group' => '']) {
     $this->checkInstallState();
-    $this->_exec("sudo -u www-data -E $this->phpUnitCmd --group $group --testdox -c /code/phpunit.xml /code/web/modules/custom");
+    if ($opts['group']) {
+      $this->_exec("sudo -u www-data -E $this->phpUnitCmd --group ${opts['group']} --testdox -c /code/phpunit.xml");
+    }
+    else {
+      $this->_exec("sudo -u www-data -E $this->phpUnitCmd --testdox -c /code/phpunit.xml");
+    }
   }
 
   /**

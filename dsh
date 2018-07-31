@@ -100,13 +100,10 @@ dsh_project() {
   set -e
 }
 
-
 # Command: ./dsh pull
 # Fetches all images used by the project.
 dsh_pull() {
   docker-compose -f ${DOCKER_COMPOSE_FILE} pull
-  docker pull jwilder/nginx-proxy
-  docker pull uofa/utility-php7
 }
 
 dsh_help() {
@@ -140,9 +137,6 @@ case ${COMMAND} in
     ;;
   pur*)
     dsh_purge
-    ;;
-  r*)
-    dsh_shell ${@:2}
     ;;
   sh*|ss*)
     dsh_shell ${@:2}

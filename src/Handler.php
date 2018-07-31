@@ -128,10 +128,10 @@ class Handler
         if (!(strpos(file_get_contents($root . '/sites/default/settings.php'), 'START SHEPHERD CONFIG') !== false)) {
             $shepherdSettings = "\n/**\n * START SHEPHERD CONFIG\n */\n" .
                 "\$databases['default']['default'] = array (\n" .
-                "  'database' => getenv('DATABASE_NAME'),\n" .
-                "  'username' => getenv('DATABASE_USER'),\n" .
-                "  'password' => getenv('DATABASE_PASSWORD_FILE') ? file_get_contents(getenv('DATABASE_PASSWORD_FILE')) : getenv('DATABASE_PASSWORD'),\n" .
-                "  'host' => getenv('DATABASE_HOST'),\n" .
+                "  'database' => getenv('DATABASE_NAME') ?: 'drupal',\n" .
+                "  'username' => getenv('DATABASE_USER') ?: 'user',\n" .
+                "  'password' => getenv('DATABASE_PASSWORD_FILE') ? file_get_contents(getenv('DATABASE_PASSWORD_FILE')) : 'password',\n" .
+                "  'host' => getenv('DATABASE_HOST') ?: '127.0.0.1',\n" .
                 "  'port' => getenv('DATABASE_PORT') ?: '3306',\n" .
                 "  'driver' => getenv('DATABASE_DRIVER') ?: 'mysql',\n" .
                 "  'prefix' => getenv('DATABASE_PREFIX') ?: '',\n" .
@@ -149,7 +149,7 @@ class Handler
                 "\$settings['install_profile'] = getenv('SHEPHERD_INSTALL_PROFILE') ?: 'standard';\n" .
                 "if (getenv('REDIS_ENABLED')) {\n" .
                 "  \$settings['redis.connection']['interface'] = 'PhpRedis';\n" .
-                "  \$settings['redis.connection']['host'] = getenv('REDIS_HOST') ?: 'redis';\n" .
+                "  \$settings['redis.connection']['host'] = getenv('REDIS_HOST') ?: '127.0.0.1';\n" .
                 "  // Always set the fast backend for bootstrap, discover and config, otherwise\n" .
                 "  // this gets lost when redis is enabled.\n" .
                 "  \$settings['cache']['bins']['bootstrap'] = 'cache.backend.chainedfast';\n" .

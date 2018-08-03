@@ -2,7 +2,6 @@
 
 # `set +e` is used to continue on errors throughout this script.
 set -euo pipefail
-IFS=$'\n\t'
 
 # Used as the prefix for docker networking, container naming and nginx hostname.
 export PROJECT=$(basename ${PWD})
@@ -65,7 +64,7 @@ dsh_shell() {
   docker-compose -f ${DOCKER_COMPOSE_FILE} exec \
    -e COLUMNS="$(tput cols)" \
    -e LINES="$(tput lines)" \
-   web /bin/bash
+   web ${@:-/bin/bash}
 }
 
 # Command: ./dsh stop

@@ -1,7 +1,7 @@
 version: '3'
 services:
   web:
-    image: uofa/apache2-php7-dev:shepherd
+    image: uofa/apache2-php7-dev:foundation
     # This makes the container run on the same network stack as your
     # workstation. Meaning that you can interact on "localhost".
     network_mode: host

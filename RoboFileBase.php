@@ -645,16 +645,24 @@ abstract class RoboFileBase extends \Robo\Tasks {
 
   /**
    * Run coding standards checks for PHP files on the project.
+   *
+   * @param string $path
+   *   An optional path to lint.
    */
-  public function lintPhp() {
-    $this->_exec("$this->phpcsCmd --report=full --standard=$this->phpcsRuleset --extensions=$this->phpcsExtensions $this->phpcsFolders");
+  public function lintPhp($path = '') {
+    $path = $path ?: $this->phpcsFolders;
+    $this->_exec("$this->phpcsCmd --report=full --standard=$this->phpcsRuleset --extensions=$this->phpcsExtensions $path");
   }
 
   /**
    * Fix coding standards violations for PHP files on the project.
+   *
+   * @param string $path
+   *   An optional path to fix.
    */
-  public function lintFix() {
-    $this->_exec("$this->phpcbfCmd --report=full --standard=$this->phpcsRuleset --extensions=$this->phpcsExtensions $this->phpcsFolders");
+  public function lintFix($path = '') {
+    $path = $path ?: $this->phpcsFolders;
+    $this->_exec("$this->phpcbfCmd --report=full --standard=$this->phpcsRuleset --extensions=$this->phpcsExtensions $path");
   }
 
   /**

@@ -128,10 +128,10 @@ class Handler
         if (!(strpos(file_get_contents($root . '/sites/default/settings.php'), 'START SHEPHERD CONFIG') !== false)) {
             $shepherdSettings = "\n/**\n * START SHEPHERD CONFIG\n */\n" .
                 "\$databases['default']['default'] = array (\n" .
-                "  'database' => getenv('DATABASE_NAME'),\n" .
-                "  'username' => getenv('DATABASE_USER'),\n" .
-                "  'password' => getenv('DATABASE_PASSWORD_FILE') ? file_get_contents(getenv('DATABASE_PASSWORD_FILE')) : getenv('DATABASE_PASSWORD'),\n" .
-                "  'host' => getenv('DATABASE_HOST'),\n" .
+                "  'database' => getenv('DATABASE_NAME') ?: 'drupal',\n" .
+                "  'username' => getenv('DATABASE_USER') ?: 'user',\n" .
+                "  'password' => getenv('DATABASE_PASSWORD_FILE') ? file_get_contents(getenv('DATABASE_PASSWORD_FILE')) : 'password',\n" .
+                "  'host' => getenv('DATABASE_HOST') ?: '127.0.0.1',\n" .
                 "  'port' => getenv('DATABASE_PORT') ?: '3306',\n" .
                 "  'driver' => getenv('DATABASE_DRIVER') ?: 'mysql',\n" .
                 "  'prefix' => getenv('DATABASE_PREFIX') ?: '',\n" .
@@ -141,15 +141,14 @@ class Handler
                 "\$settings['file_private_path'] = getenv('PRIVATE_DIR') ?: '/shared/private';\n" .
                 "\$settings['file_temporary_path'] = getenv('TMP_DIR') ?: '/shared/tmp';\n" .
                 "\$settings['hash_salt'] = getenv('HASH_SALT') ?: '" . str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(random_bytes(55))) . "';\n" .
-                "\$config_directories['sync'] = getenv('CONFIG_SYNC_DIRECTORY') ?: 'sites/default/files/config_".str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(random_bytes(55))) . "/sync';\n" .
-                "if (! is_dir(\$app_root . '/' . \$config_directories['sync'])) mkdir(\$app_root . '/' . \$config_directories['sync'], 0777, true);\n" .
+                "\$config_directories['sync'] = getenv('CONFIG_SYNC_DIRECTORY') ?: DRUPAL_ROOT . '/../config-export';\n" .
                 "\$settings['shepherd_site_id'] = getenv('SHEPHERD_SITE_ID');\n" .
                 "\$settings['shepherd_url'] = getenv('SHEPHERD_URL');\n" .
                 "\$settings['shepherd_token'] = getenv('SHEPHERD_TOKEN_FILE') ? file_get_contents(getenv('SHEPHERD_TOKEN_FILE')) : getenv('SHEPHERD_TOKEN');\n\n" .
                 "\$settings['install_profile'] = getenv('SHEPHERD_INSTALL_PROFILE') ?: 'standard';\n" .
                 "if (getenv('REDIS_ENABLED')) {\n" .
                 "  \$settings['redis.connection']['interface'] = 'PhpRedis';\n" .
-                "  \$settings['redis.connection']['host'] = getenv('REDIS_HOST') ?: 'redis';\n" .
+                "  \$settings['redis.connection']['host'] = getenv('REDIS_HOST') ?: '127.0.0.1';\n" .
                 "  // Always set the fast backend for bootstrap, discover and config, otherwise\n" .
                 "  // this gets lost when redis is enabled.\n" .
                 "  \$settings['cache']['bins']['bootstrap'] = 'cache.backend.chainedfast';\n" .

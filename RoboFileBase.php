@@ -110,9 +110,6 @@ abstract class RoboFileBase extends \Robo\Tasks {
     // Read config from env vars.
     $environment_config = $this->readConfigFromEnv();
     $this->config = array_merge($this->config, $environment_config);
-    if (!isset($this->config['database']['username'])) {
-      echo "Database config is missing.\n";
-    }
   }
 
   /**
@@ -147,16 +144,6 @@ abstract class RoboFileBase extends \Robo\Tasks {
     // Environment.
     $config['environment']['hash_salt']       = getenv('HASH_SALT');
     $config['environment']['config_sync_dir'] = getenv('CONFIG_SYNC_DIRECTORY');
-
-    // Databases.
-    $config['database']['database']  = getenv('DATABASE_NAME');
-    $config['database']['driver']    = getenv('DATABASE_DRIVER');
-    $config['database']['host']      = getenv('DATABASE_HOST');
-    $config['database']['port']      = getenv('DATABASE_PORT');
-    $config['database']['username']  = getenv('DATABASE_USER');
-    $config['database']['password']  = getenv('DATABASE_PASSWORD');
-    $config['database']['namespace'] = getenv('DATABASE_NAMESPACE');
-    $config['database']['prefix']    = getenv('DATABASE_PREFIX');
 
     // Clean up NULL values and empty arrays.
     $array_clean = function (&$item) use (&$array_clean) {

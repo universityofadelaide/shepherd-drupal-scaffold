@@ -86,6 +86,7 @@ class Handler
                 'RoboFile.php',
                 'drush/config-ignore.yml',
                 'drush/config-delete.yml',
+                'phpcs.xml',
             ]
         );
     }

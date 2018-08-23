@@ -110,6 +110,8 @@ dsh_pull() {
 
 # Command: ./dsh nfs
 # Sets up NFS integration for OSX.
+NFS_FILE=/etc/exports
+NFS_LINE="/Users -alldirs -mapall=$(id -u):$(id -g) localhost"
 dsh_setup_nfs() {
   if [ ${HOST_TYPE} != "mac" ]; then
     echo "This script is OSX-only. Please do not run it on any other Unix."
@@ -154,19 +156,15 @@ dsh_setup_nfs() {
   osascript -e 'quit app "Docker"'
 
   echo "== Resetting folder permissions..."
-  U=`id -u`
-  G=`id -g`
-  sudo chown -R "$U":"$G" .
+  sudo chown -R "$(id -u)":"$(id -g)" .
 
   echo "== Setting up nfs..."
-  LINE="/Users -alldirs -mapall=$U:$G localhost"
-  FILE=/etc/exports
-  sudo cp /dev/null $FILE
-  grep -qF -- "$LINE" "$FILE" || sudo echo "$LINE" | sudo tee -a $FILE > /dev/null
+  sudo cp /dev/null "$NFS_FILE"
+  grep -qF -- "$NFS_LINE" "$NFS_FILE" || sudo echo "$NFS_LINE" | sudo tee -a "$NFS_FILE" > /dev/null
 
   LINE="nfs.server.mount.require_resv_port = 0"
   FILE=/etc/nfs.conf
-  grep -qF -- "$LINE" "$FILE" || sudo echo "$LINE" | sudo tee -a $FILE > /dev/null
+  grep -qF -- "$LINE" "$FILE" || sudo echo "$LINE" | sudo tee -a "$FILE" > /dev/null
 
   echo "== Restarting nfsd..."
   sudo nfsd restart
@@ -178,6 +176,26 @@ dsh_setup_nfs() {
 
   echo ""
   echo "SUCCESS! Now go run your containers 🐳"
+}
+
+# Command: ./dsh rnfs
+# Removes nfs setup.
+dsh_remove_nfs() {
+  if [ ${HOST_TYPE} != "mac" ]; then
+    echo "This script is OSX-only. Please do not run it on any other Unix."
+    exit 1
+  fi
+
+  if [[ $EUID -eq 0 ]]; then
+    echo "This script must NOT be run with sudo/root. Please re-run without sudo." 1>&2
+    exit 1
+  fi
+
+  echo "== Removing nfsd exports..."
+  sudo sed -i '' "/$(echo "$NFS_LINE" | sed 's/\//\\\//g')/d" ${NFS_FILE}
+  echo "== Restarting nfsd..."
+  sudo nfsd restart
+  echo "== Done"
 }
 
 dsh_help() {
@@ -206,8 +224,11 @@ case ${COMMAND} in
   l*)
     dsh_logs
     ;;
-  nf*)
+  nfs)
     dsh_setup_nfs
+    ;;
+  rnfs)
+    dsh_remove_nfs
     ;;
   pul*)
     dsh_pull

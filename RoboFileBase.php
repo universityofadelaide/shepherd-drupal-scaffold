@@ -51,27 +51,6 @@ abstract class RoboFileBase extends \Robo\Tasks {
   protected $config_old_directory = 'config_old';
 
   /**
-   * The folders to scan for php coding standards violations.
-   *
-   * @var string
-   */
-  protected $phpcsFolders = 'web/modules/custom web/profiles';
-
-  /**
-   * The php extensions to scan for php coding standards violations.
-   *
-   * @var string
-   */
-  protected $phpcsExtensions = 'php,module,inc,install,test,profile,theme';
-
-  /**
-   * The path to the phpcs ruleset to use.
-   *
-   * @var string
-   */
-  protected $phpcsRuleset = 'vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml';
-
-  /**
    * The path to the config dir.
    *
    * @var string
@@ -637,8 +616,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
    *   An optional path to lint.
    */
   public function lintPhp($path = '') {
-    $path = $path ?: $this->phpcsFolders;
-    $this->_exec("$this->phpcsCmd --report=full --standard=$this->phpcsRuleset --extensions=$this->phpcsExtensions $path");
+    $this->_exec("$this->phpcsCmd $path");
   }
 
   /**
@@ -648,8 +626,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
    *   An optional path to fix.
    */
   public function lintFix($path = '') {
-    $path = $path ?: $this->phpcsFolders;
-    $this->_exec("$this->phpcbfCmd --report=full --standard=$this->phpcsRuleset --extensions=$this->phpcsExtensions $path");
+    $this->_exec("$this->phpcbfCmd $path");
   }
 
   /**

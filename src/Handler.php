@@ -80,11 +80,13 @@ class Handler
             $packagePath,
             $projectPath,
             [
-                'docker-compose.yml',
+                'docker-compose.linux.yml',
+                'docker-compose.osx.yml',
                 'dsh_proxy.conf',
                 'RoboFile.php',
                 'drush/config-ignore.yml',
                 'drush/config-delete.yml',
+                'phpcs.xml',
             ]
         );
     }

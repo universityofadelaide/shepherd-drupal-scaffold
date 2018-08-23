@@ -51,27 +51,6 @@ abstract class RoboFileBase extends \Robo\Tasks {
   protected $config_old_directory = 'config_old';
 
   /**
-   * The folders to scan for php coding standards violations.
-   *
-   * @var string
-   */
-  protected $phpcsFolders = 'web/modules/custom web/profiles';
-
-  /**
-   * The php extensions to scan for php coding standards violations.
-   *
-   * @var string
-   */
-  protected $phpcsExtensions = 'php,module,inc,install,test,profile,theme';
-
-  /**
-   * The path to the phpcs ruleset to use.
-   *
-   * @var string
-   */
-  protected $phpcsRuleset = 'vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml';
-
-  /**
    * The path to the config dir.
    *
    * @var string
@@ -110,9 +89,6 @@ abstract class RoboFileBase extends \Robo\Tasks {
     // Read config from env vars.
     $environment_config = $this->readConfigFromEnv();
     $this->config = array_merge($this->config, $environment_config);
-    if (!isset($this->config['database']['username'])) {
-      echo "Database config is missing.\n";
-    }
   }
 
   /**
@@ -147,16 +123,6 @@ abstract class RoboFileBase extends \Robo\Tasks {
     // Environment.
     $config['environment']['hash_salt']       = getenv('HASH_SALT');
     $config['environment']['config_sync_dir'] = getenv('CONFIG_SYNC_DIRECTORY');
-
-    // Databases.
-    $config['database']['database']  = getenv('DATABASE_NAME');
-    $config['database']['driver']    = getenv('DATABASE_DRIVER');
-    $config['database']['host']      = getenv('DATABASE_HOST');
-    $config['database']['port']      = getenv('DATABASE_PORT');
-    $config['database']['username']  = getenv('DATABASE_USER');
-    $config['database']['password']  = getenv('DATABASE_PASSWORD');
-    $config['database']['namespace'] = getenv('DATABASE_NAMESPACE');
-    $config['database']['prefix']    = getenv('DATABASE_PREFIX');
 
     // Clean up NULL values and empty arrays.
     $array_clean = function (&$item) use (&$array_clean) {
@@ -650,8 +616,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
    *   An optional path to lint.
    */
   public function lintPhp($path = '') {
-    $path = $path ?: $this->phpcsFolders;
-    $this->_exec("$this->phpcsCmd --report=full --standard=$this->phpcsRuleset --extensions=$this->phpcsExtensions $path");
+    $this->_exec("$this->phpcsCmd $path");
   }
 
   /**
@@ -661,8 +626,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
    *   An optional path to fix.
    */
   public function lintFix($path = '') {
-    $path = $path ?: $this->phpcsFolders;
-    $this->_exec("$this->phpcbfCmd --report=full --standard=$this->phpcsRuleset --extensions=$this->phpcsExtensions $path");
+    $this->_exec("$this->phpcbfCmd $path");
   }
 
   /**

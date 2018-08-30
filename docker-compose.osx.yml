@@ -27,7 +27,7 @@ services:
       XDEBUG_CONFIG: "remote_host=docker.for.mac.localhost"
       PHP_IDE_CONFIG: serverName=localhost
     volumes:
-      - .:/code
+      - nfsmount:/code
       - ./shared:/shared
       - $HOME/.ssh/id_rsa:/root/.ssh/id_rsa
 
@@ -53,3 +53,11 @@ services:
   redis:
     image: redis:alpine
     network_mode: service:web
+
+volumes:
+  nfsmount:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=host.docker.internal,rw,nolock,hard,nointr,nfsvers=3
+      device: ":${PWD}"

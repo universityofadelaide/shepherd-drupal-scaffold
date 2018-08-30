@@ -108,6 +108,96 @@ dsh_pull() {
   docker-compose -f ${DOCKER_COMPOSE_FILE} pull
 }
 
+# Command: ./dsh nfs
+# Sets up NFS integration for OSX.
+NFS_FILE=/etc/exports
+NFS_LINE="/Users -alldirs -mapall=$(id -u):$(id -g) localhost"
+dsh_setup_nfs() {
+  if [ ${HOST_TYPE} != "mac" ]; then
+    echo "This script is OSX-only. Please do not run it on any other Unix."
+    exit 1
+  fi
+
+  if [[ $EUID -eq 0 ]]; then
+    echo "This script must NOT be run with sudo/root. Please re-run without sudo." 1>&2
+    exit 1
+  fi
+
+  echo ""
+  echo " +-----------------------------+"
+  echo " | Setup native NFS for Docker |"
+  echo " +-----------------------------+"
+  echo ""
+
+  echo "WARNING: This script will shut down running containers."
+  echo ""
+  echo -n "Do you wish to proceed? [y]: "
+  read decision
+
+  if [ "$decision" != "y" ]; then
+    echo "Exiting. No changes made."
+    exit 1
+  fi
+
+  echo ""
+
+  if ! docker ps > /dev/null 2>&1 ; then
+    echo "== Waiting for docker to start..."
+  fi
+
+  open -a Docker
+
+  while ! docker ps > /dev/null 2>&1 ; do sleep 2; done
+
+  echo "== Stopping running docker containers..."
+  docker-compose -f ${DOCKER_COMPOSE_FILE} down > /dev/null 2>&1
+  docker volume prune -f > /dev/null
+
+  osascript -e 'quit app "Docker"'
+
+  echo "== Resetting folder permissions..."
+  sudo chown -R "$(id -u)":"$(id -g)" .
+
+  echo "== Setting up nfs..."
+  sudo cp /dev/null "$NFS_FILE"
+  grep -qF -- "$NFS_LINE" "$NFS_FILE" || sudo echo "$NFS_LINE" | sudo tee -a "$NFS_FILE" > /dev/null
+
+  LINE="nfs.server.mount.require_resv_port = 0"
+  FILE=/etc/nfs.conf
+  grep -qF -- "$LINE" "$FILE" || sudo echo "$LINE" | sudo tee -a "$FILE" > /dev/null
+
+  echo "== Restarting nfsd..."
+  sudo nfsd restart
+
+  echo "== Restarting docker..."
+  open -a Docker
+
+  while ! docker ps > /dev/null 2>&1 ; do sleep 2; done
+
+  echo ""
+  echo "SUCCESS! Now go run your containers 🐳"
+}
+
+# Command: ./dsh rnfs
+# Removes nfs setup.
+dsh_remove_nfs() {
+  if [ ${HOST_TYPE} != "mac" ]; then
+    echo "This script is OSX-only. Please do not run it on any other Unix."
+    exit 1
+  fi
+
+  if [[ $EUID -eq 0 ]]; then
+    echo "This script must NOT be run with sudo/root. Please re-run without sudo." 1>&2
+    exit 1
+  fi
+
+  echo "== Removing nfsd exports..."
+  sudo sed -i '' "/$(echo "$NFS_LINE" | sed 's/\//\\\//g')/d" ${NFS_FILE}
+  echo "== Restarting nfsd..."
+  sudo nfsd restart
+  echo "== Done"
+}
+
 dsh_help() {
   printf "\nUsage: dsh COMMAND\n\n
 Commands:\n
@@ -133,6 +223,12 @@ case ${COMMAND} in
     ;;
   l*)
     dsh_logs
+    ;;
+  nfs)
+    dsh_setup_nfs
+    ;;
+  rnfs)
+    dsh_remove_nfs
     ;;
   pul*)
     dsh_pull

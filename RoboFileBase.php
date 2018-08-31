@@ -183,7 +183,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
    *   Additional flags to pass to the composer install command.
    */
   public function buildMake($flags = '') {
-    $successful = $this->_exec("$this->composer_bin --no-progress $flags install")->wasSuccessful();
+    $successful = $this->_exec("$this->composer_bin --no-progress --no-interaction $flags install")->wasSuccessful();
 
     $this->checkFail($successful, "Composer install failed.");
   }

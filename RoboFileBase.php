@@ -591,7 +591,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
     $this->_exec("$this->drush_cmd sqlq --file=$sql_file");
     $this->_exec("$this->drush_cmd cr");
     $this->_exec("$this->drush_cmd upwd admin --password=password");
-    $this->_exec("$this->drush_cmd updb -y");
+    $this->_exec("$this->drush_cmd updb --entity-updates -y");
     $this->say('Duration: ' . date_diff(new DateTime(), $start)->format('%im %Ss'));
     $this->say('Database imported, admin user password is : password');
   }

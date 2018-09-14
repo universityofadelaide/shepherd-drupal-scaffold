@@ -151,6 +151,8 @@ abstract class RoboFileBase extends \Robo\Tasks {
     $this->buildCreateConfigSyncDir();
     $this->buildSetFilesOwner();
     $this->buildInstall();
+    $this->configImportPlus();
+    $this->devCacheRebuild();
     $this->buildSetFilesOwner();
     $this->say('Total build duration: ' . date_diff(new DateTime(), $start)->format('%im %Ss'));
   }

@@ -164,7 +164,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
    */
   public function distributionBuild() {
     $this->devComposerValidate();
-    $this->buildMake('--no-dev --optimize-autoloader');
+    $this->buildMake('--prefer-dist --no-suggest --no-dev --optimize-autoloader');
     $this->setSitePath();
   }
 

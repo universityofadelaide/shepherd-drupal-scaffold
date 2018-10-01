@@ -44,8 +44,9 @@ fi
 # Configures environment then brings up project using docker-compose.yml file.
 dsh_start() {
   notice "Starting project containers."
-  docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
   export URL="http://127.0.0.1"
+  dsh_project start
+  docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
   notice "Please wait about 10 seconds for the database to settle.
 You can now access the site from ${URL}.
 Project files are available in /code, You may need to build and install your
@@ -56,27 +57,30 @@ Connecting via ./dsh shell and running robo build is a common next step."
 # Command: ./dsh shell
 # Connects a shell to the web image as the current user.
 dsh_shell() {
+  dsh_project shell
   if ! docker ps | grep "\s${PROJECT}_web_1" > /dev/null; then
     notice "Project not running, starting."
     dsh_start
   fi
 
   docker-compose -f ${DOCKER_COMPOSE_FILE} exec \
-   -e COLUMNS="$(tput cols)" \
-   -e LINES="$(tput lines)" \
-   web ${@:-/bin/bash}
+    -e COLUMNS="$(tput cols)" \
+    -e LINES="$(tput lines)" \
+    web ${@:-/bin/bash}
 }
 
 # Command: ./dsh stop
 # Stops project and brings down network after disconnecting nginx proxy.
 dsh_stop() {
   notice "Stopping containers."
+  dsh_project stop
   docker-compose -f ${DOCKER_COMPOSE_FILE} stop
 }
 
 # Command: ./dsh purge
 # Stops project, then takes down containers and removes volumes if possible.
 dsh_purge() {
+  dsh_project purge
   docker-compose -f ${DOCKER_COMPOSE_FILE} down -v
 }
 
@@ -98,6 +102,7 @@ dsh_project() {
   set +e
   if [ -f dsh.project ]; then
     source dsh.project
+    dsh_project_hook "${1}"
   fi
   set -e
 }

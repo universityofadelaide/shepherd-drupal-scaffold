@@ -45,8 +45,6 @@ stop_nginx() {
     notice "Disconnecting nginx proxy from network."
     set +e
     docker network disconnect ${PROJECT}_default nginx-proxy
-    notice "Removing network."
-    docker network rm ${PROJECT}_default
     set -e
   fi
 }

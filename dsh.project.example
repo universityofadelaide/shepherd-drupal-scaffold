@@ -12,21 +12,6 @@
 export HOST_SSH_AUTH_SOCK_DIR=$(dirname ${SSH_AUTH_SOCK})
 export CONTAINER_SSH_AUTH_SOCK=/ssh/$(basename ${SSH_AUTH_SOCK})
 
-# Hook that does most of the work
-dsh_project_hook() {
-  case ${1} in
-    she*)
-      start_shell
-      ;;
-    star*)
-      setup_nginx
-      ;;
-    sto*|pur*)
-      stop_nginx
-      ;;
-  esac
-}
-
 # Add functionality to the dsh setup/start function
 setup_nginx() {
   set +e
@@ -78,3 +63,15 @@ start_shell() {
   # Exit here, we don't want to run the dsh shell function now.
   exit
 }
+
+case ${1} in
+  she*)
+    start_shell
+    ;;
+  star*)
+    setup_nginx
+    ;;
+  sto*|pur*)
+    stop_nginx
+    ;;
+esac

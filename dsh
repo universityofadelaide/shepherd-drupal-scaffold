@@ -101,8 +101,7 @@ dsh_logs() {
 dsh_project() {
   set +e
   if [ -f dsh.project ]; then
-    source dsh.project
-    dsh_project_hook "${1}"
+    source dsh.project "${1}"
   fi
   set -e
 }

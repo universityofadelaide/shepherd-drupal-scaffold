@@ -45,8 +45,8 @@ fi
 dsh_start() {
   notice "Starting project containers."
   export URL="http://127.0.0.1"
-  dsh_project start
   docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
+  dsh_project start
   notice "Please wait about 10 seconds for the database to settle.
 You can now access the site from ${URL}.
 Project files are available in /code, You may need to build and install your

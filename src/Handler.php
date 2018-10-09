@@ -162,11 +162,20 @@ class Handler
                 "  }\n" .
                 "}\n" .
                 "if (getenv('SHEPHERD_SECRET_PATH')) {\n" .
-                "   \$settings['shepherd_secrets'] = []; \n" .
-                "   // Glob the secret path for secrets, that match pattern \n" .
-                "   foreach( glob( rtrim(getenv('SHEPHERD_SECRET_PATH'),DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'SHEPHERD_*') as \$secret) {\n" .
+                "  \$settings['shepherd_secrets'] = []; \n" .
+                "  // Glob the secret path for secrets, that match pattern \n" .
+                "  foreach ( glob( rtrim(getenv('SHEPHERD_SECRET_PATH'),DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'SHEPHERD_*') as \$secret) {\n" .
                 "    \$settings['shepherd_secrets'][pathinfo(\$secret)['filename']] = file_get_contents(\$secret);\n" .
-                "   }\n" .
+                "  }\n" .
+                "}\n" .
+                "if (getenv('SHEPHERD_REVERSE_PROXY')) {\n" .
+                "  \$settings['reverse_proxy'] = TRUE; \n" .
+                "  \$settings['reverse_proxy_header'] = getenv('SHEPHERD_REVERSE_PROXY_HEADER') ?: 'X_CLUSTER_CLIENT_IP');\n" .
+                "  \$settings['reverse_proxy_addresses'] = explode(',', getenv('SHEPHERD_REVERSE_PROXY_ADDRESSES') ?: []);\n" .
+                "  \$settings['reverse_proxy_proto_header'] = getenv('SHEPHERD_REVERSE_PROXY_PROTO_HEADER') ?: 'X_FORWARDED_PROTO';" .
+                "  \$settings['reverse_proxy_host_header'] = getenv('SHEPHERD_REVERSE_PROXY_HOST_HEADER') ?: 'X_FORWARDED_HOST';" .
+                "  \$settings['reverse_proxy_port_header'] = getenv('SHEPHERD_REVERSE_PROXY_PORT_HEADER') ?: 'X_FORWARDED_PORT';" .
+                "  \$settings['reverse_proxy_forwarded_header'] = getenv('SHEPHERD_REVERSE_PROXY_FORWARDED_HEADER') ?: 'FORWARDED';" .
                 "}\n" .
                 "/**\n * END SHEPHERD CONFIG\n */\n" .
                 "\n" .

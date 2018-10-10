@@ -126,12 +126,10 @@ class Handler
 
         // If we haven't already written to settings.php.
         if (!(strpos(file_get_contents($root . '/sites/default/settings.php'), 'START SHEPHERD CONFIG') !== false)) {
-          $shepherdSettings = $this->generateSettings();
-
           // Append Shepherd-specific environment variable settings to settings.php.
             file_put_contents(
                 $root.'/sites/default/settings.php',
-                $shepherdSettings,
+                $this->generateSettings(),
                 FILE_APPEND
             );
         }
@@ -142,8 +140,10 @@ class Handler
      *
      * @return string
      *   PHP code.
+     * @throws \Exception
      */
-    public function generateSettings(): string {
+    public function generateSettings()
+    {
         return "\n/**\n * START SHEPHERD CONFIG\n */\n" .
             "\$databases['default']['default'] = array (\n" .
             "  'database' => getenv('DATABASE_NAME') ?: 'drupal',\n" .
@@ -201,7 +201,7 @@ class Handler
             "  include __DIR__ . '/settings.local.php';\n" .
             "}\n" .
             "/**\n * END LOCAL CONFIG\n */\n";
-  }
+    }
 
     /**
      * Remove all write permissions on Drupal configuration files and folder.
@@ -291,5 +291,4 @@ class Handler
         $drupalRootPath = $this->getProjectPath() . '/web';
         return $drupalRootPath;
     }
-
 }

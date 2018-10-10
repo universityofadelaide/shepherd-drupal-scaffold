@@ -187,7 +187,7 @@ class Handler
             "}\n" .
             "if (getenv('SHEPHERD_REVERSE_PROXY')) {\n" .
             "  \$settings['reverse_proxy'] = TRUE; \n" .
-            "  \$settings['reverse_proxy_header'] = getenv('SHEPHERD_REVERSE_PROXY_HEADER') ?: 'X_CLUSTER_CLIENT_IP');\n" .
+            "  \$settings['reverse_proxy_header'] = getenv('SHEPHERD_REVERSE_PROXY_HEADER') ?: 'X_CLUSTER_CLIENT_IP';\n" .
             "  \$settings['reverse_proxy_addresses'] = explode(',', getenv('SHEPHERD_REVERSE_PROXY_ADDRESSES') ?: '');\n" .
             "  \$settings['reverse_proxy_proto_header'] = getenv('SHEPHERD_REVERSE_PROXY_PROTO_HEADER') ?: 'X_FORWARDED_PROTO';\n" .
             "  \$settings['reverse_proxy_host_header'] = getenv('SHEPHERD_REVERSE_PROXY_HOST_HEADER') ?: 'X_FORWARDED_HOST';\n" .

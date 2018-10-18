@@ -48,8 +48,6 @@ start_shell() {
     # Add user with local $USER name to container.
     docker exec ${PROJECT}_web_1 adduser --disabled-password --uid ${UID} \
       --gecos ${USER} --home /home/${USER} ${USER} > /dev/null
-    # Add local .gitconfig to user's home dir on container.
-    docker cp ${HOME}/.gitconfig ${PROJECT}_web_1:/home/${USER}/
     # Allow sudo without password for user.
     docker exec ${PROJECT}_web_1 /bin/bash -c "echo '${USER} ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/${USER}"
   fi

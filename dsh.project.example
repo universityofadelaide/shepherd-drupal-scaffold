@@ -8,6 +8,10 @@
 #   Stop nginx reverse proxy on exit.
 #   Replace the shell function with our own which is more linux friendly.
 
+if [ ${HOST_TYPE} != "linux" ]; then
+    return
+fi
+
 # Set some env vars we use in our slightly modified docker-compose files
 export HOST_SSH_AUTH_SOCK_DIR=$(dirname ${SSH_AUTH_SOCK})
 export CONTAINER_SSH_AUTH_SOCK=/ssh/$(basename ${SSH_AUTH_SOCK})

@@ -164,6 +164,7 @@ class Handler
             "\$settings['shepherd_url'] = getenv('SHEPHERD_URL');\n" .
             "\$settings['shepherd_token'] = getenv('SHEPHERD_TOKEN_FILE') ? file_get_contents(getenv('SHEPHERD_TOKEN_FILE')) : getenv('SHEPHERD_TOKEN');\n\n" .
             "\$settings['install_profile'] = getenv('SHEPHERD_INSTALL_PROFILE') ?: 'standard';\n" .
+            "\$settings['google_api_key'] = getenv('GOOGLE_API_KEY') ?: '';\n" .
             "if (getenv('REDIS_ENABLED')) {\n" .
             "  \$settings['redis.connection']['interface'] = 'PhpRedis';\n" .
             "  \$settings['redis.connection']['host'] = getenv('REDIS_HOST') ?: '127.0.0.1';\n" .

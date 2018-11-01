@@ -53,7 +53,7 @@ start_shell() {
     docker-compose exec web adduser --disabled-password --uid ${UID} \
       --gecos ${USER} --home /home/${USER} ${USER} > /dev/null
     # Allow sudo without password for user.
-    docker exec web /bin/bash -c "echo '${USER} ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/${USER}"
+    docker-compose exec web /bin/bash -c "echo '${USER} ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/${USER}"
   fi
 
   docker-compose -f ${DOCKER_COMPOSE_FILE} exec \

@@ -47,13 +47,13 @@ start_shell() {
 
   # Setup docker to run the shell as the current user, thus removing any
   # permission issues.
-  if ! docker exec ${PROJECT}_web_1 id -u ${USER} > /dev/null 2>&1; then
+  if ! docker-compose exec web id -u ${USER} > /dev/null 2>&1; then
     notice "Setting up user $USER on web container."
     # Add user with local $USER name to container.
-    docker exec ${PROJECT}_web_1 adduser --disabled-password --uid ${UID} \
+    docker-compose exec web adduser --disabled-password --uid ${UID} \
       --gecos ${USER} --home /home/${USER} ${USER} > /dev/null
     # Allow sudo without password for user.
-    docker exec ${PROJECT}_web_1 /bin/bash -c "echo '${USER} ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/${USER}"
+    docker exec web /bin/bash -c "echo '${USER} ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/${USER}"
   fi
 
   docker-compose -f ${DOCKER_COMPOSE_FILE} exec \

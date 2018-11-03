@@ -17,8 +17,10 @@ services:
       SHEPHERD_URL: http://shepherd.test
       SHEPHERD_TOKEN: super-secret-token
       SHEPHERD_INSTALL_PROFILE: ua
-      REDIS_ENABLED: 1
       SHEPHERD_SECRET_PATH: /code/private
+      REDIS_ENABLED: 1
+      REDIS_HOST: redis
+      DATABASE_HOST: db
     volumes:
       - .:/code
       - ./shared:/shared

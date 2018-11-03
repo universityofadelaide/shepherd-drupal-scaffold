@@ -4,7 +4,6 @@ services:
     image: uofa/apache2-php7-dev:foundation
     # This makes the container run on the same network stack as your
     # workstation. Meaning that you can interact on "localhost".
-    network_mode: host
     environment:
       SITE_TITLE: WCMS D8
       SITE_MAIL: site@example.com
@@ -20,8 +19,6 @@ services:
       SHEPHERD_INSTALL_PROFILE: ua
       REDIS_ENABLED: 1
       SHEPHERD_SECRET_PATH: /code/private
-      XDEBUG_CONFIG: "remote_host=127.0.0.1"
-      PHP_IDE_CONFIG: serverName=localhost
     volumes:
       - .:/code
       - ./shared:/shared
@@ -29,7 +26,6 @@ services:
 
   db:
     image: mariadb
-    network_mode: host
     environment:
       MYSQL_DATABASE: drupal
       MYSQL_USER: user
@@ -38,8 +34,6 @@ services:
 
   mail:
     image: mailhog/mailhog
-    network_mode: host
 
   redis:
     image: redis:alpine
-    network_mode: host

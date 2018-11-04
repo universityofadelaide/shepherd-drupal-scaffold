@@ -215,6 +215,8 @@ Commands:\n
 Commands can be shortened to their uniqe component, eg ./dsh sh is the same as ./dsh shell.\n\n"
 }
 
+dsh_project init
+
 # Set a default command to show usage when no arguments provided.
 COMMAND=${1:-default}
 

@@ -12,19 +12,21 @@ if [ ${HOST_TYPE} != "linux" ]; then
     return
 fi
 
-# Set some env vars we use in our slightly modified docker-compose files
-export HOST_SSH_AUTH_SOCK_DIR=$(dirname ${SSH_AUTH_SOCK})
-export CONTAINER_SSH_AUTH_SOCK=/ssh/$(basename ${SSH_AUTH_SOCK})
+init() {
+  # Set some env vars we use in our slightly modified docker-compose files
+  export HOST_SSH_AUTH_SOCK_DIR=$(dirname ${SSH_AUTH_SOCK})
+  export CONTAINER_SSH_AUTH_SOCK=/ssh/$(basename ${SSH_AUTH_SOCK})
+}
 
 # Add functionality to the dsh setup/start function
 setup_nginx() {
   set +e
+  export URL="http://${PROJECT}.${DOMAIN}:8080"
   # Test to make sure its not already on the network.
   if ! docker network inspect ${PROJECT}_default | grep "nginx-proxy" > /dev/null; then
     notice "Connecting nginx-proxy to the network."
     docker network connect ${PROJECT}_default nginx-proxy
   fi
-  export URL="http://${PROJECT}.${DOMAIN}:8080"
   set -e
 }
 
@@ -67,6 +69,9 @@ start_shell() {
 }
 
 case ${1} in
+  init)
+    init
+    ;;
   she*)
     start_shell
     ;;

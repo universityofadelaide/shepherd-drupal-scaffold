@@ -12,13 +12,18 @@ if [ $(version ${DOCKER_COMPOSE_VERSION}) -lt $(version "1.21.0") ]; then
   export PROJECT=$(echo ${PROJECT} | sed 's/[-_]//g')
 fi
 
-# Determine the OS type of the host machine.
-if [ "$(uname)" == "Darwin" ]; then
-  HOST_TYPE='mac'
-  export DOCKER_COMPOSE_FILE='docker-compose.osx.yml'
-else
+if [ ${GITLAB_CI:-false} == "true" ]; then
   HOST_TYPE='linux'
-  export DOCKER_COMPOSE_FILE='docker-compose.linux.yml'
+  export DOCKER_COMPOSE_FILE='docker-compose.ci.yml'
+else
+  # Determine the OS type of the host machine.
+  if [ "$(uname)" == "Darwin" ]; then
+    HOST_TYPE='mac'
+    export DOCKER_COMPOSE_FILE='docker-compose.osx.yml'
+  else
+    HOST_TYPE='linux'
+    export DOCKER_COMPOSE_FILE='docker-compose.linux.yml'
+  fi
 fi
 
 # Setup some functions to output warnings.
@@ -57,7 +62,7 @@ Connecting via ./dsh shell and running robo build is a common next step."
 # Command: ./dsh shell
 # Connects a shell to the web image as the current user.
 dsh_shell() {
-  dsh_project shell
+  dsh_project shell ${@}
   if ! docker ps | grep "\s${PROJECT}_web_1" > /dev/null; then
     notice "Project not running, starting."
     dsh_start
@@ -101,7 +106,7 @@ dsh_logs() {
 dsh_project() {
   set +e
   if [ -f dsh.project ]; then
-    source dsh.project "${1}"
+    source dsh.project ${@}
   fi
   set -e
 }

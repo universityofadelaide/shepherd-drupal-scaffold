@@ -73,7 +73,8 @@ case ${1} in
     init
     ;;
   she*)
-    start_shell
+    shift
+    start_shell ${@}
     ;;
   star*)
     setup_nginx

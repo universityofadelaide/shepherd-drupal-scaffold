@@ -81,6 +81,7 @@ class Handler
             [
                 'docker-compose.linux.yml',
                 'docker-compose.osx.yml',
+                'docker-compose.ci.yml',
                 'drush/config-ignore.yml',
                 'drush/config-delete.yml',
                 'dsh.project.example',

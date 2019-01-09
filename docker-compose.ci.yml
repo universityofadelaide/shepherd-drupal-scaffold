@@ -1,0 +1,51 @@
+version: '3'
+services:
+  web:
+    image: uofa/apache2-php7-dev:foundation
+    privileged: true
+    hostname: ${PROJECT}
+    environment:
+      SITE_TITLE: WCMS D8
+      SITE_MAIL: site@example.com
+      SITE_ADMIN_EMAIL: admin@example.com
+      SITE_ADMIN_USERNAME: admin
+      SITE_ADMIN_PASSWORD: password
+      VIRTUAL_HOST: web
+      # Do not define this as '/' or apache2 will give strange behaviour
+      # WEB_PATH: /test
+      PRIVATE_DIR: /shared/private
+      TMP_DIR: /shared/tmp
+      PUBLIC_DIR: /shared/public
+      HASH_SALT: random-hash
+      CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
+      SHEPHERD_SITE_ID: 2
+      SHEPHERD_URL: http://shepherd.test
+      SHEPHERD_TOKEN: super-secret-token
+      SHEPHERD_INSTALL_PROFILE: ua
+      SHEPHERD_SECRET_PATH: /code/private
+      REDIS_ENABLED: 1
+      DATABASE_PORT: 3306
+      DATABASE_NAME: drupal
+      DATABASE_USER: user
+      DATABASE_PASSWORD: password
+      DATABASE_HOST: db
+    volumes:
+      - .:/code
+      - ./shared:/shared
+      - ${HOST_SSH_AUTH_SOCK_DIR}:/ssh
+
+  db:
+    image: mariadb
+    environment:
+      MYSQL_DATABASE: drupal
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: super-secret-password
+
+  mail:
+    image: helder/mailcatcher
+    environment:
+      - VIRTUAL_HOST=mail.${PROJECT}.${DOMAIN}
+
+  redis:
+    image: redis:alpine

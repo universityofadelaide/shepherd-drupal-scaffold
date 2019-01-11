@@ -8,7 +8,7 @@
  */
 
 /**
- * Class RoboFile.
+ * Class RoboFileBase.
  */
 abstract class RoboFileBase extends \Robo\Tasks {
 
@@ -38,7 +38,6 @@ abstract class RoboFileBase extends \Robo\Tasks {
 
   protected $web_server_user = 'www-data';
 
-  protected $application_root = "web";
   protected $file_public_path = '/shared/public';
   protected $file_private_path = '/shared/private';
   protected $file_temporary_path = '/shared/tmp';
@@ -82,7 +81,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
    * Initialize config variables and apply overrides.
    */
   public function __construct() {
-    $this->drush_cmd = "$this->drush_bin -r $this->application_root";
+    $this->drush_cmd = $this->drush_bin;
     $this->sudo_cmd = posix_getuid() == 0 ? '' : 'sudo';
     $this->local_user = $this->getLocalUser();
 

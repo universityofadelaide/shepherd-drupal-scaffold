@@ -38,6 +38,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
 
   protected $web_server_user = 'www-data';
 
+  protected $application_root = "/code/web";
   protected $file_public_path = '/shared/public';
   protected $file_private_path = '/shared/private';
   protected $file_temporary_path = '/shared/tmp';

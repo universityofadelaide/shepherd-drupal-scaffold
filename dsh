@@ -56,10 +56,7 @@ Connecting via ./dsh shell and running robo build is a common next step."
 # Command: ./dsh shell
 # Connects a shell to the web image as the current user.
 dsh_shell() {
-  if docker-compose -f ${DOCKER_COMPOSE_FILE} ps --filter "status=stopped" --services | grep web > /dev/null; then
-    notice "Project not running, starting."
-    dsh_start
-  fi
+  dsh_start
 
   docker-compose -f ${DOCKER_COMPOSE_FILE} exec \
    -e COLUMNS="$(tput cols)" \

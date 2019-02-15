@@ -148,7 +148,7 @@ class Handler
             "\$databases['default']['default'] = array (\n" .
             "  'database' => getenv('DATABASE_NAME') ?: 'drupal',\n" .
             "  'username' => getenv('DATABASE_USER') ?: 'user',\n" .
-            "  'password' => getenv('DATABASE_PASSWORD_FILE') ? file_get_contents(getenv('DATABASE_PASSWORD_FILE')) : 'password',\n" .
+            "  'password' => getenv('DATABASE_PASSWORD_FILE') ? file_get_contents(getenv('DATABASE_PASSWORD_FILE')) : getenv('DATABASE_PASSWORD'),\n" .
             "  'host' => getenv('DATABASE_HOST') ?: '127.0.0.1',\n" .
             "  'port' => getenv('DATABASE_PORT') ?: '3306',\n" .
             "  'driver' => getenv('DATABASE_DRIVER') ?: 'mysql',\n" .

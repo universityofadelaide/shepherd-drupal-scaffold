@@ -197,6 +197,8 @@ dsh_help() {
   printf "\nUsage: dsh COMMAND\n\n
 Commands:\n
 \thelp\tShow this help.\n
+\tnfs\tSetup NFS for macOS.\n
+\trnfs\tRemove NFS for macOS.\n
 \tpurge\tPurge the docker containers, network and proxy and remove all data.\n
 \tshell\tStart a shell which is connected to the containers and can be used to run commands.\n
 \tstart\tStart the docker containers, network and proxy.\n

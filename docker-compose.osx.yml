@@ -54,6 +54,10 @@ services:
     image: redis:alpine
     network_mode: service:web
 
+  memcached:
+    image: memcached:alpine
+    network_mode: service:web
+
 volumes:
   nfsmount:
     driver: local

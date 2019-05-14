@@ -177,6 +177,13 @@ class Handler
             "    \$settings['container_yamls'][] = 'modules/contrib/redis/example.services.yml';\n" .
             "  }\n" .
             "}\n" .
+            "if (getenv('MEMCACHE_ENABLED')) {\n" .
+            "  \$settings['redis']['servers'] = getenv('MEMCACHE_HOST') ?: '127.0.0.1';\n" .
+            "  // If we're not installing, include the memcache services.\n" .
+            "  if (!isset(\$GLOBALS['install_state'])) {\n" .
+            "    \$settings['cache']['default'] = 'cache.backend.memcache';\n\n" .
+            "  }\n" .
+            "}\n" .
             "if (getenv('SHEPHERD_SECRET_PATH')) {\n" .
             "  \$settings['shepherd_secrets'] = []; \n" .
             "  // Glob the secret path for secrets, that match pattern \n" .

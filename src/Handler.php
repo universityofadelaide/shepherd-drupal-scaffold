@@ -81,10 +81,11 @@ class Handler
             [
                 'docker-compose.linux.yml',
                 'docker-compose.osx.yml',
-                'RoboFile.php',
-                'drush/config-ignore.yml',
                 'drush/config-delete.yml',
+                'drush/config-ignore.yml',
                 'phpcs.xml',
+                'RoboFile.php',
+                'standalone-memcached.xml',
             ]
         );
     }

@@ -2,9 +2,9 @@ version: '3'
 services:
   web:
     image: uofa/apache2-php7-dev:foundation
-    # This makes the container run on the same network stack as your
-    # workstation. Meaning that you can interact on "localhost".
-    network_mode: host
+    # Chrome webdriver requires this - used for tests.
+    privileged: true
+    hostname: ${PROJECT}
     environment:
       SITE_TITLE: WCMS D8
       SITE_MAIL: site@example.com
@@ -18,14 +18,22 @@ services:
       SHEPHERD_URL: http://shepherd.test
       SHEPHERD_TOKEN: super-secret-token
       SHEPHERD_INSTALL_PROFILE: ua
-      REDIS_ENABLED: 1
+      DATABASE_HOST: db
+      REDIS_HOST: redis
+      MEMCACHE_ENABLED: 1
+      MEMCACHE_HOST: memcache
       SHEPHERD_SECRET_PATH: /code/private
-      XDEBUG_CONFIG: "remote_host=127.0.0.1"
-      PHP_IDE_CONFIG: serverName=localhost
+      XDEBUG_CONFIG: "remote_host=172.17.0.1"
+      PHP_IDE_CONFIG: serverName=${PROJECT}.${DOMAIN}
+      VIRTUAL_HOST: ${PROJECT}.${DOMAIN}
+      # Do not define this as '/' or apache2 will give strange behaviour
+      # WEB_PATH: /
     volumes:
       - .:/code
       - ./shared:/shared
-      - $HOME/.ssh/id_rsa:/root/.ssh/id_rsa
+      - ${HOST_SSH_AUTH_SOCK_DIR}:/ssh
+    networks:
+      - default
 
   db:
     image: mariadb
@@ -35,15 +43,25 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: super-secret-password
+    networks:
+      - default
 
   mail:
     image: mailhog/mailhog
-    network_mode: host
+    environment:
+      VIRTUAL_HOST: mail.${PROJECT}.${DOMAIN}
+    networks:
+      - default
 
   redis:
     image: redis:alpine
-    network_mode: host
+    networks:
+      - default
 
-  memcached:
-    image: memcached:alpine
-    network_mode: host
+  memcache:
+    image: jboss/infinispan-server:9.4.11.Final
+    # Custom command to pass in the mode we want
+    command: |
+      docker-entrypoint.sh standalone-memcached
+    networks:
+      - default

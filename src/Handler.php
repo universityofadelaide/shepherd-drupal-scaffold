@@ -178,10 +178,12 @@ class Handler
             "  }\n" .
             "}\n" .
             "if (getenv('MEMCACHE_ENABLED')) {\n" .
-            "  \$settings['redis']['servers'] = getenv('MEMCACHE_HOST') ?: '127.0.0.1';\n" .
+            "  \$settings['memcache']['servers'] = [getenv('MEMCACHE_HOST') . ':11211' => 'default'] ?: ['127.0.0.1:11211' => 'default'];\n" .
+            "  \$settings['memcache']['bins'] = ['default' => 'default'];\n" .
+            "  \$settings['memcache']['key_prefix'] = '';\n" .
             "  // If we're not installing, include the memcache services.\n" .
             "  if (!isset(\$GLOBALS['install_state'])) {\n" .
-            "    \$settings['cache']['default'] = 'cache.backend.memcache';\n\n" .
+            "    \$settings['cache']['default'] = 'cache.backend.memcache';\n" .
             "  }\n" .
             "}\n" .
             "if (getenv('SHEPHERD_SECRET_PATH')) {\n" .

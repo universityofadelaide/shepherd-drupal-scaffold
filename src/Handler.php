@@ -86,6 +86,7 @@ class Handler
                 'phpcs.xml',
                 'RoboFile.php',
                 'standalone-memcached.xml',
+                'Dockerfile',
             ]
         );
     }

@@ -21,6 +21,10 @@ else
   export DOCKER_COMPOSE_FILE='docker-compose.linux.yml'
 fi
 
+# Set user variables
+USER_ID=$(id -u ${USER})
+GROUP_ID=$(id -g ${USER})
+
 # Setup some functions to output warnings.
 notice() {
   printf "\e[32;01m$1\e[39;49;00m\n"
@@ -106,7 +110,7 @@ dsh_pull() {
 # Command: ./dsh nfs
 # Sets up NFS integration for OSX.
 NFS_FILE=/etc/exports
-NFS_LINE="/Users -alldirs -mapall=$(id -u):$(id -g) localhost"
+NFS_LINE="/Users -alldirs -mapall=${USER_ID}:${GROUP_ID} localhost"
 dsh_setup_nfs() {
   if [ ${HOST_TYPE} != "mac" ]; then
     echo "This script is OSX-only. Please do not run it on any other Unix."
@@ -151,7 +155,7 @@ dsh_setup_nfs() {
   osascript -e 'quit app "Docker"'
 
   echo "== Resetting folder permissions..."
-  sudo chown -R "$(id -u)":"$(id -g)" .
+  sudo chown -R "${USER_ID}:${GROUP_ID}" .
 
   echo "== Setting up nfs..."
   sudo cp /dev/null "$NFS_FILE"

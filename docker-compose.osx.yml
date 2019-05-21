@@ -1,7 +1,13 @@
 version: '3'
 services:
   web:
-    image: uofa/apache2-php7-dev:foundation
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        USER_ID: ${USER_ID:-1000}
+        GROUP_ID: ${GROUP_ID:-1000}
+    image: uofa/s2i-shepherd-drupal-dev
     # You will notice that we are forwarding port which do not belong to PHP.
     # We have to declare them here because these "sidecar" services are sharing
     # THIS containers network stack.
@@ -55,7 +61,13 @@ services:
     network_mode: service:web
 
   memcached:
-    image: memcached:alpine
+    image: jboss/infinispan-server:9.4.11.Final
+    entrypoint:
+      - docker-entrypoint.sh
+      - -c
+      - standalone-memcached.xml
+    volumes:
+      - ./standalone-memcached.xml:/opt/jboss/infinispan-server/standalone/configuration/standalone-memcached.xml
     network_mode: service:web
 
 volumes:

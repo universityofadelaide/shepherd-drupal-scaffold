@@ -1,7 +1,13 @@
 version: '3'
 services:
   web:
-    image: uofa/apache2-php7-dev:foundation
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        USER_ID: ${USER_ID:-1000}
+        GROUP_ID: ${GROUP_ID:-1000}
+    image: uofa/s2i-shepherd-drupal-dev
     # Chrome webdriver requires this - used for tests.
     privileged: true
     hostname: ${PROJECT}
@@ -31,13 +37,12 @@ services:
     volumes:
       - .:/code
       - ./shared:/shared
-      - ${HOST_SSH_AUTH_SOCK_DIR}:/ssh
+      - ${XDG_RUNTIME_DIR}/keyring:/ssh
     networks:
       - default
 
   db:
     image: mariadb
-    network_mode: host
     environment:
       MYSQL_DATABASE: drupal
       MYSQL_USER: user
@@ -58,10 +63,13 @@ services:
     networks:
       - default
 
-  memcache:
+  memcached:
     image: jboss/infinispan-server:9.4.11.Final
-    # Custom command to pass in the mode we want
-    command: |
-      docker-entrypoint.sh standalone-memcached
+    entrypoint:
+      - docker-entrypoint.sh
+      - -c
+      - standalone-memcached.xml
+    volumes:
+      - ./standalone-memcached.xml:/opt/jboss/infinispan-server/standalone/configuration/standalone-memcached.xml
     networks:
       - default

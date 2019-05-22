@@ -22,8 +22,8 @@ else
 fi
 
 # Set user variables
-USER_ID=$(id -u ${USER})
-GROUP_ID=$(id -g ${USER})
+export USER_ID=$(id -u ${USER})
+export GROUP_ID=$(id -g ${USER})
 
 # Setup some functions to output warnings.
 notice() {

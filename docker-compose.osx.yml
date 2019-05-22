@@ -15,6 +15,7 @@ services:
       - "80:8080"
       - "3306:3306"
       - "8025:8025"
+      - "11211:11211"
     environment:
       CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
       HASH_SALT: random-hash
@@ -58,6 +59,16 @@ services:
 
   redis:
     image: redis:alpine
+    network_mode: service:web
+
+  memcached:
+    image: jboss/infinispan-server:9.4.11.Final
+    entrypoint:
+      - docker-entrypoint.sh
+      - -c
+      - standalone-memcached.xml
+    volumes:
+      - ./standalone-memcached.xml:/opt/jboss/infinispan-server/standalone/configuration/standalone-memcached.xml
     network_mode: service:web
 
 volumes:

@@ -59,3 +59,14 @@ services:
     image: redis:alpine
     networks:
       - default
+
+  memcached:
+    image: jboss/infinispan-server:9.4.11.Final
+    entrypoint:
+      - docker-entrypoint.sh
+      - -c
+      - standalone-memcached.xml
+    volumes:
+      - ./standalone-memcached.xml:/opt/jboss/infinispan-server/standalone/configuration/standalone-memcached.xml
+    networks:
+      - default

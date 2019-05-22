@@ -79,6 +79,7 @@ dsh_stop() {
 # Stops project, then takes down containers and removes volumes if possible.
 dsh_purge() {
   docker-compose -f ${DOCKER_COMPOSE_FILE} down -v
+  docker rmi -f uofa/s2i-shepherd-drupal-dev
 }
 
 # Command: ./dsh status

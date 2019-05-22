@@ -12,28 +12,27 @@ services:
     privileged: true
     hostname: ${PROJECT}
     environment:
+      CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
+      DATABASE_HOST: db
+      DATABASE_USER: user
+      DATABASE_PASSWORD: password
+      HASH_SALT: random-hash
+      PHP_IDE_CONFIG: serverName=${PROJECT:-shop8}.${DOMAIN:-172.17.0.1.xip.io}
+      PUBLIC_DIR: /shared/public
+      REDIS_ENABLED: 1
+      REDIS_HOST: redis
+      SHEPHERD_SITE_ID: 2
+      SHEPHERD_INSTALL_PROFILE: ua
+      SHEPHERD_SECRET_PATH: /code/private
+      SHEPHERD_TOKEN: super-secret-token
+      SHEPHERD_URL: http://shepherd.test
       SITE_TITLE: WCMS D8
       SITE_MAIL: site@example.com
       SITE_ADMIN_EMAIL: admin@example.com
       SITE_ADMIN_USERNAME: admin
       SITE_ADMIN_PASSWORD: password
-      PUBLIC_DIR: /shared/public
-      HASH_SALT: random-hash
-      CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
-      SHEPHERD_SITE_ID: 2
-      SHEPHERD_URL: http://shepherd.test
-      SHEPHERD_TOKEN: super-secret-token
-      SHEPHERD_INSTALL_PROFILE: ua
-      DATABASE_HOST: db
-      REDIS_HOST: redis
-      MEMCACHE_ENABLED: 1
-      MEMCACHE_HOST: memcache
-      SHEPHERD_SECRET_PATH: /code/private
+      VIRTUAL_HOST: ${PROJECT:-shop8}.${DOMAIN:-172.17.0.1.xip.io}
       XDEBUG_CONFIG: "remote_host=172.17.0.1"
-      PHP_IDE_CONFIG: serverName=${PROJECT}.${DOMAIN}
-      VIRTUAL_HOST: ${PROJECT}.${DOMAIN}
-      # Do not define this as '/' or apache2 will give strange behaviour
-      # WEB_PATH: /
     volumes:
       - .:/code
       - ./shared:/shared
@@ -53,23 +52,10 @@ services:
 
   mail:
     image: mailhog/mailhog
-    environment:
-      VIRTUAL_HOST: mail.${PROJECT}.${DOMAIN}
     networks:
       - default
 
   redis:
     image: redis:alpine
-    networks:
-      - default
-
-  memcached:
-    image: jboss/infinispan-server:9.4.11.Final
-    entrypoint:
-      - docker-entrypoint.sh
-      - -c
-      - standalone-memcached.xml
-    volumes:
-      - ./standalone-memcached.xml:/opt/jboss/infinispan-server/standalone/configuration/standalone-memcached.xml
     networks:
       - default

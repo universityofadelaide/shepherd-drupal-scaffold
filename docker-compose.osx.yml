@@ -12,26 +12,26 @@ services:
     # We have to declare them here because these "sidecar" services are sharing
     # THIS containers network stack.
     ports:
-      - "80:80"
+      - "80:8080"
       - "3306:3306"
       - "8025:8025"
     environment:
+      CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
+      HASH_SALT: random-hash
+      PUBLIC_DIR: /shared/public
+      REDIS_ENABLED: 1
+      SHEPHERD_INSTALL_PROFILE: ua
+      SHEPHERD_SITE_ID: 2
+      SHEPHERD_SECRET_PATH: /code/private
+      SHEPHERD_TOKEN: super-secret-token
+      SHEPHERD_URL: http://shepherd.test
       SITE_TITLE: WCMS D8
       SITE_MAIL: site@example.com
       SITE_ADMIN_EMAIL: admin@example.com
       SITE_ADMIN_USERNAME: admin
       SITE_ADMIN_PASSWORD: password
-      PUBLIC_DIR: /shared/public
-      HASH_SALT: random-hash
-      CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
-      SHEPHERD_SITE_ID: 2
-      SHEPHERD_URL: http://shepherd.test
-      SHEPHERD_TOKEN: super-secret-token
-      SHEPHERD_INSTALL_PROFILE: ua
-      REDIS_ENABLED: 1
-      SHEPHERD_SECRET_PATH: /code/private
-      XDEBUG_CONFIG: "remote_host=docker.for.mac.localhost"
       PHP_IDE_CONFIG: serverName=localhost
+      XDEBUG_CONFIG: "remote_host=docker.for.mac.localhost"
     volumes:
       - nfsmount:/code
       - ./shared:/shared
@@ -58,16 +58,6 @@ services:
 
   redis:
     image: redis:alpine
-    network_mode: service:web
-
-  memcached:
-    image: jboss/infinispan-server:9.4.11.Final
-    entrypoint:
-      - docker-entrypoint.sh
-      - -c
-      - standalone-memcached.xml
-    volumes:
-      - ./standalone-memcached.xml:/opt/jboss/infinispan-server/standalone/configuration/standalone-memcached.xml
     network_mode: service:web
 
 volumes:

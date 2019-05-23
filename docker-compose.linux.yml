@@ -17,9 +17,11 @@ services:
       DATABASE_USER: user
       DATABASE_PASSWORD: password
       HASH_SALT: random-hash
-      PHP_IDE_CONFIG: serverName=${PROJECT:-shop8}.${DOMAIN:-172.17.0.1.xip.io}
+      MEMCACHE_ENABLED: 1
+      MEMCACHE_HOST: memcached
+      PHP_IDE_CONFIG: serverName=${PROJECT}.${DOMAIN}
       PUBLIC_DIR: /shared/public
-      REDIS_ENABLED: 1
+      REDIS_ENABLED: 0
       REDIS_HOST: redis
       SHEPHERD_SITE_ID: 2
       SHEPHERD_INSTALL_PROFILE: ua
@@ -31,7 +33,10 @@ services:
       SITE_ADMIN_EMAIL: admin@example.com
       SITE_ADMIN_USERNAME: admin
       SITE_ADMIN_PASSWORD: password
-      VIRTUAL_HOST: ${PROJECT:-shop8}.${DOMAIN:-172.17.0.1.xip.io}
+      VIRTUAL_HOST: ${PROJECT}.${DOMAIN}
+      # Do not define this as '/' or apache2 will give strange behaviour, to test locally,
+      # change to the web directory and create a symlink to the subpath name eg ln -s . subpath
+      # WEB_PATH: /subpath
       XDEBUG_CONFIG: "remote_host=172.17.0.1"
     volumes:
       - .:/code
@@ -52,6 +57,8 @@ services:
 
   mail:
     image: mailhog/mailhog
+    environment:
+      VIRTUAL_HOST: mail.${PROJECT}.${DOMAIN}
     networks:
       - default
 

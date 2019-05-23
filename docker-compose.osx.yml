@@ -19,8 +19,9 @@ services:
     environment:
       CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
       HASH_SALT: random-hash
+      MEMCACHE_ENABLED: 1
       PUBLIC_DIR: /shared/public
-      REDIS_ENABLED: 1
+      REDIS_ENABLED: 0
       SHEPHERD_INSTALL_PROFILE: ua
       SHEPHERD_SITE_ID: 2
       SHEPHERD_SECRET_PATH: /code/private

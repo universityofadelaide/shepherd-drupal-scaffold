@@ -15,6 +15,7 @@ services:
       - "80:8080"
       - "3306:3306"
       - "8025:8025"
+      - "9990:9990"
       - "11211:11211"
     environment:
       CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
@@ -64,6 +65,11 @@ services:
 
   memcached:
     image: jboss/infinispan-server:9.4.11.Final
+    environment:
+      APP_USER: user
+      APP_PASS: pass
+      MGMT_USER: admin
+      MGMT_PASS: admin
     entrypoint:
       - docker-entrypoint.sh
       - -c

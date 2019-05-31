@@ -11,6 +11,8 @@ services:
     # Chrome webdriver requires this - used for tests.
     privileged: true
     hostname: ${PROJECT}
+    ports:
+      - "80:8080"
     environment:
       CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
       DATABASE_HOST: db
@@ -69,6 +71,13 @@ services:
 
   memcached:
     image: jboss/infinispan-server:9.4.11.Final
+    ports:
+      - "9990:9990"
+    environment:
+      APP_USER: user
+      APP_PASS: pass
+      MGMT_USER: admin
+      MGMT_PASS: admin
     entrypoint:
       - docker-entrypoint.sh
       - -c

@@ -173,7 +173,7 @@ class Handler
             "  \$settings['cache']['bins']['bootstrap'] = 'cache.backend.chainedfast';\n" .
             "  \$settings['cache']['bins']['discovery'] = 'cache.backend.chainedfast';\n" .
             "  \$settings['cache']['bins']['config'] = 'cache.backend.chainedfast';\n\n" .
-            "  \$settings['cache_prefix']['default'] = getenv('REDIS_PREFIX') ?: 'mysite_' \n" .
+            "  \$settings['cache_prefix']['default'] = getenv('REDIS_PREFIX') ?: 'mysite_';\n" .
             "  // If we're not installing, include the redis services.\n" .
             "  if (!isset(\$GLOBALS['install_state'])) {\n" .
             "    \$settings['cache']['default'] = 'cache.backend.redis';\n\n" .

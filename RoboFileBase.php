@@ -33,6 +33,13 @@ abstract class RoboFileBase extends \Robo\Tasks {
    */
   protected $phpcbfCmd = 'bin/phpcbf';
 
+  /**
+   * The phpstan command.
+   *
+   * @var string
+   */
+  protected $phpstanCmd = 'php ./bin/phpstan analyze';
+
   protected $php_enable_module_command = 'phpenmod -v ALL';
   protected $php_disable_module_command = 'phpdismod -v ALL';
 
@@ -619,6 +626,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
    */
   public function lintPhp($path = '') {
     $this->_exec("$this->phpcsCmd $path");
+    $this->_exec($this->phpstanCmd);
   }
 
   /**

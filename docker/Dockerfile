@@ -47,14 +47,7 @@ RUN apt-get update \
 # Install Composer.
 RUN wget -q https://getcomposer.org/installer -O - | php -d allow_url_fopen=On -- --install-dir=/usr/local/bin --filename=composer
 
-RUN echo "zend_extension=xdebug.so" > /etc/php/7.2/mods-available/xdebug.ini \
-&& echo "xdebug.max_nesting_level=500" >> /etc/php/7.2/mods-available/xdebug.ini \
-&& echo "xdebug.remote_enable=1" >> /etc/php/7.2/mods-available/xdebug.ini \
-&& echo "xdebug.remote_handler=dbgp" >> /etc/php/7.2/mods-available/xdebug.ini \
-&& echo "xdebug.remote_mode=req" >> /etc/php/7.2/mods-available/xdebug.ini \
-&& echo "xdebug.remote_port=9000" >> /etc/php/7.2/mods-available/xdebug.ini \
-&& echo "xdebug.remote_connect_back=1" >> /etc/php/7.2/mods-available/xdebug.ini \
-&& echo "xdebug.idekey=PHPSTORM" >> /etc/php/7.2/mods-available/xdebug.ini
+COPY ./docker/xdebug.ini /etc/php/7.2/mods-available/xdebug.ini
 
 RUN echo "www-data ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/www-data
 

@@ -75,7 +75,7 @@ services:
       - -c
       - standalone-memcached.xml
     volumes:
-      - ./standalone-memcached.xml:/opt/jboss/infinispan-server/standalone/configuration/standalone-memcached.xml
+      - ./docker/standalone-memcached.xml:/opt/jboss/infinispan-server/standalone/configuration/standalone-memcached.xml
     network_mode: service:web
 
 volumes:

@@ -78,6 +78,12 @@ services:
       - ./docker/standalone-memcached.xml:/opt/jboss/infinispan-server/standalone/configuration/standalone-memcached.xml
     network_mode: service:web
 
+  selenium:
+    image: selenium/standalone-chrome:3.141.59-oxygen
+    network_mode: service:web
+    volumes:
+      - /dev/shm:/dev/shm
+
 volumes:
   nfsmount:
     driver: local

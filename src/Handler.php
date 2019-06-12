@@ -81,10 +81,13 @@ class Handler
             [
                 'docker-compose.linux.yml',
                 'docker-compose.osx.yml',
-                'RoboFile.php',
-                'drush/config-ignore.yml',
                 'drush/config-delete.yml',
+                'drush/config-ignore.yml',
                 'phpcs.xml',
+                'RoboFile.php',
+                'docker/standalone-memcached.xml',
+                'docker/Dockerfile',
+                'docker/xdebug.ini',
             ]
         );
     }
@@ -171,10 +174,20 @@ class Handler
             "  \$settings['cache']['bins']['bootstrap'] = 'cache.backend.chainedfast';\n" .
             "  \$settings['cache']['bins']['discovery'] = 'cache.backend.chainedfast';\n" .
             "  \$settings['cache']['bins']['config'] = 'cache.backend.chainedfast';\n\n" .
+            "  \$settings['cache_prefix']['default'] = getenv('REDIS_PREFIX') ?: '';\n" .
             "  // If we're not installing, include the redis services.\n" .
             "  if (!isset(\$GLOBALS['install_state'])) {\n" .
             "    \$settings['cache']['default'] = 'cache.backend.redis';\n\n" .
             "    \$settings['container_yamls'][] = 'modules/contrib/redis/example.services.yml';\n" .
+            "  }\n" .
+            "}\n" .
+            "if (getenv('MEMCACHE_ENABLED')) {\n" .
+            "  \$settings['memcache']['servers'] = [getenv('MEMCACHE_HOST') . ':11211' => 'default'] ?: ['127.0.0.1:11211' => 'default'];\n" .
+            "  \$settings['memcache']['bins'] = ['default' => 'default'];\n" .
+            "  \$settings['memcache']['key_prefix'] = '';\n" .
+            "  // If we're not installing, include the memcache services.\n" .
+            "  if (!isset(\$GLOBALS['install_state'])) {\n" .
+            "    \$settings['cache']['default'] = 'cache.backend.memcache';\n" .
             "  }\n" .
             "}\n" .
             "if (getenv('SHEPHERD_SECRET_PATH')) {\n" .

@@ -1,45 +1,88 @@
 version: '3'
 services:
   web:
-    image: uofa/apache2-php7-dev:foundation
-    # This makes the container run on the same network stack as your
-    # workstation. Meaning that you can interact on "localhost".
-    network_mode: host
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        USER_ID: ${USER_ID:-1000}
+        GROUP_ID: ${GROUP_ID:-1000}
+    image: uofa/s2i-shepherd-drupal-dev
+    # Chrome webdriver requires this - used for tests.
+    privileged: true
+    hostname: ${PROJECT}
+    ports:
+      - "80:8080"
     environment:
+      CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
+      DATABASE_HOST: db
+      DATABASE_USER: user
+      DATABASE_PASSWORD: password
+      HASH_SALT: random-hash
+      MEMCACHE_ENABLED: 0
+      MEMCACHE_HOST: memcached
+      PHP_IDE_CONFIG: serverName=${PROJECT}.${DOMAIN}
+      PUBLIC_DIR: /shared/public
+      REDIS_ENABLED: 1
+      REDIS_HOST: redis
+      SHEPHERD_SITE_ID: 2
+      SHEPHERD_INSTALL_PROFILE: ua
+      SHEPHERD_SECRET_PATH: /code/private
+      SHEPHERD_TOKEN: super-secret-token
+      SHEPHERD_URL: http://shepherd.test
       SITE_TITLE: WCMS D8
       SITE_MAIL: site@example.com
       SITE_ADMIN_EMAIL: admin@example.com
       SITE_ADMIN_USERNAME: admin
       SITE_ADMIN_PASSWORD: password
-      PUBLIC_DIR: /shared/public
-      HASH_SALT: random-hash
-      CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
-      SHEPHERD_SITE_ID: 2
-      SHEPHERD_URL: http://shepherd.test
-      SHEPHERD_TOKEN: super-secret-token
-      SHEPHERD_INSTALL_PROFILE: ua
-      REDIS_ENABLED: 1
-      SHEPHERD_SECRET_PATH: /code/private
-      XDEBUG_CONFIG: "remote_host=127.0.0.1"
-      PHP_IDE_CONFIG: serverName=localhost
+      VIRTUAL_HOST: ${PROJECT}.${DOMAIN}
+      # Do not define this as '/' or apache2 will give strange behaviour, to test locally,
+      # change to the web directory and create a symlink to the subpath name eg ln -s . subpath
+      # WEB_PATH: /subpath
+      XDEBUG_CONFIG: "remote_host=172.17.0.1"
     volumes:
       - .:/code
       - ./shared:/shared
-      - $HOME/.ssh/id_rsa:/root/.ssh/id_rsa
+      - ${XDG_RUNTIME_DIR}/keyring:/ssh
+    networks:
+      - default
 
   db:
     image: mariadb
-    network_mode: host
     environment:
       MYSQL_DATABASE: drupal
       MYSQL_USER: user
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: super-secret-password
+    networks:
+      - default
 
   mail:
     image: mailhog/mailhog
-    network_mode: host
+    environment:
+      VIRTUAL_HOST: mail.${PROJECT}.${DOMAIN}
+    networks:
+      - default
 
   redis:
     image: redis:alpine
-    network_mode: host
+    networks:
+      - default
+
+  memcached:
+    image: jboss/infinispan-server:9.4.11.Final
+    ports:
+      - "9990:9990"
+    environment:
+      APP_USER: user
+      APP_PASS: pass
+      MGMT_USER: admin
+      MGMT_PASS: admin
+    entrypoint:
+      - docker-entrypoint.sh
+      - -c
+      - standalone-memcached.xml
+    volumes:
+      - ./docker/standalone-memcached.xml:/opt/jboss/infinispan-server/standalone/configuration/standalone-memcached.xml
+    networks:
+      - default

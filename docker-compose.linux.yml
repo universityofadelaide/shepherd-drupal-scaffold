@@ -19,11 +19,11 @@ services:
       DATABASE_USER: user
       DATABASE_PASSWORD: password
       HASH_SALT: random-hash
-      MEMCACHE_ENABLED: 1
+      MEMCACHE_ENABLED: 0
       MEMCACHE_HOST: memcached
       PHP_IDE_CONFIG: serverName=${PROJECT}.${DOMAIN}
       PUBLIC_DIR: /shared/public
-      REDIS_ENABLED: 0
+      REDIS_ENABLED: 1
       REDIS_HOST: redis
       SHEPHERD_SITE_ID: 2
       SHEPHERD_INSTALL_PROFILE: ua

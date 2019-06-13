@@ -89,6 +89,7 @@ services:
 
   selenium:
     image: selenium/standalone-chrome:3.141.59-oxygen
-    network_mode: host
     volumes:
       - /dev/shm:/dev/shm
+    networks:
+      - default

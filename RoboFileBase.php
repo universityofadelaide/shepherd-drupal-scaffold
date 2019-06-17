@@ -129,7 +129,6 @@ abstract class RoboFileBase extends \Robo\Tasks {
 
     // Environment.
     $config['environment']['hash_salt']       = getenv('HASH_SALT');
-    $config['environment']['config_sync_dir'] = getenv('CONFIG_SYNC_DIRECTORY');
 
     // Clean up NULL values and empty arrays.
     $array_clean = function (&$item) use (&$array_clean) {
@@ -155,7 +154,6 @@ abstract class RoboFileBase extends \Robo\Tasks {
     $start = new DateTime();
     $this->devComposerValidate();
     $this->buildMake();
-    $this->buildCreateConfigSyncDir();
     $this->buildSetFilesOwner();
     $this->buildInstall();
     $this->configImportPlus();
@@ -195,19 +193,6 @@ abstract class RoboFileBase extends \Robo\Tasks {
     $successful = $this->_exec("$this->composer_bin --no-progress --no-interaction $flags install")->wasSuccessful();
 
     $this->checkFail($successful, "Composer install failed.");
-  }
-
-  /**
-   * Create the config sync directory from config.
-   *
-   * Drupal will write a .htaccess afterwards in there.
-   */
-  public function buildCreateConfigSyncDir() {
-    if (isset($this->config['environment']['config_sync_dir'])) {
-      // Only do this if we have a config sync dir setting available.
-      $this->say("Creating config sync directory.");
-      $this->_exec("$this->sudo_cmd mkdir -p " . $this->config['environment']['config_sync_dir']);
-    }
   }
 
   /**

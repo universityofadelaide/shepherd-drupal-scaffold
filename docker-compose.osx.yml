@@ -18,7 +18,6 @@ services:
       - "9990:9990"
       - "11211:11211"
     environment:
-      CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
       HASH_SALT: random-hash
       MEMCACHE_ENABLED: 0
       PUBLIC_DIR: /shared/public

@@ -75,10 +75,16 @@ dsh_stop() {
   docker-compose -f ${DOCKER_COMPOSE_FILE} stop
 }
 
-# Command: ./dsh purge
+# Command: ./dsh down
 # Stops project, then takes down containers and removes volumes if possible.
-dsh_purge() {
+dsh_down() {
   docker-compose -f ${DOCKER_COMPOSE_FILE} down -v
+}
+
+# Command: ./dsh purge
+# Stops project, then takes down containers, removes volumes and remove dev image.
+dsh_purge() {
+  dsh_down
   docker rmi -f uofa/s2i-shepherd-drupal-dev
 }
 
@@ -218,6 +224,9 @@ Commands can be shortened to their uniqe component, eg ./dsh sh is the same as .
 COMMAND=${1:-default}
 
 case ${COMMAND} in
+  dow*)
+    dsh_down
+    ;;
   e*)
     dsh_shell ${@:2}
     ;;
@@ -252,7 +261,7 @@ case ${COMMAND} in
     dsh_stop
     ;;
   *)
-    warning "Unknown command specified, defaulting to shell. For other options try:\n$0 [help|logs|purge|shell|start|status|stop].\n"
+    warning "Unknown command specified, defaulting to shell. For other options try:\n$0 [down|help|logs|purge|shell|start|status|stop].\n"
     dsh_shell
     ;;
 esac

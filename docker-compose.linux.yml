@@ -71,7 +71,7 @@ services:
       --maxmemory 512Mi
       --maxmemory-policy allkeys-lru
       --save ""
-      # --requirepass password
+    # --requirepass password
     networks:
       - default
 

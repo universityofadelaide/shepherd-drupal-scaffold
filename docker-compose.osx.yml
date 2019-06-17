@@ -66,7 +66,7 @@ services:
       --maxmemory 512Mi
       --maxmemory-policy allkeys-lru
       --save ""
-      # --requirepass password
+    # --requirepass password
     network_mode: service:web
 
   memcached:

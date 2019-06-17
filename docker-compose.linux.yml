@@ -14,7 +14,6 @@ services:
     ports:
       - "80:8080"
     environment:
-      CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
       DATABASE_HOST: db
       DATABASE_USER: user
       DATABASE_PASSWORD: password
@@ -25,6 +24,7 @@ services:
       PUBLIC_DIR: /shared/public
       REDIS_ENABLED: 1
       REDIS_HOST: redis
+      # REDIS_PASSWORD: testing
       SHEPHERD_SITE_ID: 2
       SHEPHERD_INSTALL_PROFILE: ua
       SHEPHERD_SECRET_PATH: /code/private
@@ -66,6 +66,12 @@ services:
 
   redis:
     image: redis:alpine
+    command: |
+      redis-server
+      --maxmemory 512Mi
+      --maxmemory-policy allkeys-lru
+      --save ""
+      # --requirepass password
     networks:
       - default
 

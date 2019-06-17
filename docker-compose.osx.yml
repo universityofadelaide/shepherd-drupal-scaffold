@@ -18,11 +18,12 @@ services:
       - "9990:9990"
       - "11211:11211"
     environment:
-      CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
       HASH_SALT: random-hash
       MEMCACHE_ENABLED: 0
+      PHP_IDE_CONFIG: serverName=localhost
       PUBLIC_DIR: /shared/public
       REDIS_ENABLED: 1
+      # REDIS_PASSWORD: testing
       SHEPHERD_INSTALL_PROFILE: ua
       SHEPHERD_SITE_ID: 2
       SHEPHERD_SECRET_PATH: /code/private
@@ -33,7 +34,6 @@ services:
       SITE_ADMIN_EMAIL: admin@example.com
       SITE_ADMIN_USERNAME: admin
       SITE_ADMIN_PASSWORD: password
-      PHP_IDE_CONFIG: serverName=localhost
       XDEBUG_CONFIG: "remote_host=docker.for.mac.localhost"
     volumes:
       - nfsmount:/code
@@ -61,6 +61,12 @@ services:
 
   redis:
     image: redis:alpine
+    command: |
+      redis-server
+      --maxmemory 512Mi
+      --maxmemory-policy allkeys-lru
+      --save ""
+      # --requirepass password
     network_mode: service:web
 
   memcached:

@@ -162,7 +162,7 @@ class Handler
             "\$settings['file_private_path'] = getenv('PRIVATE_DIR') ?: '/shared/private';\n" .
             "\$settings['file_temporary_path'] = getenv('TMP_DIR') ?: '/shared/tmp';\n" .
             "\$settings['hash_salt'] = getenv('HASH_SALT') ?: '" . str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(random_bytes(55))) . "';\n" .
-            "\$config_directories['sync'] = getenv('CONFIG_SYNC_DIRECTORY') ?: DRUPAL_ROOT . '/../config-export';\n" .
+            "\$config_directories['sync'] = DRUPAL_ROOT . '/../config-export';\n" .
             "\$settings['shepherd_site_id'] = getenv('SHEPHERD_SITE_ID');\n" .
             "\$settings['shepherd_url'] = getenv('SHEPHERD_URL');\n" .
             "\$settings['shepherd_token'] = getenv('SHEPHERD_TOKEN_FILE') ? file_get_contents(getenv('SHEPHERD_TOKEN_FILE')) : getenv('SHEPHERD_TOKEN');\n\n" .
@@ -177,8 +177,11 @@ class Handler
             "  \$settings['cache_prefix']['default'] = getenv('REDIS_PREFIX') ?: '';\n" .
             "  // If we're not installing, include the redis services.\n" .
             "  if (!isset(\$GLOBALS['install_state'])) {\n" .
-            "    \$settings['cache']['default'] = 'cache.backend.redis';\n\n" .
+            "    \$settings['cache']['default'] = 'cache.backend.redis';\n" .
             "    \$settings['container_yamls'][] = 'modules/contrib/redis/example.services.yml';\n" .
+            "  }\n" .
+            "  if (getenv('REDIS_PASSWORD_FILE') || getenv('REDIS_PASSWORD')) {\n" .
+            "    \$settings['redis.connection']['password'] = getenv('REDIS_PASSWORD_FILE') ? file_get_contents(getenv('REDIS_PASSWORD_FILE')) : getenv('REDIS_PASSWORD');\n" .
             "  }\n" .
             "}\n" .
             "if (getenv('MEMCACHE_ENABLED')) {\n" .

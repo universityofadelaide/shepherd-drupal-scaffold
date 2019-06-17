@@ -180,6 +180,9 @@ class Handler
             "    \$settings['cache']['default'] = 'cache.backend.redis';\n\n" .
             "    \$settings['container_yamls'][] = 'modules/contrib/redis/example.services.yml';\n" .
             "  }\n" .
+            "  if (getenv('REDIS_PASSWORD_FILE') || getenv('REDIS_PASSWORD')) {\n" .
+            "    \$settings['redis.connection']['password'] = getenv('REDIS_PASSWORD_FILE') ? file_get_contents(getenv('REDIS_PASSWORD_FILE')) : getenv('REDIS_PASSWORD');\n" .
+            "  }\n" .
             "}\n" .
             "if (getenv('MEMCACHE_ENABLED')) {\n" .
             "  \$settings['memcache']['servers'] = [getenv('MEMCACHE_HOST') . ':11211' => 'default'] ?: ['127.0.0.1:11211' => 'default'];\n" .

@@ -177,7 +177,7 @@ class Handler
             "  \$settings['cache_prefix']['default'] = getenv('REDIS_PREFIX') ?: '';\n" .
             "  // If we're not installing, include the redis services.\n" .
             "  if (!isset(\$GLOBALS['install_state'])) {\n" .
-            "    \$settings['cache']['default'] = 'cache.backend.redis';\n\n" .
+            "    \$settings['cache']['default'] = 'cache.backend.redis';\n" .
             "    \$settings['container_yamls'][] = 'modules/contrib/redis/example.services.yml';\n" .
             "  }\n" .
             "  if (getenv('REDIS_PASSWORD_FILE') || getenv('REDIS_PASSWORD')) {\n" .

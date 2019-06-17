@@ -105,7 +105,8 @@ dsh_project() {
 # Command: ./dsh pull
 # Fetches all images used by the project.
 dsh_pull() {
-  docker-compose -f ${DOCKER_COMPOSE_FILE} pull
+  docker-compose -f ${DOCKER_COMPOSE_FILE} pull --ignore-pull-failures
+  docker-compose -f ${DOCKER_COMPOSE_FILE} build
 }
 
 # Command: ./dsh nfs

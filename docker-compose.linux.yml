@@ -35,6 +35,7 @@ services:
       SITE_ADMIN_EMAIL: admin@example.com
       SITE_ADMIN_USERNAME: admin
       SITE_ADMIN_PASSWORD: password
+      SSH_AUTH_SOCK: /ssh/ssh
       VIRTUAL_HOST: ${PROJECT}.${DOMAIN}
       # Do not define this as '/' or apache2 will give strange behaviour, to test locally,
       # change to the web directory and create a symlink to the subpath name eg ln -s . subpath

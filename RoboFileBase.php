@@ -152,6 +152,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
    */
   public function build() {
     $start = new DateTime();
+    $this->devXdebugDisable();
     $this->devComposerValidate();
     $this->buildMake();
     $this->buildSetFilesOwner();
@@ -159,6 +160,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
     $this->configImportPlus();
     $this->devCacheRebuild();
     $this->buildSetFilesOwner();
+    $this->devXdebugEnable();
     $this->say('Total build duration: ' . date_diff(new DateTime(), $start)->format('%im %Ss'));
   }
 

@@ -8,8 +8,6 @@ services:
         USER_ID: ${USER_ID:-1000}
         GROUP_ID: ${GROUP_ID:-1000}
     image: uofa/s2i-shepherd-drupal-dev
-    # Chrome webdriver requires this - used for tests.
-    privileged: true
     hostname: ${PROJECT}
     ports:
       - "80:8080"

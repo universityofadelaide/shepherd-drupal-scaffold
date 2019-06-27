@@ -616,8 +616,8 @@ abstract class RoboFileBase extends \Robo\Tasks {
    *   An optional path to lint.
    */
   public function lintPhp($path = '') {
-    $this->_exec("$this->phpcsCmd $path");
-    $this->_exec($this->phpstanCmd);
+    $this->checkFail($this->_exec("$this->phpcsCmd $path")->wasSuccessful(), 'Code linting failed');
+    $this->checkFail($this->_exec($this->phpstanCmd)->wasSuccessful(), 'Code analyzing failed');
   }
 
   /**

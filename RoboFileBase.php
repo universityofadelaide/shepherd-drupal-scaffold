@@ -14,7 +14,6 @@ abstract class RoboFileBase extends \Robo\Tasks {
 
   protected $drush_cmd;
   protected $local_user;
-  protected $sudo_cmd;
 
   protected $drush_bin = "bin/drush";
   protected $composer_bin = "composer";
@@ -90,7 +89,6 @@ abstract class RoboFileBase extends \Robo\Tasks {
    */
   public function __construct() {
     $this->drush_cmd = $this->drush_bin;
-    $this->sudo_cmd = posix_getuid() == 0 ? '' : 'sudo';
     $this->local_user = $this->getLocalUser();
 
     // Read config from env vars.
@@ -203,9 +201,9 @@ abstract class RoboFileBase extends \Robo\Tasks {
   public function buildSetFilesOwner() {
     foreach ([$this->file_public_path, $this->file_private_path, $this->file_temporary_path] as $path) {
       $this->say("Ensuring all directories exist.");
-      $this->_exec("$this->sudo_cmd mkdir -p $path");
+      $this->_exec("mkdir -p $path");
       $this->say("Setting files directory owner.");
-      $this->_exec("$this->sudo_cmd chown $this->web_server_user:$this->local_user -R $path");
+      $this->_exec("chown $this->web_server_user:$this->local_user -R $path");
       $this->say("Setting directory permissions.");
       $this->setPermissions($path, '0775');
     }
@@ -260,13 +258,13 @@ abstract class RoboFileBase extends \Robo\Tasks {
    */
   public function buildClean() {
     $this->setPermissions("$this->application_root/sites/default", '0755');
-    $this->_exec("$this->sudo_cmd rm -fR $this->application_root/core");
-    $this->_exec("$this->sudo_cmd rm -fR $this->application_root/modules/contrib");
-    $this->_exec("$this->sudo_cmd rm -fR $this->application_root/profiles/contrib");
-    $this->_exec("$this->sudo_cmd rm -fR $this->application_root/themes/contrib");
-    $this->_exec("$this->sudo_cmd rm -fR $this->application_root/sites/all");
-    $this->_exec("$this->sudo_cmd rm -fR bin");
-    $this->_exec("$this->sudo_cmd rm -fR vendor");
+    $this->_exec("rm -fR $this->application_root/core");
+    $this->_exec("rm -fR $this->application_root/modules/contrib");
+    $this->_exec("rm -fR $this->application_root/profiles/contrib");
+    $this->_exec("rm -fR $this->application_root/themes/contrib");
+    $this->_exec("rm -fR $this->application_root/sites/all");
+    $this->_exec("rm -fR bin");
+    $this->_exec("rm -fR vendor");
   }
 
   /**
@@ -332,14 +330,20 @@ abstract class RoboFileBase extends \Robo\Tasks {
    * CLI debug enable.
    */
   public function devXdebugEnable() {
-    $this->_exec("sudo $this->php_enable_module_command -s cli xdebug");
+    // Only run this on environments configured with xdebug.
+    if (getenv('XDEBUG_CONFIG')) {
+      $this->_exec("sudo $this->php_enable_module_command -s cli xdebug");
+    }
   }
 
   /**
    * CLI debug disable.
    */
   public function devXdebugDisable() {
-    $this->_exec("sudo $this->php_disable_module_command -s cli xdebug");
+    // Only run this on environments configured with xdebug.
+    if (getenv('XDEBUG_CONFIG')) {
+      $this->_exec("sudo $this->php_disable_module_command -s cli xdebug");
+    }
   }
 
   /**
@@ -636,7 +640,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
    */
   protected function setPermissions($file, $permission) {
     if (file_exists($file)) {
-      $this->_exec("$this->sudo_cmd chmod $permission $file");
+      $this->_exec("chmod $permission $file");
     }
   }
 

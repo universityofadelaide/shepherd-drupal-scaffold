@@ -37,7 +37,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
    *
    * @var string
    */
-  protected $phpstanCmd = 'php ./bin/phpstan analyze';
+  protected $phpstanCmd = 'php ./bin/phpstan analyze --no-progress';
 
   protected $php_enable_module_command = 'phpenmod -v ALL';
   protected $php_disable_module_command = 'phpdismod -v ALL';

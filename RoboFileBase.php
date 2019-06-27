@@ -37,7 +37,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
    *
    * @var string
    */
-  protected $phpstanCmd = 'php ./bin/phpstan analyze';
+  protected $phpstanCmd = 'php ./bin/phpstan analyze --no-progress';
 
   protected $php_enable_module_command = 'phpenmod -v ALL';
   protected $php_disable_module_command = 'phpdismod -v ALL';
@@ -616,8 +616,8 @@ abstract class RoboFileBase extends \Robo\Tasks {
    *   An optional path to lint.
    */
   public function lintPhp($path = '') {
-    $this->_exec("$this->phpcsCmd $path");
-    $this->_exec($this->phpstanCmd);
+    $this->checkFail($this->_exec("$this->phpcsCmd $path")->wasSuccessful(), 'Code linting failed');
+    $this->checkFail($this->_exec($this->phpstanCmd)->wasSuccessful(), 'Code analyzing failed');
   }
 
   /**

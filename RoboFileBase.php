@@ -196,6 +196,64 @@ abstract class RoboFileBase extends \Robo\Tasks {
   }
 
   /**
+   * Pull assets into theme from style guide.
+   *
+   * @param string $ref
+   *   The git repo.
+   */
+  public function themeUpdate($ref = 'master') {
+    $git_remote = 'git@gitlab.adelaide.edu.au:web-team/ua-styleguide-v2-theme.git';
+    $styleguide_path = '/tmp/ua-stylguide-v2/';
+    $local_theme_path = 'web/themes/contrib/ua_foundation/dist/';
+
+    $this->taskDeleteDir($styleguide_path)->run();
+
+    $this->taskGitStack()
+      ->cloneRepo($git_remote, $styleguide_path, $ref)
+      ->run();
+
+    // Copy folders to theme.
+    foreach ($this->themeFolders as $folder) {
+      $this->taskDeleteDir([$local_theme_path . $folder])->run();
+      $this->taskCopyDir([$styleguide_path . $folder => $local_theme_path . $folder])->run();
+    }
+
+    $this->taskDeleteDir($styleguide_path)->run();
+    $this->devCacheRebuild();
+  }
+
+  /**
+   * Pull assets into theme from style guide.
+   *
+   * Pulls directly from the styleguide repo for easy testing of new features.
+   *
+   * @param string $ref
+   *   The git repo.
+   */
+  public function devThemeUpdate($ref = 'develop') {
+    $git_remote = 'git@gitlab.adelaide.edu.au:web-team/ua-styleguide-v2.git';
+    $styleguide_path = '/tmp/ua-styleguide-v2/';
+    $local_theme_path = 'web/themes/contrib/ua_foundation/dist/';
+
+    $this->taskDeleteDir($styleguide_path)->run();
+
+    $this->taskGitStack()
+      // Shallow clone to get around massive commit messages slowing down the
+      // clone.
+      ->cloneShallow($git_remote, $styleguide_path, $ref)
+      ->run();
+
+    // Copy folders to theme.
+    foreach ($this->themeFolders as $folder) {
+      $this->taskDeleteDir([$local_theme_path . $folder])->run();
+      $this->taskCopyDir([$styleguide_path . 'src/assets/' . $folder => $local_theme_path . $folder])->run();
+    }
+
+    $this->taskDeleteDir($styleguide_path)->run();
+    $this->devCacheRebuild();
+  }
+
+  /**
    * Set the owner and group of all files in the files dir to the web user.
    */
   public function buildSetFilesOwner() {

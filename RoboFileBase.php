@@ -85,6 +85,13 @@ abstract class RoboFileBase extends \Robo\Tasks {
   protected $configIgnoreList = '/code/drush/config-ignore.yml';
 
   /**
+   * An array of theme folders to copy.
+   *
+   * @var array
+   */
+  protected $themeFolders = ['img', 'fonts', 'css', 'js'];
+
+  /**
    * Initialize config variables and apply overrides.
    */
   public function __construct() {

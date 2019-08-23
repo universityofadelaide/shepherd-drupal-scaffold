@@ -1,0 +1,12 @@
+#!/bin/bash
+#
+# Helper script that is run inside docker to setup ssh access
+# for mac (linux happens automatically)
+#
+
+if ! ssh-add -l; then
+  eval $(ssh-agent -s)
+  ssh-add ~/.ssh/id_rsa
+fi
+
+bash -l

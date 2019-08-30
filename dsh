@@ -65,7 +65,7 @@ dsh_shell() {
   docker-compose -f ${DOCKER_COMPOSE_FILE} exec \
    -e COLUMNS="$(tput cols)" \
    -e LINES="$(tput lines)" \
-   web ${@:-/bin/bash}
+   web ${@:-./dsh_bash}
 }
 
 # Command: ./dsh stop

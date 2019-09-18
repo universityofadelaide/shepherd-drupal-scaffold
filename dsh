@@ -21,6 +21,11 @@ else
   export DOCKER_COMPOSE_FILE='docker-compose.linux.yml'
 fi
 
+# Ultimately permit overriding repo docker-compose.yml with custom file.
+if [ -f docker-compose.yml ]; then
+  export DOCKER_COMPOSE_FILE='docker-compose.yml'
+fi
+
 # Set user variables
 export USER_ID=$(id -u ${USER})
 export GROUP_ID=$(id -g ${USER})

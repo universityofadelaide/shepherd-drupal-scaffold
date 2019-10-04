@@ -474,7 +474,12 @@ abstract class RoboFileBase extends \Robo\Tasks {
    * @see https://github.com/previousnext/drush_cmi_tools
    */
   public function configImportPlus() {
-    $this->_exec("$this->drush_cmd cimy -y --source=$this->configDir --install=$this->configInstallDir --delete-list=$this->configDeleteList");
+    $successful = $this->_exec("$this->drush_cmd cimy -y \
+      --source=$this->configDir \
+      --install=$this->configInstallDir \
+      --delete-list=$this->configDeleteList")
+      ->wasSuccessful();
+    $this->checkFail($successful, 'Config import failed.');
   }
 
   /**

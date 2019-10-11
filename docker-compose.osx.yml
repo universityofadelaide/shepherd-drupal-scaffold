@@ -38,7 +38,7 @@ services:
     volumes:
       - nfsmount:/code
       - ./shared:/shared
-      - $HOME/.ssh/id_rsa:/root/.ssh/id_rsa
+      - $HOME/.ssh:/home/www-data/.ssh
 
   xdebug:
     image: nickschuch/d4m-tcp-forwarder

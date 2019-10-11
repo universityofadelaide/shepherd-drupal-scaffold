@@ -21,6 +21,11 @@ else
   export DOCKER_COMPOSE_FILE='docker-compose.linux.yml'
 fi
 
+# Ultimately permit overriding repo docker-compose.yml with custom file.
+if [ -f docker-compose.yml ]; then
+  export DOCKER_COMPOSE_FILE='docker-compose.yml'
+fi
+
 # Set user variables
 export USER_ID=$(id -u ${USER})
 export GROUP_ID=$(id -g ${USER})
@@ -65,7 +70,7 @@ dsh_shell() {
   docker-compose -f ${DOCKER_COMPOSE_FILE} exec \
    -e COLUMNS="$(tput cols)" \
    -e LINES="$(tput lines)" \
-   web ${@:-/bin/bash}
+   web ${@:-./dsh_bash}
 }
 
 # Command: ./dsh stop
@@ -111,6 +116,8 @@ dsh_project() {
 # Command: ./dsh pull
 # Fetches all images used by the project.
 dsh_pull() {
+  # docker-compose doesn't resolve sub-dependencies in Dockerfiles.
+  docker pull uofa/s2i-shepherd-drupal
   docker-compose -f ${DOCKER_COMPOSE_FILE} pull --ignore-pull-failures
   docker-compose -f ${DOCKER_COMPOSE_FILE} build
 }

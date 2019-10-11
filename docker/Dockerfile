@@ -4,6 +4,7 @@ FROM uofa/s2i-shepherd-drupal
 
 ARG USER_ID
 ARG GROUP_ID
+ARG PHP_VERSION="7.2"
 
 # Need to switch from www-data to root to do the change of uid
 USER 0:0
@@ -30,15 +31,15 @@ fi
 
 # Upgrade all currently installed packages and install additional packages.
 RUN apt-get update \
-&& apt-get -y install php-sqlite3 php-xdebug php7.2-cli git wget sudo unzip libnotify-bin vim \
-&& sed -ri 's/^zend.assertions\s*=\s*-1/zend.assertions = 1/g' /etc/php/7.2/cli/php.ini \
-&& sed -i 's/^\(allow_url_fopen\s*=\s*\).*$/\1on/g' /etc/php/7.2/mods-available/php_custom.ini \
+&& apt-get -y install php-sqlite3 php-xdebug php-cli git wget sudo unzip libnotify-bin vim \
+&& sed -ri 's/^zend.assertions\s*=\s*-1/zend.assertions = 1/g' /etc/php/${PHP_VERSION}/cli/php.ini \
+&& sed -i 's/^\(allow_url_fopen\s*=\s*\).*$/\1on/g' /etc/php/${PHP_VERSION}/mods-available/php_custom.ini \
 && apt-get -y autoremove && apt-get -y autoclean && apt-get clean && rm -rf /var/lib/apt/lists /tmp/* /var/tmp/*
 
 # Install Composer.
 RUN wget -q https://getcomposer.org/installer -O - | php -d allow_url_fopen=On -- --install-dir=/usr/local/bin --filename=composer
 
-COPY ./docker/xdebug.ini /etc/php/7.2/mods-available/xdebug.ini
+COPY ./docker/xdebug.ini /etc/php/${PHP_VERSION}/mods-available/xdebug.ini
 
 RUN echo "www-data ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/www-data
 

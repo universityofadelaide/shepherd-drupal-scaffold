@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+# Helper script that is run inside docker to setup ssh access
+# for mac (linux happens automatically)
+#
+
+# Try setup for linux
+export SSH_AUTH_SOCK=/ssh/ssh
+
+# Check if we have any identities, if not, try and setup
+if ! ssh-add -l > /dev/null; then
+  eval $(ssh-agent -s)
+  ssh-add ~/.ssh/id_rsa
+fi
+
+# Drop user into bash
+bash -l

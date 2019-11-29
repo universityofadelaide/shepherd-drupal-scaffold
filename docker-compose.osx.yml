@@ -19,10 +19,10 @@ services:
       - "11211:11211"
     environment:
       HASH_SALT: random-hash
-      MEMCACHE_ENABLED: 0
+      MEMCACHE_ENABLED: 1
       PHP_IDE_CONFIG: serverName=localhost
       PUBLIC_DIR: /shared/public
-      REDIS_ENABLED: 1
+      REDIS_ENABLED: 0
       # REDIS_PASSWORD: testing
       SHEPHERD_INSTALL_PROFILE: ua
       SHEPHERD_SITE_ID: 2

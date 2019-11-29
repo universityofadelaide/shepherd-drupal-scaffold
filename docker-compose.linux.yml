@@ -19,7 +19,6 @@ services:
       PUBLIC_DIR: /shared/public
       REDIS_ENABLED: 0
       REDIS_HOST: redis
-      # REDIS_PASSWORD: testing
       SHEPHERD_SITE_ID: 2
       SHEPHERD_INSTALL_PROFILE: ua
       SHEPHERD_SECRET_PATH: /code/private
@@ -63,12 +62,6 @@ services:
 
   redis:
     image: redis:alpine
-    command: |
-      redis-server
-      --maxmemory 512mb
-      --maxmemory-policy allkeys-lru
-      --save ""
-    # --requirepass password
     networks:
       - default
 

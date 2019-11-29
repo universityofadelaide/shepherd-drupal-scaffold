@@ -23,7 +23,7 @@ services:
       PHP_IDE_CONFIG: serverName=localhost
       PUBLIC_DIR: /shared/public
       REDIS_ENABLED: 0
-      # REDIS_PASSWORD: testing
+      REDIS_HOST: redis
       SHEPHERD_INSTALL_PROFILE: ua
       SHEPHERD_SITE_ID: 2
       SHEPHERD_SECRET_PATH: /code/private
@@ -61,12 +61,6 @@ services:
 
   redis:
     image: redis:alpine
-    command: |
-      redis-server
-      --maxmemory 512mb
-      --maxmemory-policy allkeys-lru
-      --save ""
-    # --requirepass password
     network_mode: service:web
 
   memcached:

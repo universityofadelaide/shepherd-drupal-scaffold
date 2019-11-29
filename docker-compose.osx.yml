@@ -22,8 +22,6 @@ services:
       MEMCACHE_ENABLED: 1
       PHP_IDE_CONFIG: serverName=localhost
       PUBLIC_DIR: /shared/public
-      REDIS_ENABLED: 0
-      # REDIS_PASSWORD: testing
       SHEPHERD_INSTALL_PROFILE: ua
       SHEPHERD_SITE_ID: 2
       SHEPHERD_SECRET_PATH: /code/private
@@ -57,16 +55,6 @@ services:
 
   mail:
     image: mailhog/mailhog
-    network_mode: service:web
-
-  redis:
-    image: redis:alpine
-    command: |
-      redis-server
-      --maxmemory 512Mi
-      --maxmemory-policy allkeys-lru
-      --save ""
-    # --requirepass password
     network_mode: service:web
 
   memcached:

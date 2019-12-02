@@ -12,7 +12,7 @@ services:
     ports:
       - "80:8080"
     environment:
-      DATABASE_HOST: db
+      DATABASE_HOST: 127.0.0.1
       DATABASE_USER: user
       DATABASE_PASSWORD: password
       HASH_SALT: random-hash
@@ -53,8 +53,7 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: super-secret-password
-    networks:
-      - default
+    network_mode: service:web
 
   mail:
     image: mailhog/mailhog
@@ -93,7 +92,7 @@ services:
       - default
 
   selenium:
-    image: selenium/standalone-chrome:3.141.59-oxygen
+    image: selenium/standalone-chrome:latest
     volumes:
       - /dev/shm:/dev/shm
     network_mode: service:web

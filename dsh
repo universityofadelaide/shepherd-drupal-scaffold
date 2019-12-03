@@ -3,6 +3,12 @@
 # `set +e` is used to continue on errors throughout this script.
 set -euo pipefail
 
+# Ensure script is NOT running inside a container - must be run from host.
+if [ -f /.dockerenv ]; then
+  echo "Inception error - you can't run $0 within a docker container."
+  exit
+fi
+
 # Used as the prefix for docker networking, container naming and nginx hostname.
 export PROJECT=$(basename ${PWD})
 # docker-compose stopped stripping chars from project name in 1.21.0.
@@ -42,12 +48,6 @@ warning() {
 error() {
   printf "\e[31;01m$1\e[39;49;00m\n"
 }
-
-# Ensure script is NOT running inside a container - must be run from host.
-if [ -f /.dockerenv ]; then
-  error "Inception error - you can't run $0 within a docker container."
-  exit
-fi
 
 # Command: ./dsh start
 # Configures environment then brings up project using docker-compose.yml file.

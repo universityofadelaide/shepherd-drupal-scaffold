@@ -210,6 +210,9 @@ class Handler
             "  \$settings['reverse_proxy_port_header'] = getenv('SHEPHERD_REVERSE_PROXY_PORT_HEADER') ?: 'X_FORWARDED_PORT';\n" .
             "  \$settings['reverse_proxy_forwarded_header'] = getenv('SHEPHERD_REVERSE_PROXY_FORWARDED_HEADER') ?: 'FORWARDED';\n" .
             "}\n" .
+            "if (getenv('TRUSTED_HOST_PATTERNS')) {\n" .
+            "  \$settings['trusted_host_patterns'] = !empty(getenv('TRUSTED_HOST_PATTERNS')) ? explode(',', getenv('TRUSTED_HOST_PATTERNS')) : [];\n" .
+            "}\n" .
             "/**\n * END SHEPHERD CONFIG\n */\n" .
             "\n" .
             "/**\n * START LOCAL CONFIG\n */\n" .

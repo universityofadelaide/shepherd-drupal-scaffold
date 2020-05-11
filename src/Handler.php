@@ -161,7 +161,7 @@ class Handler
             "  'namespace' => getenv('DATABASE_NAMESPACE') ?: 'Drupal\\\\Core\\\\Database\\\\Driver\\\\mysql',\n" .
             ");\n" .
             "\$settings['file_private_path'] = getenv('PRIVATE_DIR') ?: '/shared/private';\n" .
-            "\$settings['file_temporary_path'] = getenv('TMP_DIR') ?: '/shared/tmp';\n" .
+            "\$settings['file_temp_path'] = getenv('TMP_DIR') ?: '/shared/tmp';\n" .
             "\$settings['hash_salt'] = getenv('HASH_SALT') ?: '" . str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(random_bytes(55))) . "';\n" .
             "\$config_directories['sync'] = DRUPAL_ROOT . '/../config-export';\n" .
             "\$settings['shepherd_site_id'] = getenv('SHEPHERD_SITE_ID');\n" .
@@ -209,6 +209,9 @@ class Handler
             "  \$settings['reverse_proxy_host_header'] = getenv('SHEPHERD_REVERSE_PROXY_HOST_HEADER') ?: 'X_FORWARDED_HOST';\n" .
             "  \$settings['reverse_proxy_port_header'] = getenv('SHEPHERD_REVERSE_PROXY_PORT_HEADER') ?: 'X_FORWARDED_PORT';\n" .
             "  \$settings['reverse_proxy_forwarded_header'] = getenv('SHEPHERD_REVERSE_PROXY_FORWARDED_HEADER') ?: 'FORWARDED';\n" .
+            "}\n" .
+            "if (getenv('TRUSTED_HOST_PATTERNS')) {\n" .
+            "  \$settings['trusted_host_patterns'] = !empty(getenv('TRUSTED_HOST_PATTERNS')) ? explode(',', getenv('TRUSTED_HOST_PATTERNS')) : [];\n" .
             "}\n" .
             "/**\n * END SHEPHERD CONFIG\n */\n" .
             "\n" .

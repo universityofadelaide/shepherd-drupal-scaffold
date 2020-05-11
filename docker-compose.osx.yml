@@ -85,7 +85,7 @@ services:
     network_mode: service:web
 
   selenium:
-    image: selenium/standalone-chrome:3.141.59-oxygen
+    image: selenium/standalone-chrome:latest
     network_mode: service:web
     volumes:
       - /dev/shm:/dev/shm

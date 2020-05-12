@@ -4,7 +4,7 @@ FROM uofa/s2i-shepherd-drupal
 
 ARG USER_ID
 ARG GROUP_ID
-ARG PHP_VERSION="7.2"
+ARG PHP_VERSION="7.4"
 
 # Need to switch from www-data to root to do the change of uid
 USER 0:0

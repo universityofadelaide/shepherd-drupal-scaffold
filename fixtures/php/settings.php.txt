@@ -1,0 +1,84 @@
+/**
+ * START SHEPHERD CONFIG
+ */
+$databases['default']['default'] = array (
+  'database' => getenv('DATABASE_NAME') ?: 'drupal',
+  'username' => getenv('DATABASE_USER') ?: 'user',
+  'password' => getenv('DATABASE_PASSWORD_FILE') ? file_get_contents(getenv('DATABASE_PASSWORD_FILE')) : 'password',
+  'host' => getenv('DATABASE_HOST') ?: '127.0.0.1',
+  'port' => getenv('DATABASE_PORT') ?: '3306',
+  'driver' => getenv('DATABASE_DRIVER') ?: 'mysql',
+  'prefix' => getenv('DATABASE_PREFIX') ?: '',
+  'collation' => getenv('DATABASE_COLLATION') ?: 'utf8mb4_general_ci',
+  'namespace' => getenv('DATABASE_NAMESPACE') ?: 'Drupal\\Core\\Database\\Driver\\mysql',
+);
+$settings['file_private_path'] = getenv('PRIVATE_DIR') ?: '/shared/private';
+$settings['file_temp_path'] = getenv('TMP_DIR') ?: '/shared/tmp';
+$settings['hash_salt'] = getenv('HASH_SALT') ?: str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(random_bytes(55)));
+$config_directories['sync'] = DRUPAL_ROOT . '/../config-export';
+$settings['shepherd_site_id'] = getenv('SHEPHERD_SITE_ID');
+$settings['shepherd_url'] = getenv('SHEPHERD_URL');
+$settings['shepherd_token'] = getenv('SHEPHERD_TOKEN_FILE') ? file_get_contents(getenv('SHEPHERD_TOKEN_FILE')) : getenv('SHEPHERD_TOKEN');
+
+if (getenv('REDIS_ENABLED')) {
+  $settings['redis.connection']['interface'] = 'PhpRedis';
+  $settings['redis.connection']['host'] = getenv('REDIS_HOST') ?: '127.0.0.1';
+  // Always set the fast backend for bootstrap, discover and config, otherwise
+  // this gets lost when redis is enabled.
+  $settings['cache']['bins']['bootstrap'] = 'cache.backend.chainedfast';
+  $settings['cache']['bins']['discovery'] = 'cache.backend.chainedfast';
+  $settings['cache']['bins']['config'] = 'cache.backend.chainedfast';
+
+  $settings['cache_prefix']['default'] = getenv('REDIS_PREFIX') ?: '';
+  // If we're not installing, include the redis services.
+  if (!isset($GLOBALS['install_state'])) {
+    $settings['cache']['default'] = 'cache.backend.redis';
+    $settings['container_yamls'][] = 'modules/contrib/redis/example.services.yml';
+  }
+  if (getenv('REDIS_PASSWORD_FILE') || getenv('REDIS_PASSWORD')) {
+    $settings['redis.connection']['password'] = getenv('REDIS_PASSWORD_FILE') ? file_get_contents(getenv('REDIS_PASSWORD_FILE')) : getenv('REDIS_PASSWORD');
+  }
+}
+if (getenv('MEMCACHE_ENABLED')) {
+  $settings['memcache']['servers'] = [getenv('MEMCACHE_HOST') . ':11211' => 'default'] ?: ['127.0.0.1:11211' => 'default'];
+  $settings['memcache']['bins'] = ['default' => 'default'];
+  $settings['memcache']['key_prefix'] = '';
+  // If we're not installing, include the memcache services.
+  if (!isset($GLOBALS['install_state'])) {
+    $settings['cache']['default'] = 'cache.backend.memcache';
+  }
+}
+if (getenv('SHEPHERD_SECRET_PATH')) {
+  $settings['shepherd_secrets'] = [];
+  // Glob the secret path for secrets, that match pattern
+  foreach ( glob( rtrim(getenv('SHEPHERD_SECRET_PATH'),DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'SHEPHERD_*') as $secret) {
+    $settings['shepherd_secrets'][pathinfo($secret)['filename']] = file_get_contents($secret);
+  }
+}
+if (getenv('SHEPHERD_REVERSE_PROXY')) {
+  $settings['reverse_proxy'] = TRUE;
+  $settings['reverse_proxy_header'] = getenv('SHEPHERD_REVERSE_PROXY_HEADER') ?: 'X_CLUSTER_CLIENT_IP';
+  $settings['reverse_proxy_addresses'] = !empty(getenv('SHEPHERD_REVERSE_PROXY_ADDRESSES')) ? explode(',', getenv('SHEPHERD_REVERSE_PROXY_ADDRESSES')) : [];
+  $settings['reverse_proxy_proto_header'] = getenv('SHEPHERD_REVERSE_PROXY_PROTO_HEADER') ?: 'X_FORWARDED_PROTO';
+  $settings['reverse_proxy_host_header'] = getenv('SHEPHERD_REVERSE_PROXY_HOST_HEADER') ?: 'X_FORWARDED_HOST';
+  $settings['reverse_proxy_port_header'] = getenv('SHEPHERD_REVERSE_PROXY_PORT_HEADER') ?: 'X_FORWARDED_PORT';
+  $settings['reverse_proxy_forwarded_header'] = getenv('SHEPHERD_REVERSE_PROXY_FORWARDED_HEADER') ?: 'FORWARDED';
+}
+if (getenv('TRUSTED_HOST_PATTERNS')) {
+  $settings['trusted_host_patterns'] = !empty(getenv('TRUSTED_HOST_PATTERNS')) ? explode(',', getenv('TRUSTED_HOST_PATTERNS')) : [];
+}
+/**
+ * END SHEPHERD CONFIG
+ */
+
+/**
+ * START LOCAL CONFIG.
+ *
+ * Create a settings.local.php file on your dev environment and do not commit.
+ */
+if (file_exists(__DIR__ . '/settings.local.php')) {
+  include __DIR__ . '/settings.local.php';
+}
+/**
+ * END LOCAL CONFIG
+ */

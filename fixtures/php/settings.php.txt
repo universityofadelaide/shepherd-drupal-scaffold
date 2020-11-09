@@ -72,6 +72,18 @@ if (getenv('TRUSTED_HOST_PATTERNS')) {
  */
 
 /**
+ * START APP CONFIG
+ *
+ * A settings file with settings and configuration specific to this app/website.
+ */
+if (file_exists(__DIR__ . '/settings.app.php')) {
+  include __DIR__ . '/settings.app.php';
+}
+/**
+ * END APP CONFIG
+ */
+
+/**
  * START LOCAL CONFIG.
  *
  * Create a settings.local.php file on your dev environment and do not commit.

@@ -47,7 +47,7 @@ RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
     && rm -rf /tmp/blackfire /tmp/blackfire-probe.tar.gz
 
 # Install Composer.
-RUN wget -q https://getcomposer.org/installer -O - | php -d allow_url_fopen=On -- --install-dir=/usr/local/bin --filename=composer
+RUN wget -q https://getcomposer.org/installer -O - | php -d allow_url_fopen=On -- --install-dir=/usr/local/bin --filename=composer --1
 
 COPY ./docker/xdebug.ini /etc/php/${PHP_VERSION}/mods-available/xdebug.ini
 

@@ -162,6 +162,9 @@ class Handler
             ");\n" .
             "\$settings['file_private_path'] = getenv('PRIVATE_DIR') ?: '/shared/private';\n" .
             "\$settings['file_temp_path'] = getenv('TMP_DIR') ?: '/shared/tmp';\n" .
+            "\$settings['php_storage']['twig'] = [\n" .
+            "  'directory' => (getenv('LOCAL_DIR') ?: DRUPAL_ROOT . '/..') . '/.php',\n" .
+            "];\n" .
             "\$settings['hash_salt'] = getenv('HASH_SALT') ?: '" . str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(random_bytes(55))) . "';\n" .
             "\$config_directories['sync'] = DRUPAL_ROOT . '/../config-export';\n" .
             "\$settings['shepherd_site_id'] = getenv('SHEPHERD_SITE_ID');\n" .

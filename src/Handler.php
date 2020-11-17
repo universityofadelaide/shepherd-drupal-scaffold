@@ -148,7 +148,7 @@ class Handler
      */
     public function generateSettings()
     {
-      return file_get_contents(__DIR__ . '../fixtures/php/settings.php.txt');
+      return file_get_contents(__DIR__ . '/../fixtures/php/settings.php.txt');
     }
 
     /**

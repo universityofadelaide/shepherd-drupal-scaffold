@@ -19,11 +19,10 @@ services:
       - "11211:11211"
     environment:
       HASH_SALT: random-hash
-      MEMCACHE_ENABLED: 0
+      MEMCACHE_ENABLED: 1
       PHP_IDE_CONFIG: serverName=localhost
       PUBLIC_DIR: /shared/public
-      REDIS_ENABLED: 1
-      # REDIS_PASSWORD: testing
+      REDIS_ENABLED: 0
       SHEPHERD_INSTALL_PROFILE: ua
       SHEPHERD_SITE_ID: 2
       SHEPHERD_SECRET_PATH: /code/private
@@ -61,27 +60,10 @@ services:
 
   redis:
     image: redis:alpine
-    command: |
-      redis-server
-      --maxmemory 512mb
-      --maxmemory-policy allkeys-lru
-      --save ""
-    # --requirepass password
     network_mode: service:web
 
   memcached:
-    image: jboss/infinispan-server:9.4.11.Final
-    environment:
-      APP_USER: user
-      APP_PASS: pass
-      MGMT_USER: admin
-      MGMT_PASS: admin
-    entrypoint:
-      - docker-entrypoint.sh
-      - -c
-      - standalone-memcached.xml
-    volumes:
-      - ./docker/standalone-memcached.xml:/opt/jboss/infinispan-server/standalone/configuration/standalone-memcached.xml
+    image: memcachedLalpine
     network_mode: service:web
 
   selenium:

@@ -63,7 +63,7 @@ services:
     network_mode: service:web
 
   memcached:
-    image: memcachedLalpine
+    image: memcached:alpine
     network_mode: service:web
 
   selenium:

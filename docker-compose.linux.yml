@@ -62,11 +62,19 @@ services:
 
   redis:
     image: redis:alpine
+    command: |
+      redis-server
+      --maxmemory 256m
+      --maxmemory-policy allkeys-lru
+      --save ""
     networks:
       - default
 
   memcached:
     image: memcached:alpine
+    command: |
+      memcached
+      -m 256
     networks:
       - default
 

@@ -60,10 +60,18 @@ services:
 
   redis:
     image: redis:alpine
+    command: |
+      redis-server
+      --maxmemory 256m
+      --maxmemory-policy allkeys-lru
+      --save ""
     network_mode: service:web
 
   memcached:
     image: memcached:alpine
+    command: |
+      memcached
+      -m 256
     network_mode: service:web
 
   selenium:

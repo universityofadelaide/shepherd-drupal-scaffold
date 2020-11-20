@@ -50,6 +50,9 @@ RUN wget -q https://getcomposer.org/installer -O - | php -d allow_url_fopen=On -
 
 COPY ./docker/xdebug.ini /etc/php/${PHP_VERSION}/mods-available/xdebug.ini
 
+# Overwrite the prod custom ini with a version with dev settings.
+COPY ./docker/php_custom.ini /etc/php/${PHP_VERSION}/mods-available/php_custom.ini
+
 RUN echo "www-data ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/www-data
 
 # Enable xdebug.

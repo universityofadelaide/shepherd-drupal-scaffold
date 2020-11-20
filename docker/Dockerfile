@@ -33,7 +33,6 @@ fi
 RUN apt-get update \
 && apt-get -y install php-sqlite3 php-xdebug php-cli git wget sudo unzip libnotify-bin vim \
 && sed -ri 's/^zend.assertions\s*=\s*-1/zend.assertions = 1/g' /etc/php/${PHP_VERSION}/cli/php.ini \
-&& sed -i 's/^\(allow_url_fopen\s*=\s*\).*$/\1on/g' /etc/php/${PHP_VERSION}/mods-available/php_custom.ini \
 && apt-get -y autoremove && apt-get -y autoclean && apt-get clean && rm -rf /var/lib/apt/lists /tmp/* /var/tmp/*
 
 # Blackfire

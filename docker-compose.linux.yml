@@ -13,13 +13,12 @@ services:
       - "80:8080"
     environment:
       HASH_SALT: random-hash
-      MEMCACHE_ENABLED: 0
+      MEMCACHE_ENABLED: 1
       MEMCACHE_HOST: memcached
       PHP_IDE_CONFIG: serverName=${PROJECT}.${DOMAIN}
       PUBLIC_DIR: /shared/public
-      REDIS_ENABLED: 1
+      REDIS_ENABLED: 0
       REDIS_HOST: redis
-      # REDIS_PASSWORD: testing
       SHEPHERD_SITE_ID: 2
       SHEPHERD_INSTALL_PROFILE: ua
       SHEPHERD_SECRET_PATH: /code/private
@@ -65,28 +64,17 @@ services:
     image: redis:alpine
     command: |
       redis-server
-      --maxmemory 512mb
+      --maxmemory 256m
       --maxmemory-policy allkeys-lru
       --save ""
-    # --requirepass password
     networks:
       - default
 
   memcached:
-    image: jboss/infinispan-server:9.4.11.Final
-    ports:
-      - "9990:9990"
-    environment:
-      APP_USER: user
-      APP_PASS: pass
-      MGMT_USER: admin
-      MGMT_PASS: admin
-    entrypoint:
-      - docker-entrypoint.sh
-      - -c
-      - standalone-memcached.xml
-    volumes:
-      - ./docker/standalone-memcached.xml:/opt/jboss/infinispan-server/standalone/configuration/standalone-memcached.xml
+    image: memcached:alpine
+    command: |
+      memcached
+      -m 256
     networks:
       - default
 

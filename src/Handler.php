@@ -86,7 +86,6 @@ class Handler
                 'dsh_bash',
                 'phpcs.xml',
                 'RoboFile.php',
-                'docker/standalone-memcached.xml',
                 'docker/Dockerfile',
                 'docker/xdebug.ini',
             ]

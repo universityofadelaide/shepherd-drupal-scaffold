@@ -199,7 +199,10 @@ abstract class RoboFileBase extends \Robo\Tasks {
    * Set the owner and group of all files in the files dir to the web user.
    */
   public function buildSetFilesOwner() {
-    foreach ([$this->file_public_path, $this->file_private_path, $this->file_temp_path] as $path) {
+    $publicDir = getenv('PUBLIC_DIR') ?: $this->file_public_path;
+    $privateDir = getenv('PRIVATE_DIR') ?: $this->file_private_path;
+    $tmpDir = getenv('TMP_DIR') ?: $this->file_temp_path;
+    foreach ([$publicDir, $privateDir, $tmpDir] as $path) {
       $this->say("Ensuring all directories exist.");
       $this->_exec("mkdir -p $path");
       $this->say("Setting files directory owner.");

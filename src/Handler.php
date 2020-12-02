@@ -88,6 +88,7 @@ class Handler
                 'RoboFile.php',
                 'docker/Dockerfile',
                 'docker/xdebug.ini',
+                'docker/php_custom.ini',
             ]
         );
     }

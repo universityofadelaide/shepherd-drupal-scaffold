@@ -148,11 +148,11 @@ abstract class RoboFileBase extends \Robo\Tasks {
     $this->devXdebugDisable();
     $this->devComposerValidate();
     $this->buildMake();
-    $this->buildSetFilesOwner();
+    $this->ensureDirectories();
     $this->buildInstall();
     $this->configImportPlus();
     $this->devCacheRebuild();
-    $this->buildSetFilesOwner();
+    $this->ensureDirectories();
     $this->devXdebugEnable();
     $this->say('Total build duration: ' . date_diff(new DateTime(), $start)->format('%im %Ss'));
   }
@@ -193,7 +193,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
   /**
    * Set the owner and group of all files in the files dir to the web user.
    */
-  public function buildSetFilesOwner() {
+  public function ensureDirectories() {
     $publicDir = getenv('PUBLIC_DIR') ?: $this->file_public_path;
     $privateDir = getenv('PRIVATE_DIR') ?: $this->file_private_path;
     $tmpDir = getenv('TMP_DIR') ?: $this->file_temp_path;
@@ -203,6 +203,15 @@ abstract class RoboFileBase extends \Robo\Tasks {
       $this->say("Setting directory permissions.");
       $this->setPermissions($path, '0775');
     }
+  }
+
+  /**
+   * Set the owner and group of all files in the files dir to the web user.
+   *
+   * @deprecated Use ::ensureDirectories instead.
+   */
+  public function buildSetFilesOwner() {
+    $this->ensureDirectories();
   }
 
   /**

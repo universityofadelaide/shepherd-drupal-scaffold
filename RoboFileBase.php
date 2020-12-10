@@ -13,7 +13,6 @@
 abstract class RoboFileBase extends \Robo\Tasks {
 
   protected $drush_cmd;
-  protected $local_user;
 
   protected $drush_bin = "bin/drush";
   protected $composer_bin = "composer";
@@ -42,14 +41,11 @@ abstract class RoboFileBase extends \Robo\Tasks {
   protected $php_enable_module_command = 'phpenmod -v ALL';
   protected $php_disable_module_command = 'phpdismod -v ALL';
 
-  protected $web_server_user = 'www-data';
-
   protected $application_root = "/code/web";
   protected $file_public_path = '/shared/public';
   protected $file_private_path = '/shared/private';
   protected $file_temp_path = '/shared/tmp';
   protected $services_yml = "web/sites/default/services.yml";
-  protected $settings_php = "web/sites/default/settings.php";
 
   protected $config = [];
 
@@ -89,7 +85,6 @@ abstract class RoboFileBase extends \Robo\Tasks {
    */
   public function __construct() {
     $this->drush_cmd = $this->drush_bin;
-    $this->local_user = $this->getLocalUser();
 
     // Read config from env vars.
     $environment_config = $this->readConfigFromEnv();
@@ -205,8 +200,6 @@ abstract class RoboFileBase extends \Robo\Tasks {
     foreach ([$publicDir, $privateDir, $tmpDir] as $path) {
       $this->say("Ensuring all directories exist.");
       $this->_exec("mkdir -p $path");
-      $this->say("Setting files directory owner.");
-      $this->_exec("chown $this->web_server_user:$this->local_user -R $path");
       $this->say("Setting directory permissions.");
       $this->setPermissions($path, '0775');
     }
@@ -650,17 +643,6 @@ abstract class RoboFileBase extends \Robo\Tasks {
     if (file_exists($file)) {
       $this->_exec("chmod $permission $file");
     }
-  }
-
-  /**
-   * Return the name of the local user.
-   *
-   * @return string
-   *   Returns the current user.
-   */
-  protected function getLocalUser() {
-    $user = posix_getpwuid(posix_getuid());
-    return $user['name'];
   }
 
   /**

@@ -13,7 +13,6 @@
 abstract class RoboFileBase extends \Robo\Tasks {
 
   protected $drush_cmd;
-  protected $local_user;
 
   protected $drush_bin = "bin/drush";
   protected $composer_bin = "composer";
@@ -42,14 +41,11 @@ abstract class RoboFileBase extends \Robo\Tasks {
   protected $php_enable_module_command = 'phpenmod -v ALL';
   protected $php_disable_module_command = 'phpdismod -v ALL';
 
-  protected $web_server_user = 'www-data';
-
   protected $application_root = "/code/web";
   protected $file_public_path = '/shared/public';
   protected $file_private_path = '/shared/private';
   protected $file_temp_path = '/shared/tmp';
   protected $services_yml = "web/sites/default/services.yml";
-  protected $settings_php = "web/sites/default/settings.php";
 
   protected $config = [];
 
@@ -89,7 +85,6 @@ abstract class RoboFileBase extends \Robo\Tasks {
    */
   public function __construct() {
     $this->drush_cmd = $this->drush_bin;
-    $this->local_user = $this->getLocalUser();
 
     // Read config from env vars.
     $environment_config = $this->readConfigFromEnv();
@@ -153,11 +148,11 @@ abstract class RoboFileBase extends \Robo\Tasks {
     $this->devXdebugDisable();
     $this->devComposerValidate();
     $this->buildMake();
-    $this->buildSetFilesOwner();
+    $this->ensureDirectories();
     $this->buildInstall();
     $this->configImportPlus();
     $this->devCacheRebuild();
-    $this->buildSetFilesOwner();
+    $this->ensureDirectories();
     $this->devXdebugEnable();
     $this->say('Total build duration: ' . date_diff(new DateTime(), $start)->format('%im %Ss'));
   }
@@ -198,18 +193,25 @@ abstract class RoboFileBase extends \Robo\Tasks {
   /**
    * Set the owner and group of all files in the files dir to the web user.
    */
-  public function buildSetFilesOwner() {
+  public function ensureDirectories() {
     $publicDir = getenv('PUBLIC_DIR') ?: $this->file_public_path;
     $privateDir = getenv('PRIVATE_DIR') ?: $this->file_private_path;
     $tmpDir = getenv('TMP_DIR') ?: $this->file_temp_path;
     foreach ([$publicDir, $privateDir, $tmpDir] as $path) {
       $this->say("Ensuring all directories exist.");
       $this->_exec("mkdir -p $path");
-      $this->say("Setting files directory owner.");
-      $this->_exec("chown $this->web_server_user:$this->local_user -R $path");
       $this->say("Setting directory permissions.");
       $this->setPermissions($path, '0775');
     }
+  }
+
+  /**
+   * Set the owner and group of all files in the files dir to the web user.
+   *
+   * @deprecated Use ::ensureDirectories instead.
+   */
+  public function buildSetFilesOwner() {
+    $this->ensureDirectories();
   }
 
   /**
@@ -650,17 +652,6 @@ abstract class RoboFileBase extends \Robo\Tasks {
     if (file_exists($file)) {
       $this->_exec("chmod $permission $file");
     }
-  }
-
-  /**
-   * Return the name of the local user.
-   *
-   * @return string
-   *   Returns the current user.
-   */
-  protected function getLocalUser() {
-    $user = posix_getpwuid(posix_getuid());
-    return $user['name'];
   }
 
   /**

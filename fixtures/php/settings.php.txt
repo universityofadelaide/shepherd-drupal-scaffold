@@ -1,7 +1,7 @@
 /**
  * START SHEPHERD CONFIG
  */
-$databases['default']['default'] = array (
+$databases['default']['default'] = [
   'database' => getenv('DATABASE_NAME') ?: 'drupal',
   'username' => getenv('DATABASE_USER') ?: 'user',
   'password' => getenv('DATABASE_PASSWORD_FILE') ? file_get_contents(getenv('DATABASE_PASSWORD_FILE')) : 'password',
@@ -11,7 +11,7 @@ $databases['default']['default'] = array (
   'prefix' => getenv('DATABASE_PREFIX') ?: '',
   'collation' => getenv('DATABASE_COLLATION') ?: 'utf8mb4_general_ci',
   'namespace' => getenv('DATABASE_NAMESPACE') ?: 'Drupal\\Core\\Database\\Driver\\mysql',
-);
+];
 $settings['file_private_path'] = getenv('PRIVATE_DIR') ?: '/shared/private';
 $settings['file_temp_path'] = getenv('TMP_DIR') ?: '/shared/tmp';
 $settings['php_storage']['twig'] = [

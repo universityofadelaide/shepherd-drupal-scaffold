@@ -119,7 +119,7 @@ dsh_pull() {
   # docker-compose doesn't resolve sub-dependencies in Dockerfiles.
   docker pull uofa/s2i-shepherd-drupal
   docker-compose -f ${DOCKER_COMPOSE_FILE} pull --ignore-pull-failures
-  docker-compose -f ${DOCKER_COMPOSE_FILE} build
+  docker-compose -f ${DOCKER_COMPOSE_FILE} build --pull
 }
 
 # Command: ./dsh nfs

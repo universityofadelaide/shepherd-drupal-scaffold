@@ -6,8 +6,8 @@
     "require": {
         "php": ">=7.0",
         "composer-plugin-api": "^1.1",
-        "composer/semver": "^1.4",
-        "drupal-composer/drupal-scaffold": "^2.2",
+        "composer/semver": "^3",
+        "drupal/core-composer-scaffold": "^9",
         "symfony/filesystem": "~3.0 || ^4.0"
     },
     "config": {

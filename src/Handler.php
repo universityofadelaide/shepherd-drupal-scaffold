@@ -81,8 +81,6 @@ class Handler
             [
                 'docker-compose.linux.yml',
                 'docker-compose.osx.yml',
-                'drush/config-delete.yml',
-                'drush/config-ignore.yml',
                 'dsh_bash',
                 'phpcs.xml',
                 'RoboFile.php',

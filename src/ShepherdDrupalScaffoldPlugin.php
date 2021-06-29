@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains UniversityOfAdelaide\ShepherdDrupalScaffold\Plugin.
- */
 
 namespace UniversityOfAdelaide\ShepherdDrupalScaffold;
 
@@ -21,17 +17,17 @@ class ShepherdDrupalScaffoldPlugin implements PluginInterface, EventSubscriberIn
 
     protected Handler $handler;
 
-    /**
-     * {@inheritdoc}
-     */
     public function activate(Composer $composer, IOInterface $io)
     {
         $this->handler = new Handler($composer, $io);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    public function deactivate(Composer $composer, IOInterface $io) {
+    }
+
+    public function uninstall(Composer $composer, IOInterface $io) {
+    }
+
     public static function getSubscribedEvents()
     {
         return array(

@@ -10,19 +10,16 @@ use Composer\Composer;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
+use Composer\Script\Event;
 use Composer\Script\ScriptEvents;
-use Composer\Util\RemoteFilesystem;
 
 /**
  * Composer plugin for handling Shepherd Drupal scaffold.
  */
-class Plugin implements PluginInterface, EventSubscriberInterface
+class ShepherdDrupalScaffoldPlugin implements PluginInterface, EventSubscriberInterface
 {
 
-    /**
-     * @var \UniversityOfAdelaide\ShepherdDrupalScaffold\Handler
-     */
-    protected $handler;
+    protected Handler $handler;
 
     /**
      * {@inheritdoc}
@@ -38,17 +35,14 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            // ScriptEvents::POST_INSTALL_CMD => 'postCmd',
             ScriptEvents::POST_UPDATE_CMD => 'postCmd',
         );
     }
 
     /**
     * Post command event callback.
-    *
-    * @param \Composer\Script\Event $event
     */
-    public function postCmd(\Composer\Script\Event $event)
+    public function postCmd(Event $event)
     {
         $this->handler->onPostCmdEvent($event);
     }
@@ -57,10 +51,8 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     /**
      * Script callback for putting in composer scripts to download the
      * scaffold files.
-     *
-     * @param \Composer\Script\Event $event
     */
-    public static function scaffold(\Composer\Script\Event $event)
+    public static function scaffold(Event $event)
     {
         $handler = new Handler($event->getComposer(), $event->getIO());
         $handler->onPostCmdEvent($event);

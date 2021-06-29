@@ -4,10 +4,11 @@
     "type": "composer-plugin",
     "license": "GPL-2.0+",
     "require": {
-        "php": ">=7.0",
-        "composer-plugin-api": "^1.1",
-        "composer/semver": "^1.4",
-        "symfony/filesystem": "~3.0 || ^4.0"
+        "php": ">=7.4",
+        "composer-plugin-api": "^2",
+        "composer/semver": "^3",
+        "symfony/filesystem": "~3.0 || ^4.0",
+        "composer/composer": "^2.1"
     },
     "config": {
         "bin-dir": "bin/"
@@ -18,6 +19,6 @@
         }
     },
     "extra": {
-        "class": "UniversityOfAdelaide\\ShepherdDrupalScaffold\\Plugin"
+        "class": "UniversityOfAdelaide\\ShepherdDrupalScaffold\\ShepherdDrupalScaffoldPlugin"
     }
 }

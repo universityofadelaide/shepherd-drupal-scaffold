@@ -4,33 +4,17 @@ namespace UniversityOfAdelaide\ShepherdDrupalScaffold;
 
 use Composer\Composer;
 use Composer\IO\IOInterface;
+use Composer\Script\Event;
 use Composer\Util\Filesystem as ComposerFilesystem;
 use Symfony\Component\Filesystem\Filesystem;
 
 class Handler
 {
 
-    /**
-     * @var \Composer\Composer
-     */
-    protected $composer;
+    protected Composer $composer;
+    protected IOInterface $io;
+    protected Filesystem $filesystem;
 
-    /**
-     * @var \Composer\IO\IOInterface
-     */
-    protected $io;
-
-    /**
-     * @var \Symfony\Component\Filesystem\Filesystem
-     */
-    protected $filesystem;
-
-    /**
-     * Handler constructor.
-     *
-     * @param Composer $composer
-     * @param IOInterface $io
-     */
     public function __construct(Composer $composer, IOInterface $io)
     {
         $this->composer = $composer;
@@ -40,10 +24,8 @@ class Handler
 
     /**
     * Post update command event to execute the scaffolding.
-    *
-    * @param \Composer\Script\Event $event
     */
-    public function onPostCmdEvent(\Composer\Script\Event $event)
+    public function onPostCmdEvent(Event $event): void
     {
         $event->getIO()->write("Updating Shepherd scaffold files.");
         $this->updateShepherdScaffoldFiles();
@@ -58,7 +40,7 @@ class Handler
     /**
      * Update the Shepherd scaffold files.
      */
-    public function updateShepherdScaffoldFiles()
+    public function updateShepherdScaffoldFiles(): void
     {
         $packagePath = $this->getPackagePath();
         $projectPath = $this->getProjectPath();
@@ -94,7 +76,7 @@ class Handler
     /**
      * Ensure necessary directories exist.
      */
-    public function createDirectories()
+    public function createDirectories(): void
     {
         $root = $this->getDrupalRootPath();
         $dirs = [
@@ -119,7 +101,7 @@ class Handler
      *
      * Note: does nothing if the file already exists.
      */
-    public function populateSettingsFile()
+    public function populateSettingsFile(): void
     {
         $root = $this->getDrupalRootPath();
 
@@ -144,7 +126,7 @@ class Handler
      *   PHP code.
      * @throws \Exception
      */
-    public function generateSettings()
+    public function generateSettings(): string
     {
       $settings = file_get_contents(__DIR__ . '/../fixtures/php/settings.php.txt');
       $hashSalt = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(random_bytes(55)));
@@ -154,7 +136,7 @@ class Handler
     /**
      * Remove all write permissions on Drupal configuration files and folder.
      */
-    public function removeWritePermissions()
+    public function removeWritePermissions(): void
     {
         $root = $this->getDrupalRootPath();
 //        $this->filesystem->chmod($root . '/sites/default/settings.php', 0444);
@@ -167,7 +149,7 @@ class Handler
      * @param bool $overwriteExisting
      *  If true, replace existing files. Defaults to false.
      */
-    public function copyFiles($origin, $destination, $filenames, $overwriteExisting = false)
+    public function copyFiles($origin, $destination, $filenames, $overwriteExisting = false): void
     {
         foreach ($filenames as $filename) {
             // Skip copying files that already exist at the destination.
@@ -189,7 +171,7 @@ class Handler
      *
      * @return string
      */
-    public function getVendorPath()
+    public function getVendorPath(): string
     {
         // Load ComposerFilesystem to get access to path normalisation.
         $composerFilesystem = new ComposerFilesystem();
@@ -205,38 +187,30 @@ class Handler
      * Get the path to the project directory.
      *
      * E.g. /home/user/code/project
-     *
-     * @return string
      */
-    public function getProjectPath()
+    public function getProjectPath(): string
     {
-        $projectPath = dirname($this->getVendorPath());
-        return $projectPath;
+        return dirname($this->getVendorPath());
     }
 
     /**
      * Get the path to the package directory.
      *
      * E.g. /home/user/code/project/vendor/universityofadelaide/shepherd-drupal-scaffold
-     *
-     * @return string
      */
-    public function getPackagePath()
+    public function getPackagePath(): string
     {
-        $packagePath = $this->getVendorPath() . '/universityofadelaide/shepherd-drupal-scaffold';
-        return $packagePath;
+        return $this->getVendorPath() . '/universityofadelaide/shepherd-drupal-scaffold';
     }
 
     /**
      * Get the path to the Drupal root directory.
      *
      * E.g. /home/user/code/project/web
-     *
-     * @return string
      */
-    public function getDrupalRootPath()
+    public function getDrupalRootPath(): string
     {
-        $drupalRootPath = $this->getProjectPath() . '/web';
-        return $drupalRootPath;
+        return $this->getProjectPath() . '/web';
     }
+
 }

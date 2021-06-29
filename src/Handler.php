@@ -124,7 +124,7 @@ class Handler
         $root = $this->getDrupalRootPath();
 
         // Assume Drupal scaffold created the settings.php
-        $this->filesystem->chmod($root . '/sites/default/settings.php', 0664);
+//        $this->filesystem->chmod($root . '/sites/default/settings.php', 0664);
 
         // If we haven't already written to settings.php.
         if (!(strpos(file_get_contents($root . '/sites/default/settings.php'), 'START SHEPHERD CONFIG') !== false)) {
@@ -157,8 +157,8 @@ class Handler
     public function removeWritePermissions()
     {
         $root = $this->getDrupalRootPath();
-        $this->filesystem->chmod($root . '/sites/default/settings.php', 0444);
-        $this->filesystem->chmod($root . '/sites/default', 0555);
+//        $this->filesystem->chmod($root . '/sites/default/settings.php', 0444);
+//        $this->filesystem->chmod($root . '/sites/default', 0555);
     }
 
     /**

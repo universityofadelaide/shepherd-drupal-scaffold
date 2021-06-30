@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace UniversityOfAdelaide\ShepherdDrupalScaffold;
 
 use Composer\Composer;
@@ -10,7 +12,6 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class Handler
 {
-
     protected Composer $composer;
     protected IOInterface $io;
     protected Filesystem $filesystem;
@@ -23,17 +24,17 @@ class Handler
     }
 
     /**
-    * Post update command event to execute the scaffolding.
-    */
+     * Post update command event to execute the scaffolding.
+     */
     public function onPostCmdEvent(Event $event): void
     {
-        $event->getIO()->write("Updating Shepherd scaffold files.");
+        $event->getIO()->write('Updating Shepherd scaffold files.');
         $this->updateShepherdScaffoldFiles();
-        $event->getIO()->write("Creating necessary directories.");
+        $event->getIO()->write('Creating necessary directories.');
         $this->createDirectories();
-        $event->getIO()->write("Creating settings.php file if not present.");
+        $event->getIO()->write('Creating settings.php file if not present.');
         $this->populateSettingsFile();
-        $event->getIO()->write("Removing write permissions on settings files.");
+        $event->getIO()->write('Removing write permissions on settings files.');
         $this->removeWritePermissions();
     }
 
@@ -42,12 +43,12 @@ class Handler
      */
     public function updateShepherdScaffoldFiles(): void
     {
-        $packagePath = $this->getPackagePath();
         $projectPath = $this->getProjectPath();
+        $scaffoldPath = $this->getScaffoldDirectory();
 
         // Always copy and replace these files.
         $this->copyFiles(
-            $packagePath,
+            $scaffoldPath . '/required',
             $projectPath,
             [
                 'dsh',
@@ -58,7 +59,7 @@ class Handler
 
         // Only copy these files if they do not exist at the destination.
         $this->copyFiles(
-            $packagePath,
+          $scaffoldPath . '/optional',
             $projectPath,
             [
                 'docker-compose.linux.yml',
@@ -78,6 +79,7 @@ class Handler
      */
     public function createDirectories(): void
     {
+        // @todo is this necessary????????????????
         $root = $this->getDrupalRootPath();
         $dirs = [
             $root . '/modules',
@@ -109,10 +111,10 @@ class Handler
 //        $this->filesystem->chmod($root . '/sites/default/settings.php', 0664);
 
         // If we haven't already written to settings.php.
-        if (!(strpos(file_get_contents($root . '/sites/default/settings.php'), 'START SHEPHERD CONFIG') !== false)) {
-          // Append Shepherd-specific environment variable settings to settings.php.
+        if (!(false !== strpos(file_get_contents($root . '/sites/default/settings.php'), 'START SHEPHERD CONFIG'))) {
+            // Append Shepherd-specific environment variable settings to settings.php.
             file_put_contents(
-                $root.'/sites/default/settings.php',
+                $root . '/sites/default/settings.php',
                 $this->generateSettings(),
                 FILE_APPEND
             );
@@ -123,14 +125,14 @@ class Handler
      * Generates the "template" settings.php configuration.
      *
      * @return string
-     *   PHP code.
-     * @throws \Exception
+     *   Contents of the settings.php file.
      */
     public function generateSettings(): string
     {
-      $settings = file_get_contents(__DIR__ . '/../fixtures/php/settings.php.txt');
-      $hashSalt = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(random_bytes(55)));
-      return str_replace('<<<DEFAULT_HASH_SALT>>>', $hashSalt, $settings);
+        $settings = file_get_contents(__DIR__ . '/../fixtures/php/settings.php.txt');
+        $hashSalt = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(random_bytes(55)));
+
+        return str_replace('<<<DEFAULT_HASH_SALT>>>', $hashSalt, $settings);
     }
 
     /**
@@ -146,14 +148,15 @@ class Handler
     /**
      * Copy files from origin to destination, optionally overwriting existing.
      *
+     * @param string[] $filenames
      * @param bool $overwriteExisting
-     *  If true, replace existing files. Defaults to false.
+     *   If true, replace existing files. Defaults to false.
      */
-    public function copyFiles($origin, $destination, $filenames, $overwriteExisting = false): void
+    public function copyFiles(string $origin, string $destination, array $filenames, bool $overwriteExisting = false): void
     {
         foreach ($filenames as $filename) {
             // Skip copying files that already exist at the destination.
-            if (! $overwriteExisting && $this->filesystem->exists($destination . '/' . $filename)) {
+            if (!$overwriteExisting && $this->filesystem->exists($destination . '/' . $filename)) {
                 continue;
             }
             $this->filesystem->copy(
@@ -168,8 +171,6 @@ class Handler
      * Get the path to the vendor directory.
      *
      * E.g. /home/user/code/project/vendor
-     *
-     * @return string
      */
     public function getVendorPath(): string
     {
@@ -194,16 +195,6 @@ class Handler
     }
 
     /**
-     * Get the path to the package directory.
-     *
-     * E.g. /home/user/code/project/vendor/universityofadelaide/shepherd-drupal-scaffold
-     */
-    public function getPackagePath(): string
-    {
-        return $this->getVendorPath() . '/universityofadelaide/shepherd-drupal-scaffold';
-    }
-
-    /**
      * Get the path to the Drupal root directory.
      *
      * E.g. /home/user/code/project/web
@@ -213,4 +204,11 @@ class Handler
         return $this->getProjectPath() . '/web';
     }
 
+    /**
+     * Path to scaffold files.
+     */
+    public function getScaffoldDirectory(): string
+    {
+        return $this->getVendorPath() . '/universityofadelaide/shepherd-drupal-scaffold/scaffold';
+    }
 }

@@ -2,3 +2,4 @@
 vendor
 docker-compose.yml
 bin/
+.php_cs.cache

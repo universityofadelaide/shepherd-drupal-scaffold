@@ -53,6 +53,9 @@ class Handler
         }
     }
 
+    /**
+     * Adds scaffold files to .gitignore.
+     */
     public function updateGitIgnoreScaffoldFiles(): void
     {
         // Only continue if there is a .gitignore file.

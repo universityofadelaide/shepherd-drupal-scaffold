@@ -32,6 +32,8 @@ class Handler
     {
         $event->getIO()->write('Updating Shepherd scaffold files.');
         $this->updateShepherdScaffoldFiles();
+        $event->getIO()->write('Adding scaffold files to .gitignore');
+        $this->updateGitIgnoreScaffoldFiles();
         $event->getIO()->write('Creating necessary directories.');
         $this->createDirectories();
         $event->getIO()->write('Creating settings.php file if not present.');
@@ -48,6 +50,34 @@ class Handler
         $scaffoldPath = $this->getScaffoldDirectory();
         foreach ($this->getFileTasks($scaffoldPath) as $task) {
             $task->execute($this->filesystem, $this->getProjectPath());
+        }
+    }
+
+    public function updateGitIgnoreScaffoldFiles(): void
+    {
+        // Only continue if there is a .gitignore file.
+        $gitIgnorePath = $this->getProjectPath() . '/.gitignore';
+        if (!$this->filesystem->exists($gitIgnorePath)) {
+            return;
+        }
+
+        $gitIgnore = file_get_contents($gitIgnorePath);
+
+        // Get list of file paths which need to be added to .gitignore.
+        $paths = array_filter(
+            array_map(fn (CopyFile $task) => $task->getFilename(), $this->getFileTasks($this->getScaffoldDirectory())),
+            function (string $fileName) use ($gitIgnore): bool {
+                return false !== strpos($gitIgnore, $fileName);
+            }
+        );
+
+        $append = '';
+        foreach ($paths as $path) {
+            $append .= sprintf("%s\n", $path);
+        }
+
+        if (!empty($append)) {
+            file_put_contents($gitIgnorePath, "\n" . $append, \FILE_APPEND);
         }
     }
 

@@ -67,7 +67,7 @@ class Handler
         $paths = array_filter(
             array_map(fn (CopyFile $task) => $task->getFilename(), $this->getFileTasks($this->getScaffoldDirectory())),
             function (string $fileName) use ($gitIgnore): bool {
-                return false !== strpos($gitIgnore, $fileName);
+                return false === strpos($gitIgnore, $fileName);
             }
         );
 
@@ -189,7 +189,7 @@ class Handler
      */
     protected function getFileTasks(string $scaffoldPath): array
     {
-        return array_map(fn (...$args): CopyFile => new CopyFile(...$args), [
+        return array_map(fn ($args): CopyFile => new CopyFile(...$args), [
             // Always copy and replace these files.
             [$scaffoldPath . '/required', 'dsh', true],
             [$scaffoldPath . '/required', 'RoboFileBase.php', true],

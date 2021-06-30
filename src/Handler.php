@@ -9,6 +9,8 @@ use Composer\IO\IOInterface;
 use Composer\Script\Event;
 use Composer\Util\Filesystem as ComposerFilesystem;
 use Symfony\Component\Filesystem\Filesystem;
+use UniversityOfAdelaide\ShepherdDrupalScaffold\tasks\CopyFile;
+use UniversityOfAdelaide\ShepherdDrupalScaffold\tasks\CreateDirectory;
 
 class Handler
 {
@@ -43,35 +45,10 @@ class Handler
      */
     public function updateShepherdScaffoldFiles(): void
     {
-        $projectPath = $this->getProjectPath();
         $scaffoldPath = $this->getScaffoldDirectory();
-
-        // Always copy and replace these files.
-        $this->copyFiles(
-            $scaffoldPath . '/required',
-            $projectPath,
-            [
-                'dsh',
-                'RoboFileBase.php',
-            ],
-            true
-        );
-
-        // Only copy these files if they do not exist at the destination.
-        $this->copyFiles(
-          $scaffoldPath . '/optional',
-            $projectPath,
-            [
-                'docker-compose.linux.yml',
-                'docker-compose.osx.yml',
-                'dsh_bash',
-                'phpcs.xml',
-                'RoboFile.php',
-                'docker/Dockerfile',
-                'docker/xdebug.ini',
-                'docker/php_custom.ini',
-            ]
-        );
+        foreach ($this->getFileTasks($scaffoldPath) as $task) {
+            $task->execute($this->filesystem, $this->getProjectPath());
+        }
     }
 
     /**
@@ -79,22 +56,9 @@ class Handler
      */
     public function createDirectories(): void
     {
-        // @todo is this necessary????????????????
         $root = $this->getDrupalRootPath();
-        $dirs = [
-            $root . '/modules',
-            $root . '/profiles',
-            $root . '/themes',
-            'config-install',
-            'config-export',
-        ];
-
-        // Required for unit testing.
-        foreach ($dirs as $dir) {
-            if (!$this->filesystem->exists($dir)) {
-                $this->filesystem->mkdir($dir);
-                $this->filesystem->touch($dir . '/.gitkeep');
-            }
+        foreach ($this->getCreateDirectoryTasks($root) as $task) {
+            $task->execute($this->filesystem);
         }
     }
 
@@ -146,28 +110,6 @@ class Handler
     }
 
     /**
-     * Copy files from origin to destination, optionally overwriting existing.
-     *
-     * @param string[] $filenames
-     * @param bool $overwriteExisting
-     *   If true, replace existing files. Defaults to false.
-     */
-    public function copyFiles(string $origin, string $destination, array $filenames, bool $overwriteExisting = false): void
-    {
-        foreach ($filenames as $filename) {
-            // Skip copying files that already exist at the destination.
-            if (!$overwriteExisting && $this->filesystem->exists($destination . '/' . $filename)) {
-                continue;
-            }
-            $this->filesystem->copy(
-                $origin . '/' . $filename,
-                $destination . '/' . $filename,
-                true
-            );
-        }
-    }
-
-    /**
      * Get the path to the vendor directory.
      *
      * E.g. /home/user/code/project/vendor
@@ -210,5 +152,41 @@ class Handler
     public function getScaffoldDirectory(): string
     {
         return $this->getVendorPath() . '/universityofadelaide/shepherd-drupal-scaffold/scaffold';
+    }
+
+    /**
+     * @return \UniversityOfAdelaide\ShepherdDrupalScaffold\tasks\CopyFile[]
+     */
+    protected function getFileTasks(string $scaffoldPath): array
+    {
+        return array_map(fn (...$args): CopyFile => new CopyFile(...$args), [
+            // Always copy and replace these files.
+            [$scaffoldPath . '/required', 'dsh', true],
+            [$scaffoldPath . '/required', 'RoboFileBase.php', true],
+
+            // Only copy these files if they do not exist at the destination.
+            [$scaffoldPath . '/optional', 'docker-compose.linux.yml'],
+            [$scaffoldPath . '/optional', 'docker-compose.osx.yml'],
+            [$scaffoldPath . '/optional', 'dsh_bash'],
+            [$scaffoldPath . '/optional', 'phpcs.xml'],
+            [$scaffoldPath . '/optional', 'RoboFile.php'],
+            [$scaffoldPath . '/optional', 'docker/Dockerfile'],
+            [$scaffoldPath . '/optional', 'docker/xdebug.ini'],
+            [$scaffoldPath . '/optional', 'docker/php_custom.ini'],
+        ]);
+    }
+
+    /**
+     * @return \UniversityOfAdelaide\ShepherdDrupalScaffold\tasks\CreateDirectory[]
+     */
+    protected function getCreateDirectoryTasks(string $root): array
+    {
+        return array_map(fn (string $path): CreateDirectory => new CreateDirectory($path), [
+            $root . '/modules',
+            $root . '/profiles',
+            $root . '/themes',
+            'config-install',
+            'config-export',
+        ]);
     }
 }

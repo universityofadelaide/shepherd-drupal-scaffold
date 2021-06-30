@@ -69,9 +69,7 @@ class Handler
         // Get list of file paths which need to be added to .gitignore.
         $paths = array_filter(
             array_map(fn (CopyFile $task) => $task->getFilename(), $this->getFileTasks($this->getScaffoldDirectory())),
-            function (string $fileName) use ($gitIgnore): bool {
-                return false === strpos($gitIgnore, $fileName);
-            }
+            fn (string $fileName): bool => false === strpos($gitIgnore, $fileName)
         );
 
         $append = '';

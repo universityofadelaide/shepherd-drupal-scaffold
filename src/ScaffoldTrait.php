@@ -15,11 +15,13 @@ trait ScaffoldTrait
     protected IOInterface $io;
     protected Filesystem $filesystem;
 
-    public function create(Composer $composer, IOInterface $io)
+    public static function create(Composer $composer, IOInterface $io)
     {
-        $this->composer = $composer;
-        $this->io = $io;
-        $this->filesystem = new Filesystem();
+        $instance = new static();
+        $instance->composer = $composer;
+        $instance->io = $io;
+        $instance->filesystem = new Filesystem();
+        return $instance;
     }
 
     /**

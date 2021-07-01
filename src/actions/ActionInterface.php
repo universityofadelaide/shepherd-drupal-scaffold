@@ -13,7 +13,7 @@ interface ActionInterface
     /**
      * @return static
      */
-    public function create(Composer $composer, IOInterface $io);
+    public static function create(Composer $composer, IOInterface $io);
 
     public function onEvent(Event $event): void;
 }

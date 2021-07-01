@@ -46,7 +46,7 @@ final class DrupalSettings implements ActionInterface
             return [];
         }
 
-        $settings = file_get_contents(__DIR__ . '/../fixtures/php/settings.php.txt');
+        $settings = file_get_contents(__DIR__ . '/../../fixtures/php/settings.php.txt');
         $hashSalt = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(random_bytes(55)));
         $data = str_replace('<<<DEFAULT_HASH_SALT>>>', $hashSalt, $settings);
 

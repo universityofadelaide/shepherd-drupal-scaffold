@@ -13,7 +13,9 @@ use UniversityOfAdelaide\ShepherdDrupalScaffold\tasks\AppendFile;
 /**
  * Create settings.php file and inject Shepherd-specific settings.
  *
- * Note: does nothing if the file already exists.
+ * Sites shouldn't commit their own settings.php. Site-specific settings should
+ * be added with a `settings.app.php` adjacent to `settings.php`. This file
+ * include is done with the append task below.
  */
 final class DrupalSettings implements ActionInterface
 {
@@ -34,14 +36,10 @@ final class DrupalSettings implements ActionInterface
      */
     public static function tasks(Filesystem $filesystem, string $drupalRootPath): array
     {
+        // settings.php comes from drupal/core-composer-scaffold.
         $settingsFile = $drupalRootPath . '/sites/default/settings.php';
 
-        // settings.php comes from drupal/core-composer-scaffold.
-        if (!$filesystem->exists($settingsFile)) {
-            return [];
-        }
-
-        // If we have already written to settings.php.
+        // Exit if a site has a committed settings.php with this text fragment.
         if (false !== strpos(file_get_contents($settingsFile), 'START SHEPHERD CONFIG')) {
             return [];
         }

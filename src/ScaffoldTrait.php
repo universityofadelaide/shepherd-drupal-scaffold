@@ -21,6 +21,7 @@ trait ScaffoldTrait
         $instance->composer = $composer;
         $instance->io = $io;
         $instance->filesystem = new Filesystem();
+
         return $instance;
     }
 

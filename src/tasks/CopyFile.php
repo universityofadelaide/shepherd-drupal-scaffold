@@ -8,14 +8,16 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class CopyFile implements TaskInterface
 {
+    protected Filesystem $filesystem;
+    protected string $destination;
     protected string $origin;
-
     protected string $filename;
-
     protected bool $overwriteExisting;
 
-    public function __construct(string $origin, string $filename, bool $overwriteExisting = false)
+    public function __construct(Filesystem $filesystem, string $destination, string $origin, string $filename, bool $overwriteExisting = false)
     {
+        $this->filesystem = $filesystem;
+        $this->destination = $destination;
         $this->origin = $origin;
         $this->filename = $filename;
         $this->overwriteExisting = $overwriteExisting;
@@ -31,27 +33,22 @@ class CopyFile implements TaskInterface
         return $this->filename;
     }
 
-    public function isOverwriting(): bool
-    {
-        return $this->overwriteExisting;
-    }
-
     /**
      * @throws \Symfony\Component\Filesystem\Exception\FileNotFoundException
      *   When original file doesn't exist
      * @throws \Symfony\Component\Filesystem\Exception\IOException
      *   When copy fails
      */
-    public function execute(Filesystem $filesystem, string $destination): void
+    public function execute(): void
     {
         // Skip copying files that already exist at the destination.
-        if (!$this->overwriteExisting && $filesystem->exists($destination . '/' . $this->filename)) {
+        if (!$this->overwriteExisting && $this->filesystem->exists($this->destination . '/' . $this->filename)) {
             return;
         }
 
-        $filesystem->copy(
+        $this->filesystem->copy(
             $this->origin . '/' . $this->filename,
-            $destination . '/' . $this->filename,
+            $this->destination . '/' . $this->filename,
             $this->overwriteExisting,
         );
     }

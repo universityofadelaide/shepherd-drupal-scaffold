@@ -10,17 +10,24 @@ use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\Event;
 use Composer\Script\ScriptEvents;
+use UniversityOfAdelaide\ShepherdDrupalScaffold\actions\ActionInterface;
+use UniversityOfAdelaide\ShepherdDrupalScaffold\actions\Directories;
+use UniversityOfAdelaide\ShepherdDrupalScaffold\actions\DrupalSettings;
+use UniversityOfAdelaide\ShepherdDrupalScaffold\actions\GitIgnore;
+use UniversityOfAdelaide\ShepherdDrupalScaffold\actions\ScaffoldFiles;
 
 /**
  * Composer plugin for handling Shepherd Drupal scaffold.
  */
 class ShepherdDrupalScaffoldPlugin implements PluginInterface, EventSubscriberInterface
 {
-    protected Handler $handler;
+    protected IOInterface $io;
+    protected Composer $composer;
 
     public function activate(Composer $composer, IOInterface $io)
     {
-        $this->handler = new Handler($composer, $io);
+        $this->composer = $composer;
+        $this->io = $io;
     }
 
     public function deactivate(Composer $composer, IOInterface $io)
@@ -44,16 +51,15 @@ class ShepherdDrupalScaffoldPlugin implements PluginInterface, EventSubscriberIn
      */
     public function postCmd(Event $event)
     {
-        $this->handler->onPostCmdEvent($event);
-    }
-
-    /**
-     * Script callback for putting in composer scripts to download the
-     * scaffold files.
-     */
-    public static function scaffold(Event $event)
-    {
-        $handler = new Handler($event->getComposer(), $event->getIO());
-        $handler->onPostCmdEvent($event);
+        foreach ([
+            Directories::class,
+            DrupalSettings::class,
+            GitIgnore::class,
+            ScaffoldFiles::class,
+        ] as $actionClass) {
+            $action = $actionClass::create($this->io, $this->composer);
+            assert($action instanceof ActionInterface);
+            $action->onEvent($event);
+        }
     }
 }

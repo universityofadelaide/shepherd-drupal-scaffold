@@ -6,4 +6,5 @@ namespace UniversityOfAdelaide\ShepherdDrupalScaffold\tasks;
 
 interface TaskInterface
 {
+    public function execute(): void;
 }

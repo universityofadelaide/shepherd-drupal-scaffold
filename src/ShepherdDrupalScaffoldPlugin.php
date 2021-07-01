@@ -57,7 +57,7 @@ class ShepherdDrupalScaffoldPlugin implements PluginInterface, EventSubscriberIn
             GitIgnore::class,
             ScaffoldFiles::class,
         ] as $actionClass) {
-            $action = $actionClass::create($this->io, $this->composer);
+            $action = $actionClass::create($this->composer, $this->io);
             assert($action instanceof ActionInterface);
             $action->onEvent($event);
         }

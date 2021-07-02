@@ -467,8 +467,8 @@ abstract class RoboFileBase extends Tasks {
     $start = new DateTime();
     $this->_exec("$this->drush_cmd sql:drop --yes");
     $this->_exec("$this->drush_cmd sql:query --file=$sql_file");
-    $this->_exec("$this->drush_cmd cache:rebuild");
-    $this->_exec("$this->drush_cmd updatedb --entity-updates --yes");
+    $this->devCacheRebuild();
+    $this->buildApplyUpdates();
 
     $this->say('Duration: ' . (new \DateTimeImmutable())->diff($start)->format('%im %Ss'));
     $this->_exec("$this->drush_cmd upwd admin password");

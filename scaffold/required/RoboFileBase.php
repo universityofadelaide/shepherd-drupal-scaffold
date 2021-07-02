@@ -123,7 +123,7 @@ abstract class RoboFileBase extends Tasks {
    * Perform a full build on the project.
    */
   public function build(): void {
-    $start = new DateTime();
+    $start = new DateTimeImmutable();
     $this->devXdebugDisable();
     $this->devComposerValidate();
     $this->buildMake();
@@ -133,7 +133,7 @@ abstract class RoboFileBase extends Tasks {
     $this->devCacheRebuild();
     $this->ensureDirectories();
     $this->devXdebugEnable();
-    $this->say('Total build duration: ' . date_diff(new DateTime(), $start)->format('%im %Ss'));
+    $this->say('Total build duration: ' . (new \DateTimeImmutable())->diff($start)->format('%im %Ss'));
   }
 
   /**
@@ -164,7 +164,11 @@ abstract class RoboFileBase extends Tasks {
    *   Additional flags to pass to the composer install command.
    */
   public function buildMake($flags = '') {
-    $successful = $this->_exec("$this->composer_bin --no-progress --no-interaction $flags install")->wasSuccessful();
+    $successful = $this->_exec(sprintf(
+      '%s --no-progress --no-interaction %s install',
+      $this->composer_bin,
+      $flags)
+    )->wasSuccessful();
 
     $this->checkFail($successful, "Composer install failed.");
   }
@@ -191,11 +195,11 @@ abstract class RoboFileBase extends Tasks {
     $this->devConfigWriteable();
 
     // @TODO: When is this really used? Automated builds - can be random values.
-    $successful = $this->_exec("$this->drush_cmd site-install " .
+    $successful = $this->_exec("$this->drush_cmd site:install " .
       $this->getDrupalProfile() .
       " install_configure_form.enable_update_status_module=NULL" .
       " install_configure_form.enable_update_status_emails=NULL" .
-      " -y" .
+      " --yes" .
       " --account-mail=\"" . $this->config['site']['admin_email'] . "\"" .
       " --account-name=\"" . $this->config['site']['admin_user'] . "\"" .
       " --account-pass=\"" . $this->config['site']['admin_password'] . "\"" .
@@ -206,7 +210,7 @@ abstract class RoboFileBase extends Tasks {
     // Re-set settings.php permissions.
     $this->devConfigReadOnly();
 
-    $this->checkFail($successful, 'drush site-install failed.');
+    $this->checkFail($successful, 'drush site:install failed.');
 
     $this->devCacheRebuild();
   }
@@ -247,7 +251,7 @@ abstract class RoboFileBase extends Tasks {
    */
   public function buildApplyUpdates() {
     // Run the module updates.
-    $successful = $this->_exec("$this->drush_cmd -y updatedb")->wasSuccessful();
+    $successful = $this->_exec("$this->drush_cmd --yes updatedb")->wasSuccessful();
     $this->checkFail($successful, 'running drupal updates failed.');
   }
 
@@ -255,7 +259,7 @@ abstract class RoboFileBase extends Tasks {
    * Perform cache clear in the app directory.
    */
   public function devCacheRebuild() {
-    $successful = $this->_exec("$this->drush_cmd cr")->wasSuccessful();
+    $successful = $this->_exec("$this->drush_cmd cache:rebuild")->wasSuccessful();
 
     $this->checkFail($successful, 'drush cache-rebuild failed.');
   }
@@ -414,8 +418,8 @@ abstract class RoboFileBase extends Tasks {
    */
   public function devAggregateAssetsDisable() {
     $this->taskExecStack()
-      ->exec($this->drush_cmd . ' cset system.performance js.preprocess 0 -y')
-      ->exec($this->drush_cmd . ' cset system.performance css.preprocess 0 -y')
+      ->exec($this->drush_cmd . ' config:set system.performance js.preprocess 0 --yes')
+      ->exec($this->drush_cmd . ' config:set system.performance css.preprocess 0 --yes')
       ->run();
     $this->devCacheRebuild();
     $this->say('Asset Aggregation is now disabled.');
@@ -426,8 +430,8 @@ abstract class RoboFileBase extends Tasks {
    */
   public function devAggregateAssetsEnable() {
     $this->taskExecStack()
-      ->exec($this->drush_cmd . ' cset system.performance js.preprocess 1 -y')
-      ->exec($this->drush_cmd . ' cset system.performance css.preprocess 1 -y')
+      ->exec($this->drush_cmd . ' config:set system.performance js.preprocess 1 --yes')
+      ->exec($this->drush_cmd . ' config:set system.performance css.preprocess 1 --yes')
       ->run();
     $this->devCacheRebuild();
     $this->say('Asset Aggregation is now enabled.');
@@ -461,11 +465,12 @@ abstract class RoboFileBase extends Tasks {
    */
   public function devImportDb($sql_file) {
     $start = new DateTime();
-    $this->_exec("$this->drush_cmd -y sql-drop");
-    $this->_exec("$this->drush_cmd sqlq --file=$sql_file");
-    $this->_exec("$this->drush_cmd cr");
-    $this->_exec("$this->drush_cmd updb --entity-updates -y");
-    $this->say('Duration: ' . date_diff(new DateTime(), $start)->format('%im %Ss'));
+    $this->_exec("$this->drush_cmd sql:drop --yes");
+    $this->_exec("$this->drush_cmd sql:query --file=$sql_file");
+    $this->_exec("$this->drush_cmd cache:rebuild");
+    $this->_exec("$this->drush_cmd updatedb --entity-updates --yes");
+
+    $this->say('Duration: ' . (new \DateTimeImmutable())->diff($start)->format('%im %Ss'));
     $this->_exec("$this->drush_cmd upwd admin password");
     $this->say('Database imported, admin user password is : password');
   }
@@ -478,8 +483,8 @@ abstract class RoboFileBase extends Tasks {
    */
   public function devExportDb($name = 'dump') {
     $start = new DateTime();
-    $this->_exec("$this->drush_cmd sql-dump --gzip --result-file=$name.sql");
-    $this->say("Duration: " . date_diff(new DateTime(), $start)->format('%im %Ss'));
+    $this->_exec("$this->drush_cmd sql:dump --gzip --result-file=$name.sql");
+    $this->say('Duration: ' . (new \DateTimeImmutable())->diff($start)->format('%im %Ss'));
     $this->say("Database $name.sql.gz exported");
   }
 

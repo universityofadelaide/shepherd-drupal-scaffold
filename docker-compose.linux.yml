@@ -61,7 +61,7 @@ services:
       - default
 
   redis:
-    image: redis:6.0-alpine
+    image: redis:alpine
     command: |
       redis-server
       --maxmemory 256m

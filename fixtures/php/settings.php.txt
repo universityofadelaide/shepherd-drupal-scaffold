@@ -75,6 +75,20 @@ if (getenv('TRUSTED_HOST_PATTERNS')) {
  */
 
 /**
+ * START OKTA CONFIG
+ *
+ * Settings for Okta auth.
+ */
+if (getenv('UA_AUTH_CLIENT_SECRET')) {
+  $settings['ua_auth.environment'] = getenv('UA_AUTH_ENVIRONMENT');
+  $settings['ua_auth.client_id'] = getenv('UA_AUTH_CLIENT_ID');
+  $settings['ua_auth.client_secret'] = getenv('UA_AUTH_CLIENT_SECRET');
+}
+/**
+ * END OKTA CONFIG
+ */
+
+/**
  * START APP CONFIG
  *
  * A settings file with settings and configuration specific to this app/website.

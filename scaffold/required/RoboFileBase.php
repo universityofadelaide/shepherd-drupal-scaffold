@@ -7,10 +7,12 @@
  * Implementation of class for Robo - http://robo.li/
  */
 
+use Robo\Tasks;
+
 /**
  * Class RoboFileBase.
  */
-abstract class RoboFileBase extends \Robo\Tasks {
+abstract class RoboFileBase extends Tasks {
 
   protected $drush_cmd;
 
@@ -49,36 +51,13 @@ abstract class RoboFileBase extends \Robo\Tasks {
 
   protected $config = [];
 
-  protected $config_new_directory = 'config_new';
-  protected $config_old_directory = 'config_old';
-
   /**
-   * The path to the config dir.
-   *
-   * @var string
+   * The path to the Drupal config directories.
    */
-  protected $configDir = '/code/config-export';
+  protected const CONFIG_DIRECTORY = '/code/config-export';
+  protected const CONFIG_DIRECTORY_NEW = 'config_new';
+  protected const CONFIG_DIRECTORY_OLD = 'config_old';
 
-  /**
-   * The path to the config install dir.
-   *
-   * @var string
-   */
-  protected $configInstallDir = '/code/config-install';
-
-  /**
-   * The path to the config delete list.
-   *
-   * @var string
-   */
-  protected $configDeleteList = '/code/drush/config-delete.yml';
-
-  /**
-   * The path to the config delete list.
-   *
-   * @var string
-   */
-  protected $configIgnoreList = '/code/drush/config-ignore.yml';
 
   /**
    * Initialize config variables and apply overrides.
@@ -143,18 +122,18 @@ abstract class RoboFileBase extends \Robo\Tasks {
   /**
    * Perform a full build on the project.
    */
-  public function build() {
-    $start = new DateTime();
+  public function build(): void {
+    $start = new DateTimeImmutable();
     $this->devXdebugDisable();
     $this->devComposerValidate();
     $this->buildMake();
     $this->ensureDirectories();
     $this->buildInstall();
-    $this->configImportPlus();
+    $this->configImport();
     $this->devCacheRebuild();
     $this->ensureDirectories();
     $this->devXdebugEnable();
-    $this->say('Total build duration: ' . date_diff(new DateTime(), $start)->format('%im %Ss'));
+    $this->say('Total build duration: ' . (new \DateTimeImmutable())->diff($start)->format('%im %Ss'));
   }
 
   /**
@@ -185,7 +164,11 @@ abstract class RoboFileBase extends \Robo\Tasks {
    *   Additional flags to pass to the composer install command.
    */
   public function buildMake($flags = '') {
-    $successful = $this->_exec("$this->composer_bin --no-progress --no-interaction $flags install")->wasSuccessful();
+    $successful = $this->_exec(sprintf(
+      '%s --no-progress --no-interaction %s install',
+      $this->composer_bin,
+      $flags)
+    )->wasSuccessful();
 
     $this->checkFail($successful, "Composer install failed.");
   }
@@ -206,26 +189,17 @@ abstract class RoboFileBase extends \Robo\Tasks {
   }
 
   /**
-   * Set the owner and group of all files in the files dir to the web user.
-   *
-   * @deprecated Use ::ensureDirectories instead.
-   */
-  public function buildSetFilesOwner() {
-    $this->ensureDirectories();
-  }
-
-  /**
    * Clean config and files, then install Drupal and module dependencies.
    */
   public function buildInstall() {
     $this->devConfigWriteable();
 
     // @TODO: When is this really used? Automated builds - can be random values.
-    $successful = $this->_exec("$this->drush_cmd site-install " .
+    $successful = $this->_exec("$this->drush_cmd site:install " .
       $this->getDrupalProfile() .
       " install_configure_form.enable_update_status_module=NULL" .
       " install_configure_form.enable_update_status_emails=NULL" .
-      " -y" .
+      " --yes" .
       " --account-mail=\"" . $this->config['site']['admin_email'] . "\"" .
       " --account-name=\"" . $this->config['site']['admin_user'] . "\"" .
       " --account-pass=\"" . $this->config['site']['admin_password'] . "\"" .
@@ -236,7 +210,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
     // Re-set settings.php permissions.
     $this->devConfigReadOnly();
 
-    $this->checkFail($successful, 'drush site-install failed.');
+    $this->checkFail($successful, 'drush site:install failed.');
 
     $this->devCacheRebuild();
   }
@@ -277,7 +251,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
    */
   public function buildApplyUpdates() {
     // Run the module updates.
-    $successful = $this->_exec("$this->drush_cmd -y updatedb")->wasSuccessful();
+    $successful = $this->_exec("$this->drush_cmd --yes updatedb")->wasSuccessful();
     $this->checkFail($successful, 'running drupal updates failed.');
   }
 
@@ -285,7 +259,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
    * Perform cache clear in the app directory.
    */
   public function devCacheRebuild() {
-    $successful = $this->_exec("$this->drush_cmd cr")->wasSuccessful();
+    $successful = $this->_exec("$this->drush_cmd cache:rebuild")->wasSuccessful();
 
     $this->checkFail($successful, 'drush cache-rebuild failed.');
   }
@@ -352,150 +326,44 @@ abstract class RoboFileBase extends \Robo\Tasks {
   }
 
   /**
-   * Export the current configuration to an 'old' directory.
+   * Imports Drupal configuration.
    */
-  public function configExportOld() {
-    $this->configExport($this->config_old_directory);
+  public function configImport() {
+    $successful = $this->_exec(
+      sprintf('%s config:import --yes --source=%s',
+      $this->drush_cmd,
+      static::CONFIG_DIRECTORY
+    ))
+    ->wasSuccessful();
+    $this->checkFail($successful, 'Config import failed.');
+  }
+
+  /**
+   * Exports Drupal configuration.
+   *
+   * @param string|null $destination
+   *   An optional custom destination.
+   */
+  public function configExport(?string $destination = NULL): void {
+    $this->_exec(sprintf(
+      '%s config:export --yes --destination=%s',
+      $this->drush_cmd,
+      $destination ?? static::CONFIG_DIRECTORY
+    ));
   }
 
   /**
    * Export the current configuration to a 'new' directory.
    */
-  public function configExportNew() {
-    $this->configExport($this->config_new_directory);
+  public function configExportNew(): void  {
+    $this->configExport(static::CONFIG_DIRECTORY_OLD);
   }
 
   /**
-   * Export config to a supplied directory.
-   *
-   * @param string $destination
-   *   The folder within the application root.
+   * Export the current configuration to an 'old' directory.
    */
-  protected function configExport($destination = NULL) {
-    $this->yell('This command is deprecated, you should use config:export-plus instead', 40, 'red');
-    if ($destination) {
-      $this->_exec("$this->drush_cmd -y cex --destination=" . $destination);
-      $this->_exec("sed -i '/^uuid:.*$/d; /^_core:$/, /^.*default_config_hash:.*$/d' $this->application_root/$destination/*.yml");
-    }
-  }
-
-  /**
-   * Display files changed between 'config_old' and 'config_new' directories.
-   *
-   * @param array $opts
-   *   Specify whether to show the diff output or just list them.
-   *
-   * @return array
-   *   Diff output as an array of strings.
-   */
-  public function configChanges($opts = ['show|s' => FALSE]) {
-    $this->yell('This command is deprecated, you should use config:export-plus and config:import-plus instead', 40, 'red');
-    $output_style = '-qbr';
-    $config_old_path = $this->application_root . '/' . $this->config_old_directory;
-    $config_new_path = $this->application_root . '/' . $this->config_new_directory;
-
-    if (isset($opts['show']) && $opts['show']) {
-      $output_style = '-ubr';
-    }
-
-    $results = $this->taskExec("diff -N -I \"   - 'file:.*\" $output_style $config_old_path $config_new_path")
-      ->run()
-      ->getMessage();
-
-    $results_array = explode("\n", $results);
-
-    return $results_array;
-  }
-
-  /**
-   * Synchronise active config to the install profile or specified path.
-   *
-   * Synchronise the differences from the configured 'config_new' and
-   * 'config_old' directories into the install profile or a specific path.
-   *
-   * @param array $path
-   *   If the sync is to update an entity instead of a profile, supple a path.
-   */
-  public function configSync($path = NULL) {
-    $this->yell('This command is deprecated, you should use config:export-plus and config:import-plus instead', 40, 'red');
-    $config_sync_already_run = FALSE;
-    $output_path = $this->application_root . '/profiles/' . $this->getDrupalProfile() . '/config/install';
-    $config_new_path = $this->application_root . '/' . $this->config_new_directory;
-
-    // If a path is passed in, use it to override the destination.
-    if (!empty($path) && is_dir($path)) {
-      $output_path = $path;
-    }
-
-    $results_array = $this->configChanges();
-
-    $tasks = $this->taskFilesystemStack();
-
-    foreach ($results_array as $line) {
-      // Handle/remove blank lines.
-      $line = trim($line);
-      if (empty($line)) {
-        continue;
-      }
-
-      // Never sync the extension file, it breaks things.
-      if (stristr($line, 'core.extension.yml')) {
-        continue;
-      }
-
-      // Break up the line into fields and put the parts in their place.
-      $parts = explode(' ', $line);
-      $config_new_file = $parts[3];
-      $output_file_path = $output_path .
-        preg_replace("/^" . str_replace('/', '\/', $config_new_path) ."/", '', $config_new_file);
-
-      // If the source doesn't exist, we're removing it from the
-      // destination in the profile.
-      if (!file_exists($config_new_file)) {
-        if (file_exists($output_file_path)) {
-          $tasks->remove($output_file_path);
-        }
-        else {
-          $config_sync_already_run = TRUE;
-        }
-      }
-      else {
-        $tasks->copy($config_new_file, $output_file_path);
-      }
-    }
-
-    if ($config_sync_already_run) {
-      $this->say("Config sync already run?");
-    }
-
-    $tasks->run();
-  }
-
-  /**
-   * Imports configuration using advanced drush commands.
-   *
-   * Commands provided by previousnext/drush_cmi_tools.
-   *
-   * @see https://github.com/previousnext/drush_cmi_tools
-   */
-  public function configImportPlus() {
-    $successful = $this->_exec("$this->drush_cmd cimy -y \
-      --source=$this->configDir \
-      --install=$this->configInstallDir \
-      --delete-list=$this->configDeleteList")
-      ->wasSuccessful();
-    $this->checkFail($successful, 'Config import failed.');
-  }
-
-  /**
-   * Exports configuration using advanced drush commands.
-   *
-   * Commands provided by previousnext/drush_cmi_tools.
-   *
-   * @see https://github.com/previousnext/drush_cmi_tools
-   */
-  public function configExportPlus() {
-    $this->_exec("$this->drush_cmd cexy -y --destination=$this->configDir --ignore-list=$this->configIgnoreList");
+  public function configExportOld(): void {
+    $this->configExport(static::CONFIG_DIRECTORY_NEW);
   }
 
   /**
@@ -550,8 +418,8 @@ abstract class RoboFileBase extends \Robo\Tasks {
    */
   public function devAggregateAssetsDisable() {
     $this->taskExecStack()
-      ->exec($this->drush_cmd . ' cset system.performance js.preprocess 0 -y')
-      ->exec($this->drush_cmd . ' cset system.performance css.preprocess 0 -y')
+      ->exec($this->drush_cmd . ' config:set system.performance js.preprocess 0 --yes')
+      ->exec($this->drush_cmd . ' config:set system.performance css.preprocess 0 --yes')
       ->run();
     $this->devCacheRebuild();
     $this->say('Asset Aggregation is now disabled.');
@@ -562,8 +430,8 @@ abstract class RoboFileBase extends \Robo\Tasks {
    */
   public function devAggregateAssetsEnable() {
     $this->taskExecStack()
-      ->exec($this->drush_cmd . ' cset system.performance js.preprocess 1 -y')
-      ->exec($this->drush_cmd . ' cset system.performance css.preprocess 1 -y')
+      ->exec($this->drush_cmd . ' config:set system.performance js.preprocess 1 --yes')
+      ->exec($this->drush_cmd . ' config:set system.performance css.preprocess 1 --yes')
       ->run();
     $this->devCacheRebuild();
     $this->say('Asset Aggregation is now enabled.');
@@ -596,12 +464,13 @@ abstract class RoboFileBase extends \Robo\Tasks {
    *   Path to sql file to import.
    */
   public function devImportDb($sql_file) {
-    $start = new DateTime();
-    $this->_exec("$this->drush_cmd -y sql-drop");
-    $this->_exec("$this->drush_cmd sqlq --file=$sql_file");
-    $this->_exec("$this->drush_cmd cr");
-    $this->_exec("$this->drush_cmd updb --entity-updates -y");
-    $this->say('Duration: ' . date_diff(new DateTime(), $start)->format('%im %Ss'));
+    $start = new DateTimeImmutable();
+    $this->_exec("$this->drush_cmd sql:drop --yes");
+    $this->_exec("$this->drush_cmd sql:query --file=$sql_file");
+    $this->devCacheRebuild();
+    $this->buildApplyUpdates();
+
+    $this->say('Duration: ' . (new \DateTimeImmutable())->diff($start)->format('%im %Ss'));
     $this->_exec("$this->drush_cmd upwd admin password");
     $this->say('Database imported, admin user password is : password');
   }
@@ -613,9 +482,9 @@ abstract class RoboFileBase extends \Robo\Tasks {
    *   Name of sql file to be exported.
    */
   public function devExportDb($name = 'dump') {
-    $start = new DateTime();
-    $this->_exec("$this->drush_cmd sql-dump --gzip --result-file=$name.sql");
-    $this->say("Duration: " . date_diff(new DateTime(), $start)->format('%im %Ss'));
+    $start = new DateTimeImmutable();
+    $this->_exec("$this->drush_cmd sql:dump --gzip --result-file=$name.sql");
+    $this->say('Duration: ' . (new \DateTimeImmutable())->diff($start)->format('%im %Ss'));
     $this->say("Database $name.sql.gz exported");
   }
 

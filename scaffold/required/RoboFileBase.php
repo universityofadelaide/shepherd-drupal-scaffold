@@ -464,7 +464,7 @@ abstract class RoboFileBase extends Tasks {
    *   Path to sql file to import.
    */
   public function devImportDb($sql_file) {
-    $start = new DateTime();
+    $start = new DateTimeImmutable();
     $this->_exec("$this->drush_cmd sql:drop --yes");
     $this->_exec("$this->drush_cmd sql:query --file=$sql_file");
     $this->devCacheRebuild();
@@ -482,7 +482,7 @@ abstract class RoboFileBase extends Tasks {
    *   Name of sql file to be exported.
    */
   public function devExportDb($name = 'dump') {
-    $start = new DateTime();
+    $start = new DateTimeImmutable();
     $this->_exec("$this->drush_cmd sql:dump --gzip --result-file=$name.sql");
     $this->say('Duration: ' . (new \DateTimeImmutable())->diff($start)->format('%im %Ss'));
     $this->say("Database $name.sql.gz exported");

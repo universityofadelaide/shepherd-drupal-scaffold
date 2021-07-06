@@ -59,7 +59,7 @@ services:
     network_mode: service:web
 
   redis:
-    image: redis:alpine
+    image: redis:6.0-alpine
     command: |
       redis-server
       --maxmemory 256m

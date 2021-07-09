@@ -192,8 +192,6 @@ abstract class RoboFileBase extends Tasks {
    * Clean config and files, then install Drupal and module dependencies.
    */
   public function buildInstall() {
-    $this->devConfigWriteable();
-
     // @TODO: When is this really used? Automated builds - can be random values.
     $successful = $this->_exec("$this->drush_cmd site:install " .
       $this->getDrupalProfile() .
@@ -206,9 +204,6 @@ abstract class RoboFileBase extends Tasks {
       " --site-name=\"" . $this->config['site']['title'] . "\"" .
       " --site-mail=\"" . $this->config['site']['mail'] . "\"")
       ->wasSuccessful();
-
-    // Re-set settings.php permissions.
-    $this->devConfigReadOnly();
 
     $this->checkFail($successful, 'drush site:install failed.');
 
@@ -370,7 +365,6 @@ abstract class RoboFileBase extends Tasks {
    * Turns on twig debug mode, autoreload on and caching off.
    */
   public function devTwigDebugEnable() {
-    $this->devConfigWriteable();
     $this->taskReplaceInFile($this->services_yml)
       ->from('debug: false')
       ->to('debug: true')
@@ -384,7 +378,6 @@ abstract class RoboFileBase extends Tasks {
       ->to('cache: false')
       ->run();
     $this->devAggregateAssetsDisable();
-    $this->devConfigReadOnly();
     $this->say('Clearing Drupal cache...');
     $this->devCacheRebuild();
     $this->say('Done. Twig debugging has been enabled');
@@ -394,7 +387,6 @@ abstract class RoboFileBase extends Tasks {
    * Turn off twig debug mode, autoreload off and caching on.
    */
   public function devTwigDebugDisable() {
-    $this->devConfigWriteable();
     $this->taskReplaceInFile($this->services_yml)
       ->from('debug: true')
       ->to('debug: false')
@@ -407,7 +399,6 @@ abstract class RoboFileBase extends Tasks {
       ->from('c: false')
       ->to('cache: true')
       ->run();
-    $this->devConfigReadOnly();
     $this->say('Clearing Drupal cache...');
     $this->devCacheRebuild();
     $this->say('Done. Twig debugging has been disabled');
@@ -439,6 +430,8 @@ abstract class RoboFileBase extends Tasks {
 
   /**
    * Make config files write-able.
+   *
+   * @deprecated
    */
   public function devConfigWriteable() {
     $this->setPermissions("$this->application_root/sites/default/services.yml", '0664');
@@ -449,6 +442,8 @@ abstract class RoboFileBase extends Tasks {
 
   /**
    * Make config files read only.
+   *
+   * @deprecated
    */
   public function devConfigReadOnly() {
     $this->setPermissions("$this->application_root/sites/default/services.yml", '0444');

@@ -429,30 +429,6 @@ abstract class RoboFileBase extends Tasks {
   }
 
   /**
-   * Make config files write-able.
-   *
-   * @deprecated
-   */
-  public function devConfigWriteable() {
-    $this->setPermissions("$this->application_root/sites/default/services.yml", '0664');
-    $this->setPermissions("$this->application_root/sites/default/settings.php", '0664');
-    $this->setPermissions("$this->application_root/sites/default/settings.local.php", '0664');
-    $this->setPermissions("$this->application_root/sites/default", '0775');
-  }
-
-  /**
-   * Make config files read only.
-   *
-   * @deprecated
-   */
-  public function devConfigReadOnly() {
-    $this->setPermissions("$this->application_root/sites/default/services.yml", '0444');
-    $this->setPermissions("$this->application_root/sites/default/settings.php", '0444');
-    $this->setPermissions("$this->application_root/sites/default/settings.local.php", '0444');
-    $this->setPermissions("$this->application_root/sites/default", '0555');
-  }
-
-  /**
    * Imports a database, updates the admin user password and applies updates.
    *
    * @param string $sql_file

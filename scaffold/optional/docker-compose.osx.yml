@@ -33,7 +33,7 @@ services:
       SITE_ADMIN_EMAIL: admin@example.com
       SITE_ADMIN_USERNAME: admin
       SITE_ADMIN_PASSWORD: password
-      XDEBUG_CONFIG: "remote_host=docker.for.mac.localhost"
+      XDEBUG_CONFIG: "remote_host=host.docker.internal"
     volumes:
       - nfsmount:/code
       - ./shared:/shared

@@ -334,6 +334,13 @@ abstract class RoboFileBase extends Tasks {
   }
 
   /**
+   * Config import backwards compatibility for restore/upgrade.
+   */
+  public function configImportPlus() {
+    $this->configImport();
+  }
+
+  /**
    * Exports Drupal configuration.
    *
    * @param string|null $destination

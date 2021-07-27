@@ -335,6 +335,8 @@ abstract class RoboFileBase extends Tasks {
 
   /**
    * Config import backwards compatibility for restore/upgrade.
+   *
+   * @deprecated To be removed once all apps move to D9.
    */
   public function configImportPlus() {
     $this->configImport();

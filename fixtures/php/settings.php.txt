@@ -71,7 +71,7 @@ if (getenv('TRUSTED_HOST_PATTERNS')) {
   $settings['trusted_host_patterns'] = !empty(getenv('TRUSTED_HOST_PATTERNS')) ? explode(',', getenv('TRUSTED_HOST_PATTERNS')) : [];
 }
 // Monolog configuration.
-$settings['container_yamls'][] = 'sites/default/monolog.services.yml';
+$settings['container_yamls'][] = $app_root . '/' . $site_path . '/monolog.services.yml';
 /**
  * END SHEPHERD CONFIG
  */

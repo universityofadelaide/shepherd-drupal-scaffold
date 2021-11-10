@@ -36,7 +36,7 @@ final class ScaffoldFiles implements ActionInterface
             // Always copy and replace these files.
             [$scaffoldPath . '/required', 'dsh', true],
             [$scaffoldPath . '/required', 'RoboFileBase.php', true],
-            [$scaffoldPath . '/required', 'sites/default/monolog.services.yml', true],
+            [$scaffoldPath . '/required', 'web/sites/default/monolog.services.yml', true],
 
             // Only copy these files if they do not exist at the destination.
             [$scaffoldPath . '/optional', 'docker-compose.linux.yml'],

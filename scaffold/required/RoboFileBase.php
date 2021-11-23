@@ -55,6 +55,7 @@ abstract class RoboFileBase extends Tasks {
    * The path to the Drupal config directories.
    */
   protected const CONFIG_DIRECTORY = '/code/config-export';
+  protected const CONFIG_INSTALL_DIRECTORY = '/code/config-install';
   protected const CONFIG_DIRECTORY_NEW = 'config_new';
   protected const CONFIG_DIRECTORY_OLD = 'config_old';
 
@@ -130,6 +131,7 @@ abstract class RoboFileBase extends Tasks {
     $this->ensureDirectories();
     $this->buildInstall();
     $this->configImport();
+    $this->configInstall();
     $this->devCacheRebuild();
     $this->ensureDirectories();
     $this->devXdebugEnable();
@@ -318,6 +320,19 @@ abstract class RoboFileBase extends Tasks {
     if (getenv('XDEBUG_CONFIG')) {
       $this->_exec("sudo $this->php_disable_module_command -s cli xdebug");
     }
+  }
+
+  /**
+   * Imports Drupal configuration for one off configuration.
+   */
+  public function configInstall() {
+    $successful = $this->_exec(
+      sprintf('%s config:import --partial --yes --source=%s',
+        $this->drush_cmd,
+        static::CONFIG_INSTALL_DIRECTORY
+      ))
+      ->wasSuccessful();
+    $this->checkFail($successful, 'Config install import failed.');
   }
 
   /**

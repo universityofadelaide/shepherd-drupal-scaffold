@@ -10,7 +10,7 @@
         "symfony/filesystem": "~3.0 || ^4.0"
     },
     "require-dev": {
-        "composer/composer": "^1.8@stable",
+        "composer/composer": "^1.10@stable",
         "friendsofphp/php-cs-fixer": "^2",
         "consolidation/robo": "^1"
     },

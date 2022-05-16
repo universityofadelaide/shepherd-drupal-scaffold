@@ -42,7 +42,8 @@ final class GitIgnore implements ActionInterface
         $gitIgnore = file_get_contents($gitIgnorePath);
 
         // Get list of file paths which need to be added to .gitignore.
-        $fileTasks = ScaffoldFiles::tasks($filesystem, $scaffoldPath, $projectPath);
+        $requiredPath = $scaffoldPath . '/required';
+        $fileTasks = ScaffoldFiles::tasks($filesystem, $requiredPath, $projectPath);
         $paths = array_filter(
             array_map(fn (CopyFile $task) => $task->getFilename(), $fileTasks),
             fn (string $fileName): bool => false === strpos($gitIgnore, $fileName)

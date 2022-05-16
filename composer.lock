@@ -2143,12 +2143,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "f7e29ecb38b7536fa544108b8a7962697273d88c"
+                "reference": "18949198428c079e9cbe7be63fd628d74e7f2751"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/f7e29ecb38b7536fa544108b8a7962697273d88c",
-                "reference": "f7e29ecb38b7536fa544108b8a7962697273d88c",
+                "url": "https://api.github.com/repos/symfony/console/zipball/18949198428c079e9cbe7be63fd628d74e7f2751",
+                "reference": "18949198428c079e9cbe7be63fd628d74e7f2751",
                 "shasum": ""
             },
             "require": {
@@ -2235,7 +2235,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-05-10T09:18:46+00:00"
+            "time": "2022-05-14T12:51:09+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",
@@ -3016,12 +3016,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "453a55e6c15c98f20429fc51e050915176b53432"
+                "reference": "318718453c2be58266f1a9e74063d13cb8dd4165"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/453a55e6c15c98f20429fc51e050915176b53432",
-                "reference": "453a55e6c15c98f20429fc51e050915176b53432",
+                "url": "https://api.github.com/repos/symfony/process/zipball/318718453c2be58266f1a9e74063d13cb8dd4165",
+                "reference": "318718453c2be58266f1a9e74063d13cb8dd4165",
                 "shasum": ""
             },
             "require": {
@@ -3069,7 +3069,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-04-12T16:22:53+00:00"
+            "time": "2022-05-11T12:12:29+00:00"
         },
         {
             "name": "symfony/service-contracts",
@@ -3225,12 +3225,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/string.git",
-                "reference": "360e14d2a1588eb525b09898ff37d63509748db5"
+                "reference": "d3edc75baf9f1d4f94879764dda2e1ac33499529"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/string/zipball/360e14d2a1588eb525b09898ff37d63509748db5",
-                "reference": "360e14d2a1588eb525b09898ff37d63509748db5",
+                "url": "https://api.github.com/repos/symfony/string/zipball/d3edc75baf9f1d4f94879764dda2e1ac33499529",
+                "reference": "d3edc75baf9f1d4f94879764dda2e1ac33499529",
                 "shasum": ""
             },
             "require": {

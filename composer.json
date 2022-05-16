@@ -10,9 +10,9 @@
         "symfony/filesystem": "~3.0 || ^4.0"
     },
     "require-dev": {
-        "composer/composer": "^1.8@stable",
-        "friendsofphp/php-cs-fixer": "^2",
-        "consolidation/robo": "^1"
+        "composer/composer": "^2@stable",
+        "friendsofphp/php-cs-fixer": "^3@stable",
+        "consolidation/robo": "^3@stable"
     },
     "config": {
         "bin-dir": "bin/"

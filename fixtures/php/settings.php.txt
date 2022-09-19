@@ -59,6 +59,10 @@ if (getenv('SHEPHERD_SECRET_PATH')) {
   }
 }
 if (getenv('SHEPHERD_REVERSE_PROXY')) {
+  if ($_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https, http') {
+    $_SERVER['HTTP_X_FORWARDED_PROTO'] = 'https';
+  }
+
   $settings['reverse_proxy'] = TRUE;
   $settings['reverse_proxy_header'] = getenv('SHEPHERD_REVERSE_PROXY_HEADER') ?: 'X_CLUSTER_CLIENT_IP';
   $settings['reverse_proxy_addresses'] = !empty(getenv('SHEPHERD_REVERSE_PROXY_ADDRESSES')) ? explode(',', getenv('SHEPHERD_REVERSE_PROXY_ADDRESSES')) : [];

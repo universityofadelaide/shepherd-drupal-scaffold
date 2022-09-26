@@ -8,6 +8,7 @@ use Composer\Script\Event;
 use Symfony\Component\Filesystem\Filesystem;
 use UniversityOfAdelaide\ShepherdDrupalScaffold\ScaffoldTrait;
 use UniversityOfAdelaide\ShepherdDrupalScaffold\tasks\CopyFile;
+use UniversityOfAdelaide\ShepherdDrupalScaffold\tasks\DeleteFile;
 
 /**
  * Updates the Shepherd scaffold files.
@@ -25,6 +26,9 @@ final class ScaffoldFiles implements ActionInterface
         foreach (static::tasks($this->filesystem, $scaffoldPath, $projectPath) as $task) {
             $task->execute();
         }
+
+        $delete = new DeleteFile($this->filesystem, 'core/web', 'install.php');
+        $delete->execute();
     }
 
     /**

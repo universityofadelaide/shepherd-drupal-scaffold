@@ -28,7 +28,7 @@ final class ScaffoldFiles implements ActionInterface
         }
 
         $event->getIO()->write('Deleting install.php');
-        $delete = new DeleteFile($this->filesystem, 'core/web', 'install.php');
+        $delete = new DeleteFile($this->filesystem, 'web/core', 'install.php');
         $delete->execute();
     }
 

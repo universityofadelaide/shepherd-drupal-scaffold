@@ -43,9 +43,28 @@ if (getenv('REDIS_ENABLED')) {
   }
 }
 if (getenv('MEMCACHE_ENABLED')) {
-  $settings['memcache']['servers'] = [getenv('MEMCACHE_HOST') . ':11211' => 'default'] ?: ['127.0.0.1:11211' => 'default'];
+  $memcache_host = getenv('MEMCACHE_HOST') ?: ['127.0.0.1:11211' => 'default']
+
+  // Handle the default/unset value
+  if (is_array($memcache_host)) {
+    $settings['memcache']['servers'] = $memcache_host;
+  }
+  elseif (!strpos($memcache_host, ',')) {
+    // Handle "memcache:11211"
+    $settings['memcache']['servers'] = [$memcache_host => 'default'];
+  }
+  else {
+    // Handle "memcache1:11211,memcache2:11211"
+    $memcache_hosts = array_flip(explode(',', $memcache_host));
+    array_walk($memcache_hosts, function (&$value, $key) {
+      $value = 'default';
+    });
+    $settings['memcache']['servers'] = $memcache_hosts;
+  }
+
   $settings['memcache']['bins'] = ['default' => 'default'];
-  $settings['memcache']['key_prefix'] = '';
+  $settings['memcache']['key_prefix'] = getenv('MEMCACHE_PREFIX') ?: '';
+
   // If we're not installing, include the memcache services.
   if (!isset($GLOBALS['install_state'])) {
     $settings['cache']['default'] = 'cache.backend.memcache';

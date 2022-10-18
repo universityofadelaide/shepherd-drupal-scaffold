@@ -40,8 +40,10 @@ final class DrupalSettings implements ActionInterface
         $settingsFile = $drupalRootPath . '/sites/default/settings.php';
 
         // Exit if a site has a committed settings.php with this text fragment.
-        if (false !== strpos(file_get_contents($settingsFile), 'START SHEPHERD CONFIG')) {
-            return [];
+        if (file_exists($settingsFile)) {
+            if (false !== strpos(file_get_contents($settingsFile), 'START SHEPHERD CONFIG')) {
+                return [];
+            }
         }
 
         $settings = file_get_contents(__DIR__ . '/../../fixtures/php/settings.php.txt');

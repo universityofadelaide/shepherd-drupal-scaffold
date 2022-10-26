@@ -34,7 +34,7 @@ fi
 
 # Upgrade all currently installed packages and install additional packages.
 RUN apt-get update \
-&& apt-get -y --no-install-recommends install openssh-client php-sqlite3 php-xdebug php-cli git wget sudo unzip vim \
+&& apt-get -y --no-install-recommends install openssh-client php${PHP_VERSION}-sqlite3 php${PHP_VERSION}-xdebug php${PHP_VERSION}-cli git wget sudo unzip vim \
 && sed -ri 's/^zend.assertions\s*=\s*-1/zend.assertions = 1/g' /etc/php/${PHP_VERSION}/cli/php.ini \
 && apt-get -y autoremove && apt-get -y autoclean && apt-get clean && rm -rf /var/lib/apt/lists /tmp/* /var/tmp/*
 

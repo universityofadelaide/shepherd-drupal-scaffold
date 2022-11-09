@@ -9,9 +9,7 @@ use DateTimeImmutable;
 
 class ShepherdCommands extends \Robo\Tasks
 {
-    protected $drush_cmd;
-
-    protected $drush_bin = "bin/drush";
+    protected $drush_cmd = "bin/drush";
     protected $composer_bin = "composer";
 
     /**
@@ -59,8 +57,6 @@ class ShepherdCommands extends \Robo\Tasks
      * Initialize config variables and apply overrides.
      */
     public function __construct() {
-        $this->drush_cmd = $this->drush_bin;
-
         // Read config from env vars.
         $environment_config = $this->readConfigFromEnv();
         $this->config = array_merge($this->config, $environment_config);

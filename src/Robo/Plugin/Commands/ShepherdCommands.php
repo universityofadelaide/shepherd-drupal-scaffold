@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace UniversityOfAdelaide\ShepherdDrupalScaffold\Robo\Plugin\Commands;
 
 use Robo\Symfony\ConsoleIO;
+use DateTimeImmutable;
 
 class ShepherdCommands extends \Robo\Tasks
 {

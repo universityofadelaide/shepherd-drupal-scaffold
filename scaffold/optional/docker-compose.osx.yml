@@ -31,7 +31,7 @@ services:
       SHEPHERD_TOKEN: super-secret-token
       SHEPHERD_URL: http://shepherd.test
       SIMPLETEST_BASE_URL: http://web:8080
-      SITE_TITLE: WCMS D8
+      SITE_TITLE: WCMS
       SITE_MAIL: site@example.com
       SITE_ADMIN_EMAIL: admin@example.com
       SITE_ADMIN_USERNAME: admin

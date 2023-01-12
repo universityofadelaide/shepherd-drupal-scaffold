@@ -59,6 +59,10 @@ if (getenv('SHEPHERD_SECRET_PATH')) {
   }
 }
 if (getenv('SHEPHERD_REVERSE_PROXY')) {
+  if ($_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https, http') {
+    $_SERVER['HTTP_X_FORWARDED_PROTO'] = 'https';
+  }
+
   $settings['reverse_proxy'] = TRUE;
   $settings['reverse_proxy_header'] = getenv('SHEPHERD_REVERSE_PROXY_HEADER') ?: 'X_CLUSTER_CLIENT_IP';
   $settings['reverse_proxy_addresses'] = !empty(getenv('SHEPHERD_REVERSE_PROXY_ADDRESSES')) ? explode(',', getenv('SHEPHERD_REVERSE_PROXY_ADDRESSES')) : [];
@@ -66,6 +70,11 @@ if (getenv('SHEPHERD_REVERSE_PROXY')) {
   $settings['reverse_proxy_host_header'] = getenv('SHEPHERD_REVERSE_PROXY_HOST_HEADER') ?: 'X_FORWARDED_HOST';
   $settings['reverse_proxy_port_header'] = getenv('SHEPHERD_REVERSE_PROXY_PORT_HEADER') ?: 'X_FORWARDED_PORT';
   $settings['reverse_proxy_forwarded_header'] = getenv('SHEPHERD_REVERSE_PROXY_FORWARDED_HEADER') ?: 'FORWARDED';
+  $settings['reverse_proxy_trusted_headers'] = getenv('SHEPHERD_REVERSE_PROXY_TRUSTED_HEADERS') ?:
+    \Symfony\Component\HttpFoundation\Request::HEADER_X_FORWARDED_FOR |
+    \Symfony\Component\HttpFoundation\Request::HEADER_X_FORWARDED_HOST |
+    \Symfony\Component\HttpFoundation\Request::HEADER_X_FORWARDED_PORT |
+    \Symfony\Component\HttpFoundation\Request::HEADER_X_FORWARDED_PROTO;
 }
 if (getenv('TRUSTED_HOST_PATTERNS')) {
   $settings['trusted_host_patterns'] = !empty(getenv('TRUSTED_HOST_PATTERNS')) ? explode(',', getenv('TRUSTED_HOST_PATTERNS')) : [];

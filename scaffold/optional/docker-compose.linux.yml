@@ -52,7 +52,8 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: super-secret-password
-    network_mode: service:web
+    networks:
+      - default
 
   mail:
     image: mailhog/mailhog
@@ -85,4 +86,5 @@ services:
     image: selenium/standalone-chrome:latest
     volumes:
       - /dev/shm:/dev/shm
-    network_mode: service:web
+    networks:
+      - default

@@ -1,6 +1,6 @@
 # This dockerfile takes the current users uid/gid at build time and adjusts reality
 # so that the running user for www-data is actually the same as the launching user.
-FROM uofa/s2i-shepherd-drupal:composer2
+FROM uofa/s2i-shepherd-drupal:openshift-4.x
 
 ARG USER_ID
 ARG GROUP_ID

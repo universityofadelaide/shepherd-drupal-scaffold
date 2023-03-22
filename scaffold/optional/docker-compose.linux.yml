@@ -23,7 +23,7 @@ services:
       REDIS_HOST: redis
       SHEPHERD_SITE_ID: 2
       SHEPHERD_INSTALL_PROFILE: ua
-      SHEPHERD_SECRET_PATH: /code/private
+      SHEPHERD_SECRET_PATH: /code/secret
       SHEPHERD_TOKEN: super-secret-token
       SHEPHERD_URL: http://shepherd.test
       SIMPLETEST_BASE_URL: http://web:8080
@@ -52,7 +52,8 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: super-secret-password
-    network_mode: service:web
+    networks:
+      - default
 
   mail:
     image: mailhog/mailhog
@@ -85,4 +86,5 @@ services:
     image: selenium/standalone-chrome:latest
     volumes:
       - /dev/shm:/dev/shm
-    network_mode: service:web
+    networks:
+      - default

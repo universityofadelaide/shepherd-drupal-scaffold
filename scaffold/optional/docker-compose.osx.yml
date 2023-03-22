@@ -17,6 +17,7 @@ services:
       - "8025:8025"
       - "9990:9990"
       - "11211:11211"
+      - "4444:4444"
     environment:
       DTT_BASE_URL: http://web:8080
       DTT_MINK_DRIVER_ARGS: '["chrome", { "chromeOptions": { "w3c": false } }, "http://selenium:4444/wd/hub"]'
@@ -27,7 +28,7 @@ services:
       REDIS_ENABLED: 0
       SHEPHERD_INSTALL_PROFILE: ua
       SHEPHERD_SITE_ID: 2
-      SHEPHERD_SECRET_PATH: /code/private
+      SHEPHERD_SECRET_PATH: /code/secret
       SHEPHERD_TOKEN: super-secret-token
       SHEPHERD_URL: http://shepherd.test
       SIMPLETEST_BASE_URL: http://web:8080

@@ -5,14 +5,14 @@
     "license": "GPL-2.0+",
     "minimum-stability": "dev",
     "require": {
-        "php": ">=7.4",
+        "php": ">=8",
         "composer-plugin-api": "^2",
         "symfony/filesystem": "~3.0 || ^4.0"
     },
     "require-dev": {
         "composer/composer": "^2@stable",
         "friendsofphp/php-cs-fixer": "^3@stable",
-        "consolidation/robo": "^3@stable"
+        "consolidation/robo": "^4"
     },
     "config": {
         "bin-dir": "bin/"

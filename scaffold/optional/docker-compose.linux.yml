@@ -44,7 +44,8 @@ services:
       - ${XDG_RUNTIME_DIR}/keyring:/ssh
     networks:
       - default
-
+    extra_hosts:
+        - host.docker.internal:host-gateway
   db:
     image: mariadb
     environment:

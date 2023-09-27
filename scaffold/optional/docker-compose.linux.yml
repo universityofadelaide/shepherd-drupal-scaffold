@@ -57,7 +57,7 @@ services:
       - default
 
   mail:
-    image: mailhog/mailhog
+    image: axllent/mailpit
     environment:
       VIRTUAL_HOST: mail.${PROJECT}.${DOMAIN}
     ports:

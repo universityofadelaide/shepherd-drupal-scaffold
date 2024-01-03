@@ -42,8 +42,8 @@ final class ScaffoldFiles implements ActionInterface
             [$scaffoldPath . '/required', 'dsh', true],
             [$scaffoldPath . '/required', 'RoboFileBase.php', true],
 
-	    // Only copy these files if they do not exist at the destination.
-	    [$scaffoldPath . '/optional', '.gitlab-ci.yml'],
+            // Only copy these files if they do not exist at the destination.
+            [$scaffoldPath . '/optional', '.gitlab-ci.yml'],
             [$scaffoldPath . '/optional', 'docker-compose.linux.yml'],
             [$scaffoldPath . '/optional', 'docker-compose.osx.yml'],
             [$scaffoldPath . '/optional', 'dsh_bash'],

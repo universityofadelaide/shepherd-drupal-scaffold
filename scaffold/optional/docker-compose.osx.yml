@@ -50,13 +50,14 @@ services:
       - PORT=9000
 
   db:
-    image: mariadb
+    image: mariadb:lts
     network_mode: service:web
     environment:
       MYSQL_DATABASE: drupal
       MYSQL_USER: user
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: super-secret-password
+    command: --transaction-isolation=READ-COMMITTED
 
   mail:
     image: axllent/mailpit

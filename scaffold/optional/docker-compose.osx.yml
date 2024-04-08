@@ -59,7 +59,7 @@ services:
       MYSQL_ROOT_PASSWORD: super-secret-password
 
   mail:
-    image: mailhog/mailhog
+    image: axllent/mailpit
     network_mode: service:web
 
   redis:

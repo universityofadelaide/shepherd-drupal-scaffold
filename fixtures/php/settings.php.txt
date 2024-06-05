@@ -43,7 +43,7 @@ if (getenv('REDIS_ENABLED')) {
   }
 }
 if (getenv('MEMCACHE_ENABLED')) {
-  $settings['memcache']['servers'] = [getenv('MEMCACHE_HOST') . ':11211' => 'default'] ?: ['127.0.0.1:11211' => 'default'];
+  $settings['memcache']['servers'] = getenv('MEMCACHE_HOST')  ? [getenv('MEMCACHE_HOST') . ':11211' => 'default'] : ['127.0.0.1:11211' => 'default'];
   $settings['memcache']['bins'] = ['default' => 'default'];
   $settings['memcache']['key_prefix'] = '';
   // If we're not installing, include the memcache services.

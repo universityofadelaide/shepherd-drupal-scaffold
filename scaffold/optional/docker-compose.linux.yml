@@ -47,12 +47,13 @@ services:
     extra_hosts:
         - host.docker.internal:host-gateway
   db:
-    image: mariadb
+    image: mariadb:lts
     environment:
       MYSQL_DATABASE: drupal
       MYSQL_USER: user
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: super-secret-password
+    command: --transaction-isolation=READ-COMMITTED
     networks:
       - default
 

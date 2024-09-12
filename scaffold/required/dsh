@@ -19,7 +19,7 @@ fi
 # Used as the prefix for docker networking, container naming and nginx hostname.
 export PROJECT=$(basename ${PWD})
 # docker-compose stopped stripping chars from project name in 1.21.0.
-export DOCKER_COMPOSE_VERSION=$(docker-compose -v | awk '{print $3}' | rev | cut -c 2- | rev)
+export DOCKER_COMPOSE_VERSION=$(${DOCKER_COMPOSE_COMMAND} version | awk '{print $4}')
 function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
 if [ $(version ${DOCKER_COMPOSE_VERSION}) -lt $(version "1.21.0") ]; then
   export PROJECT=$(echo ${PROJECT} | sed 's/[-_]//g')

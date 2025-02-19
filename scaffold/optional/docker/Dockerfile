@@ -16,6 +16,7 @@ USER 0:0
 RUN \
     if [ ${USER_ID:-0} -ne 0 ] && [ ${GROUP_ID:-0} -ne 0 ]; then \
     userdel -f www-data \
+    && userdel -f www-data \
     && groupdel dialout \
     && if getent group www-data ; then groupdel www-data; fi \
     && groupadd -g ${GROUP_ID} www-data \

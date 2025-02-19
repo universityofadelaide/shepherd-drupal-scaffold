@@ -1,10 +1,10 @@
 # This dockerfile takes the current users uid/gid at build time and adjusts reality
 # so that the running user for www-data is actually the same as the launching user.
-FROM uofa/s2i-shepherd-drupal:openshift-4.x-22.04-php8.1
+FROM uofa/s2i-shepherd-drupal:php-8.3
 
 ARG USER_ID
 ARG GROUP_ID
-ARG PHP_VERSION="8.1"
+ARG PHP_VERSION="8.3"
 
 # Ensure shell is what we want.
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -14,29 +14,30 @@ USER 0:0
 
 # Remove existing www user (both) and group (dialout is the users group on mac).
 RUN \
-if [ ${USER_ID:-0} -ne 0 ] && [ ${GROUP_ID:-0} -ne 0 ]; then \
+    if [ ${USER_ID:-0} -ne 0 ] && [ ${GROUP_ID:-0} -ne 0 ]; then \
     userdel -f www-data \
+    && userdel -f www-data \
     && groupdel dialout \
     && if getent group www-data ; then groupdel www-data; fi \
     && groupadd -g ${GROUP_ID} www-data \
     && useradd -l -u ${USER_ID} -g www-data www-data \
     && install -d -m 0755 -o www-data -g www-data /home/www-data \
     && chown --changes --no-dereference --recursive \
-        --from=33 ${USER_ID}:${GROUP_ID} \
-        /var/www \
-        /run/lock \
-        /var/run/apache2 \
-        /var/log/apache2 \
-        /var/lock/apache2 \
-        /code \
-        /shared; \
-fi
+    --from=33 ${USER_ID}:${GROUP_ID} \
+    /var/www \
+    /run/lock \
+    /var/run/apache2 \
+    /var/log/apache2 \
+    /var/lock/apache2 \
+    /code \
+    /shared; \
+    fi
 
 # Upgrade all currently installed packages and install additional packages.
 RUN apt-get update \
-&& apt-get -y --no-install-recommends install openssh-client php-sqlite3 php-xdebug php-cli git wget sudo unzip vim \
-&& sed -ri 's/^zend.assertions\s*=\s*-1/zend.assertions = 1/g' /etc/php/${PHP_VERSION}/cli/php.ini \
-&& apt-get -y autoremove && apt-get -y autoclean && apt-get clean && rm -rf /var/lib/apt/lists /tmp/* /var/tmp/*
+    && apt-get -y --no-install-recommends install openssh-client php-sqlite3 php-xdebug php-cli git wget sudo unzip vim \
+    && sed -ri 's/^zend.assertions\s*=\s*-1/zend.assertions = 1/g' /etc/php/${PHP_VERSION}/cli/php.ini \
+    && apt-get -y autoremove && apt-get -y autoclean && apt-get clean && rm -rf /var/lib/apt/lists /tmp/* /var/tmp/*
 
 # Blackfire
 # Similar to https://blackfire.io/docs/integrations/docker/php-docker#debugging-the-php-probe
@@ -55,6 +56,18 @@ COPY ./docker/xdebug.ini /etc/php/${PHP_VERSION}/mods-available/xdebug.ini
 
 # Overwrite the prod custom ini with a version with dev settings.
 COPY ./docker/php_custom.ini /etc/php/${PHP_VERSION}/mods-available/php_custom.ini
+
+
+## SAPP-4787 Workaround for segfaults with Ubuntu package php-xdebug 3.2.0
+## Install xdebug from PECL instead of standard Ubuntu repo
+## This workaround can be removed when the Ubuntu package works again
+RUN apt-get update \
+    && apt-get -y remove php8.3-xdebug \
+    && apt-get -y install php-dev php-pear \
+    && pecl install xdebug \
+    && apt-get -y remove php-dev && apt-get -y autoremove && apt-get -y autoclean && apt-get clean && rm -rf /var/lib/apt/lists /tmp/* /var/tmp/*
+## End workaround
+
 
 RUN echo "www-data ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/www-data
 

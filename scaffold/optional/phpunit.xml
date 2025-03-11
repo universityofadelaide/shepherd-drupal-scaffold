@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="./web/core/tests/bootstrap.php" colors="true"
+     beStrictAboutTestsThatDoNotTestAnything="true"
+     beStrictAboutOutputDuringTests="true"
+     beStrictAboutChangesToGlobalState="true"
+     printerClass="\Drupal\Tests\Listeners\HtmlOutputPrinter">
+    <coverage>
+        <include>
+            <directory>./web/modules/custom</directory>
+        </include>
+        <exclude>
+            <directory suffix="Test.php">./</directory>
+            <directory suffix="TestBase.php">./</directory>
+        </exclude>
+    </coverage>
+    <php>
+        <!-- Set error reporting to E_ALL. -->
+        <ini name="error_reporting" value="32767"/>
+        <ini name="memory_limit" value="-1"/>
+        <ini name="max_execution_time" value="0"/>
+        <env name="BROWSERTEST_OUTPUT_DIRECTORY" value="/code/web/sites/simpletest/browser_output" />
+        <env name="DTT_HTML_OUTPUT_DIRECTORY" value="/code/web/sites/simpletest/browser_output" />
+        <env name="SIMPLETEST_BASE_URL" value="http://web:8080"/>
+        <!-- See \weitzman\DrupalTestTraits\MinkSetup -->
+        <env name="DTT_BASE_URL" value="http://web:8080"/>
+        <!-- See \weitzman\DrupalTestTraits\WebDriverSetup -->
+        <env name="DTT_MINK_DRIVER_ARGS" value="[&quot;chrome&quot;, { &quot;chromeOptions&quot;: { &quot;w3c&quot;: false, &quot;args&quot;: [&quot;--disable-dev-shm-usage&quot;] } }, &quot;http://selenium:4444/wd/hub&quot;]"/>
+        <env name="SIMPLETEST_DB" value="mysql://user:password@db/drupal"/>
+        <const name="BOOTSTRAP_IS_PHPUNIT" value="true"/>
+        <!-- To disable deprecation testing completely set SYMFONY_DEPRECATIONS_HELPER value: 'disabled' -->
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="disabled"/>
+    </php>
+    <testsuites>
+        <testsuite name="unit">
+            <directory>./web/modules/custom/*/tests/src/Unit</directory>
+            <directory>./web/profiles/*/tests/src/Unit</directory>
+        </testsuite>
+        <testsuite name="kernel">
+            <directory>./web/modules/custom/*/tests/src/Kernel</directory>
+            <directory>./web/profiles/*/tests/src/Kernel</directory>
+        </testsuite>
+        <testsuite name="functional">
+            <directory>./web/modules/custom/*/tests/src/Functional</directory>
+            <directory>./web/profiles/*/tests/src/Functional</directory>
+        </testsuite>
+        <testsuite name="functional-javascript">
+            <directory>./web/modules/custom/*/tests/src/FunctionalJavascript</directory>
+            <directory>./web/profiles/*/tests/src/FunctionalJavascript</directory>
+        </testsuite>
+    </testsuites>
+    <listeners>
+        <listener class="\Drupal\Tests\Listeners\DrupalListener">
+        </listener>
+        <!-- The Symfony deprecation listener has to come after the Drupal listener -->
+        <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener">
+        </listener>
+    </listeners>
+</phpunit>

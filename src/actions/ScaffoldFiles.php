@@ -47,6 +47,7 @@ final class ScaffoldFiles implements ActionInterface
             [$scaffoldPath . '/optional', 'docker-compose.osx.yml'],
             [$scaffoldPath . '/optional', 'dsh_bash'],
             [$scaffoldPath . '/optional', 'phpcs.xml'],
+            [$scaffoldPath . '/optional', 'phpunit.xml'],
             [$scaffoldPath . '/optional', 'RoboFile.php'],
             [$scaffoldPath . '/optional', 'docker/Dockerfile'],
             [$scaffoldPath . '/optional', 'docker/xdebug.ini'],

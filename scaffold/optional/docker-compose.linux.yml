@@ -23,7 +23,7 @@ services:
       REDIS_HOST: redis
       SHEPHERD_SITE_ID: 2
       SHEPHERD_INSTALL_PROFILE: ua
-      SHEPHERD_SECRET_PATH: /code/private
+      SHEPHERD_SECRET_PATH: /code/secret
       SHEPHERD_TOKEN: super-secret-token
       SHEPHERD_URL: http://shepherd.test
       SIMPLETEST_BASE_URL: http://web:8080
@@ -44,19 +44,21 @@ services:
       - ${XDG_RUNTIME_DIR}/keyring:/ssh
     networks:
       - default
-
+    extra_hosts:
+        - host.docker.internal:host-gateway
   db:
-    image: mariadb
+    image: mariadb:lts
     environment:
       MYSQL_DATABASE: drupal
       MYSQL_USER: user
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: super-secret-password
+    command: --transaction-isolation=READ-COMMITTED
     networks:
       - default
 
   mail:
-    image: mailhog/mailhog
+    image: axllent/mailpit
     environment:
       VIRTUAL_HOST: mail.${PROJECT}.${DOMAIN}
     ports:

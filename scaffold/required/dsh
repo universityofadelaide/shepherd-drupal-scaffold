@@ -9,6 +9,13 @@ if [ -f /.dockerenv ]; then
   exit
 fi
 
+export DOCKER_COMPOSE_COMMAND="docker-compose"
+
+# Support newer version of docker that have docker compose built in
+if [[ ! $(which docker-compose) ]]; then
+  DOCKER_COMPOSE_COMMAND="docker compose"
+fi
+
 # Used as the prefix for docker networking, container naming and nginx hostname.
 export PROJECT=$(basename ${PWD})
 # docker-compose stopped stripping chars from project name in 1.21.0.
@@ -53,7 +60,7 @@ error() {
 # Configures environment then brings up project using docker-compose.yml file.
 dsh_start() {
   notice "Starting project containers."
-  docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
+  ${DOCKER_COMPOSE_COMMAND} -f ${DOCKER_COMPOSE_FILE} up -d
   export URL="http://127.0.0.1"
   notice "Please wait about 10 seconds for the database to settle.
 You can now access the site from ${URL}.
@@ -67,7 +74,7 @@ Connecting via ./dsh shell and running robo build is a common next step."
 dsh_shell() {
   dsh_start
 
-  docker-compose -f ${DOCKER_COMPOSE_FILE} exec \
+  ${DOCKER_COMPOSE_COMMAND} -f ${DOCKER_COMPOSE_FILE} exec \
    -e COLUMNS="$(tput cols)" \
    -e LINES="$(tput lines)" \
    web ${@:-./dsh_bash}
@@ -77,13 +84,13 @@ dsh_shell() {
 # Stops project and brings down network after disconnecting nginx proxy.
 dsh_stop() {
   notice "Stopping containers."
-  docker-compose -f ${DOCKER_COMPOSE_FILE} stop
+  ${DOCKER_COMPOSE_COMMAND} -f ${DOCKER_COMPOSE_FILE} stop
 }
 
 # Command: ./dsh down
 # Stops project, then takes down containers and removes volumes if possible.
 dsh_down() {
-  docker-compose -f ${DOCKER_COMPOSE_FILE} down -v
+  ${DOCKER_COMPOSE_COMMAND} -f ${DOCKER_COMPOSE_FILE} down -v
 }
 
 # Command: ./dsh purge
@@ -96,13 +103,13 @@ dsh_purge() {
 # Command: ./dsh status
 # Shows status information about project containers.
 dsh_status() {
-  docker-compose -f ${DOCKER_COMPOSE_FILE} ps
+  ${DOCKER_COMPOSE_COMMAND} -f ${DOCKER_COMPOSE_FILE} ps
 }
 
 # Command: ./dsh logs
 # Tails logs from web container.
 dsh_logs() {
-  docker-compose -f ${DOCKER_COMPOSE_FILE} logs -f web
+  ${DOCKER_COMPOSE_COMMAND} -f ${DOCKER_COMPOSE_FILE} logs -f web
 }
 
 dsh_project() {
@@ -117,9 +124,9 @@ dsh_project() {
 # Fetches all images used by the project.
 dsh_pull() {
   # docker-compose doesn't resolve sub-dependencies in Dockerfiles and that's ok.
-  docker-compose -f ${DOCKER_COMPOSE_FILE} pull --ignore-pull-failures
+  ${DOCKER_COMPOSE_COMMAND} -f ${DOCKER_COMPOSE_FILE} pull --ignore-pull-failures
   # Check for dependent image updates with --pull before building.
-  docker-compose -f ${DOCKER_COMPOSE_FILE} build --pull
+  ${DOCKER_COMPOSE_COMMAND} -f ${DOCKER_COMPOSE_FILE} build --pull
 }
 
 # Command: ./dsh nfs
@@ -164,7 +171,7 @@ dsh_setup_nfs() {
   while ! docker ps > /dev/null 2>&1 ; do sleep 2; done
 
   echo "== Stopping running docker containers..."
-  docker-compose -f ${DOCKER_COMPOSE_FILE} down > /dev/null 2>&1
+  ${DOCKER_COMPOSE_COMMAND} -f ${DOCKER_COMPOSE_FILE} down > /dev/null 2>&1
   docker volume prune -f > /dev/null
 
   osascript -e 'quit app "Docker"'

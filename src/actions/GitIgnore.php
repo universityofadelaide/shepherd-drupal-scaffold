@@ -27,7 +27,7 @@ final class GitIgnore implements ActionInterface
             $task->execute();
         }
     }
-    
+
     /**
      * @return \UniversityOfAdelaide\ShepherdDrupalScaffold\tasks\AppendFile[]
      */

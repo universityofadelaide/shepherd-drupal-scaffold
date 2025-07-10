@@ -15,53 +15,53 @@ use UniversityOfAdelaide\ShepherdDrupalScaffold\tasks\CopyFile;
  */
 final class GitIgnore implements ActionInterface
 {
-  use ScaffoldTrait;
+    use ScaffoldTrait;
 
-  public function onEvent(Event $event): void {
-    $event->getIO()->write('Adding scaffold files to .gitignore');
+    public function onEvent(Event $event): void
+    {
+        $event->getIO()->write('Adding scaffold files to .gitignore');
 
-    $scaffoldPath = $this->getScaffoldDirectory();
-    $projectPath = $this->getProjectPath();
-    foreach (GitIgnore::tasks($this->filesystem, $scaffoldPath, $projectPath) as $task) {
-      $task->execute();
+        $scaffoldPath = $this->getScaffoldDirectory();
+        $projectPath = $this->getProjectPath();
+        foreach (static::tasks($this->filesystem, $scaffoldPath, $projectPath) as $task) {
+            $task->execute();
+        }
     }
-  }
+    /**
+     * @return \UniversityOfAdelaide\ShepherdDrupalScaffold\tasks\AppendFile[]
+     */
+    public static function tasks(Filesystem $filesystem, string $scaffoldPath, string $projectPath): array
+    {
+        // Only continue if there is a .gitignore file.
+        $gitIgnorePath = $projectPath . '/.gitignore';
+        if (!$filesystem->exists($gitIgnorePath)) {
+            return [];
+        }
 
-  /**
-   * @return \UniversityOfAdelaide\ShepherdDrupalScaffold\tasks\AppendFile[]
-   */
-  public static function tasks(Filesystem $filesystem, string $scaffoldPath, string $projectPath): array {
-    // Only continue if there is a .gitignore file.
-    $gitIgnorePath = $projectPath . '/.gitignore';
-    if (!$filesystem->exists($gitIgnorePath)) {
-      return [];
+        $gitIgnore = file_get_contents($gitIgnorePath);
+
+        // Get list of file paths which need to be added to .gitignore.
+        $fileTasks = ScaffoldFiles::tasks($filesystem, $scaffoldPath, $projectPath);
+
+        // Filter only files from the "required" folder.
+        $filteredTasks = array_filter(
+            $fileTasks,
+            fn (CopyFile $task): bool => str_contains($task->getOrigin(), '/required')
+        );
+        $paths = array_filter(
+            array_map(fn (CopyFile $task) => $task->getFilename(), $filteredTasks),
+            fn (string $fileName): bool => false === strpos($gitIgnore, $fileName)
+        );
+
+        $data = '';
+        foreach ($paths as $path) {
+            $data .= sprintf("%s\n", $path);
+        }
+
+        if (!empty($data)) {
+            return [new AppendFile($gitIgnorePath, "\n" . $data)];
+        }
+
+        return [];
     }
-
-    $gitIgnore = file_get_contents($gitIgnorePath);
-
-    // Get list of file paths which need to be added to .gitignore.
-    $fileTasks = ScaffoldFiles::tasks($filesystem, $scaffoldPath, $projectPath);
-
-    // Filter only files from the "required" folder.
-    $filteredTasks = array_filter(
-        $fileTasks,
-        fn (CopyFile $task): bool => str_contains($task->getOrigin(), '/required')
-    );
-    $paths = array_filter(
-        array_map(fn (CopyFile $task) => $task->getFilename(), $filteredTasks),
-        fn (string $fileName): bool => !str_contains($gitIgnore, $fileName)
-    );
-
-    $data = '';
-    foreach ($paths as $path) {
-      $data .= sprintf("%s\n", $path);
-    }
-
-    if (!empty($data)) {
-      return [new AppendFile($gitIgnorePath, "\n" . $data)];
-    }
-
-    return [];
-  }
-
 }

@@ -45,12 +45,12 @@ final class GitIgnore implements ActionInterface
         $fileTasks = ScaffoldFiles::tasks($filesystem, $scaffoldPath, $projectPath);
 
         // Filter only files from the "required" folder.
-        $filteredTasks = array_filter(
+        $requiredTasks = array_filter(
             $fileTasks,
             fn (CopyFile $task): bool => str_contains($task->getOrigin(), '/required')
         );
         $paths = array_filter(
-            array_map(fn (CopyFile $task) => $task->getFilename(), $filteredTasks),
+            array_map(fn (CopyFile $task) => $task->getFilename(), $requiredTasks),
             fn (string $fileName): bool => false === strpos($gitIgnore, $fileName)
         );
 

@@ -1,0 +1,83 @@
+# START AU CUSTOM CONFIG.
+<IfModule mod_headers.c>
+  # ----------------------------------------------------------------------
+  # 1. HTTP Strict Transport Security (HSTS)
+  # ----------------------------------------------------------------------
+  # Force all traffic over HTTPS.
+  # No need as we have it in the webserver config.
+
+  # ----------------------------------------------------------------------
+  # 2. Referrer-Policy
+  # ----------------------------------------------------------------------
+  # Protects sensitive referrer info, while allowing analytics to work.
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # ----------------------------------------------------------------------
+  # 3. X-Permitted-Cross-Domain-Policies
+  # ----------------------------------------------------------------------
+  # Legacy Flash/PDF policy — not needed for modern web apps. Block it.
+  Header always set X-Permitted-Cross-Domain-Policies "none"
+
+  # ----------------------------------------------------------------------
+  # 4. Content-Security-Policy (CSP)
+  # ----------------------------------------------------------------------
+  # Controls what external resources (scripts, styles, iframes, fonts, images) can load.
+  # Adjust this list depending on modules/services you use in Drupal.
+  #
+  # - default-src 'self' → only allow same-origin unless overridden below
+  # - script-src → allow Drupal, inline scripts, GTM/GA, Siteimprove, Twitter, Contentsquare, Adobe, etc.
+  # - style-src → allow Drupal, inline styles, and Google Fonts CSS
+  # - font-src → allow Drupal and Google Fonts
+  # - img-src → allow Drupal, GTM, GA, data: URIs (inline images, SVGs), Siteimprove image endpoints, and Contentsquare imagery.
+  # - frame-src → allow Drupal itself and GTM iframe
+  # -------------------------------------------------------------------------
+  # Adobe's analytics stack (Analytics, Target, Launch):
+  #   list of Adobe domains: https://experienceleague.adobe.com/en/docs/analytics/technotes/domains
+  #
+  # Configuring CSP rules for siteimprove: https://help.siteimprove.com/support/solutions/articles/80000448448-adding-siteimprove-analytics-javascript-to-your-website
+  #
+  # Configuring CSP rules for contentsquare: https://docs.contentsquare.com/en/web/content-security-policy/
+  #
+  # ----------------------------------------------------------------------
+  # Content-Security-Policy (CSP) with support for Google Tag Manager, Google Analytics,
+  # Siteimprove, Contentsquare, Adobe tools, Twitter Widgets, and more.
+  # ----------------------------------------------------------------------
+  Header always set Content-Security-Policy "\
+    default-src 'self'; \
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' \
+      https://www.googletagmanager.com \
+      https://www.google-analytics.com \
+      https://www.google.com.au \
+      *.contentsquare.net app.contentsquare.com \
+      *.siteimproveanalytics.com siteimprove.com \
+      adobe.com adobe.net adobe.io \
+      aaui-879784980514.s3.us-east-2.amazonaws.com \
+      d30ln29764hddd.cloudfront.net \
+      esp.aptrinsic.com esp-m.aptrinsic.com \
+      app.launchdarkly.com \
+      awaascicdprodva7.blob.core.windows.net aauicdnva7.azureedge.net \
+      https://cdnjs.cloudflare.com https://use.fontawesome.com; \
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://use.fontawesome.com; \
+    font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com https://use.fontawesome.com; \
+    img-src 'self' data: \
+      https://www.googletagmanager.com \
+      https://www.google-analytics.com \
+      https://www.google.com.au \
+      *.siteimproveanalytics.io \
+      *.contentsquare.net; \
+    connect-src 'self' \
+      https://analytics.google.com \
+      https://www.google.com.au \
+      *.contentsquare.net *.contentsquare.com \
+      *.siteimproveanalytics.com \
+      adobe.com adobe.net adobe.io; \
+    frame-src 'self' https://www.googletagmanager.com https://app.contentsquare.com https://t.contentsquare.net https://www.google.com.au https://analytics.google.com; \
+  "
+  # ----------------------------------------------------------------------
+  # 5. X-Frame-Options
+  # ----------------------------------------------------------------------
+  # Protect against clickjacking.
+  # SAMEORIGIN = allow your own domain.
+  # (Google Tag Manager <noscript><iframe src="https://www.googletagmanager.com/ns.html></ifram></noscript> should still work.)
+  Header always set X-Frame-Options "SAMEORIGIN"
+</IfModule>

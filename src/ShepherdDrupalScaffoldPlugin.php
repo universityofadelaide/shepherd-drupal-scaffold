@@ -14,6 +14,7 @@ use UniversityOfAdelaide\ShepherdDrupalScaffold\actions\ActionInterface;
 use UniversityOfAdelaide\ShepherdDrupalScaffold\actions\Directories;
 use UniversityOfAdelaide\ShepherdDrupalScaffold\actions\DrupalSettings;
 use UniversityOfAdelaide\ShepherdDrupalScaffold\actions\GitIgnore;
+use UniversityOfAdelaide\ShepherdDrupalScaffold\actions\Htaccess;
 use UniversityOfAdelaide\ShepherdDrupalScaffold\actions\ScaffoldFiles;
 
 /**
@@ -55,6 +56,7 @@ class ShepherdDrupalScaffoldPlugin implements PluginInterface, EventSubscriberIn
             Directories::class,
             DrupalSettings::class,
             GitIgnore::class,
+            Htaccess::class,
             ScaffoldFiles::class,
         ] as $actionClass) {
             $action = $actionClass::create($this->composer, $this->io);

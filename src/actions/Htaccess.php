@@ -35,7 +35,7 @@ final class Htaccess implements ActionInterface
     public static function tasks(Filesystem $filesystem, string $drupalRootPath): array
     {
         // .htaccess comes from drupal/core-composer-scaffold by composer.
-        $htaccessFile = $drupalRootPath . '/web/.htaccess';
+        $htaccessFile = $drupalRootPath . '/.htaccess';
 
         // If a site has .htaccess with this text fragment.
         if (str_contains(file_get_contents($htaccessFile), '# START AU CUSTOM CONFIG')) {

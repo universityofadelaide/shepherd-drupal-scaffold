@@ -58,7 +58,8 @@
       awaascicdprodva7.blob.core.windows.net aauicdnva7.azureedge.net \
       https://cdnjs.cloudflare.com https://use.fontawesome.com; \
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://use.fontawesome.com; \
-    font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com https://use.fontawesome.com;  https://themes.googleusercontent.com; \
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://use.fontawesome.com;
+    font-src 'self' data: https://themes.googleusercontent.com https://fonts.gstatic.com https://use.fontawesome.com;
     img-src * data: blob:; \
     connect-src 'self' \
       https://analytics.google.com \

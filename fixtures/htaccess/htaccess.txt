@@ -50,7 +50,7 @@
       https://www.google-analytics.com \
       https://www.google.com.au \
       *.contentsquare.net app.contentsquare.com \
-      *.siteimproveanalytics.com siteimprove.com \
+      *.siteimproveanalytics.com siteimproveanalytics.com siteimprove.com \
       adobe.com adobe.net adobe.io \
       aaui-879784980514.s3.us-east-2.amazonaws.com \
       d30ln29764hddd.cloudfront.net \
@@ -70,7 +70,7 @@
       https://analytics.google.com \
       https://www.google.com.au \
       *.contentsquare.net *.contentsquare.com \
-      *.siteimproveanalytics.com \
+      *.siteimproveanalytics.com siteimproveanalytics.com \
       adobe.com adobe.net adobe.io; \
     frame-src 'self' https://www.googletagmanager.com https://app.contentsquare.com https://t.contentsquare.net https://www.google.com.au https://analytics.google.com; \
   "

@@ -60,8 +60,9 @@
       https://cdnjs.cloudflare.com https://use.fontawesome.com \
       https://cdn.jsdelivr.net https://unpkg.com \
       https://code.jquery.com \
+      https://platform.twitter.com \
       https://global.adelaide.edu.au; \
-    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://use.fontawesome.com https://cdn.jsdelivr.net https://unpkg.com https://code.jquery.com https://global.adelaide.edu.au; \
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://use.fontawesome.com https://cdn.jsdelivr.net https://unpkg.com https://code.jquery.com https://platform.twitter.com https://global.adelaide.edu.au; \
     font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com https://use.fontawesome.com https://themes.googleusercontent.com; \
     img-src * data: blob:; \
     connect-src 'self' \

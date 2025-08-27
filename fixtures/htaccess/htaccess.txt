@@ -71,7 +71,8 @@
       https://www.google.com.au \
       *.contentsquare.net *.contentsquare.com \
       *.siteimproveanalytics.com siteimproveanalytics.com \
-      adobe.com adobe.net adobe.io; \
+      adobe.com adobe.net adobe.io \
+      https://stats.g.doubleclick.net; \
     frame-src 'self' https://www.googletagmanager.com https://app.contentsquare.com https://t.contentsquare.net https://www.google.com.au https://analytics.google.com; \
   "
   # ----------------------------------------------------------------------

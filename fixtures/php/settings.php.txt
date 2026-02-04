@@ -110,6 +110,18 @@ if (file_exists(__DIR__ . '/settings.app.php')) {
  */
 
 /**
+ * START ERRORS CONFIG
+ *
+ * A settings file with settings and configuration specific to error handling.
+ */
+if (file_exists(__DIR__ . '/settings.errors.php')) {
+  include __DIR__ . '/settings.errors.php';
+}
+/**
+ * END ERRORS CONFIG
+ */
+
+/**
  * START LOCAL CONFIG.
  *
  * Create a settings.local.php file on your dev environment and do not commit.

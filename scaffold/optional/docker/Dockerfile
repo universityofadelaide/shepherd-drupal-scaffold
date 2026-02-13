@@ -1,6 +1,6 @@
 # This dockerfile takes the current users uid/gid at build time and adjusts reality
 # so that the running user for www-data is actually the same as the launching user.
-FROM uofa/s2i-shepherd-drupal:php-8.3-ssl-legacy
+FROM uofa/s2i-shepherd-drupal:php8.3-ssl-legacy
 
 ARG USER_ID
 ARG GROUP_ID

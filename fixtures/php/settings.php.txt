@@ -79,6 +79,22 @@ if (getenv('SHEPHERD_REVERSE_PROXY')) {
 if (getenv('TRUSTED_HOST_PATTERNS')) {
   $settings['trusted_host_patterns'] = !empty(getenv('TRUSTED_HOST_PATTERNS')) ? explode(',', getenv('TRUSTED_HOST_PATTERNS')) : [];
 }
+
+/**
+ * Configure trusted oEmbed provider host patterns.
+ *
+ * Sets trusted host patterns for Media oEmbed URL discovery from the
+ * MEDIA_OEMBED_DISCOVERY_TRUSTED_HOST_PATTERNS environment variable.
+ */
+$media_oembed_discovery_trusted_host_patterns = getenv('MEDIA_OEMBED_DISCOVERY_TRUSTED_HOST_PATTERNS');
+
+if ($media_oembed_discovery_trusted_host_patterns !== false && $media_oembed_discovery_trusted_host_patterns !== '') {
+  $settings['media_oembed_discovery_trusted_host_patterns'] = array_map(
+    'trim',
+    explode(',', $media_oembed_discovery_trusted_host_patterns)
+  );
+}
+
 /**
  * END SHEPHERD CONFIG
  */

@@ -86,8 +86,13 @@ if (getenv('TRUSTED_HOST_PATTERNS')) {
  * Sets trusted host patterns for Media oEmbed URL discovery from the
  * MEDIA_OEMBED_DISCOVERY_TRUSTED_HOST_PATTERNS environment variable.
  */
-if (getenv('MEDIA_OEMBED_DISCOVERY_TRUSTED_HOST_PATTERNS') && !empty(getenv('MEDIA_OEMBED_DISCOVERY_TRUSTED_HOST_PATTERNS'))) {
-  $settings['media_oembed_discovery_trusted_host_patterns'] = explode(',', getenv('MEDIA_OEMBED_DISCOVERY_TRUSTED_HOST_PATTERNS'));
+$media_oembed_discovery_trusted_host_patterns = getenv('MEDIA_OEMBED_DISCOVERY_TRUSTED_HOST_PATTERNS');
+
+if ($media_oembed_discovery_trusted_host_patterns !== false && $media_oembed_discovery_trusted_host_patterns !== '') {
+  $settings['media_oembed_discovery_trusted_host_patterns'] = array_map(
+    'trim',
+    explode(',', $media_oembed_discovery_trusted_host_patterns)
+  );
 }
 
 /**
